@@ -34,7 +34,7 @@ export const postsInDbRepository={
         if(title){
             filter.title={$regex: title}
         }
-        const posts = await postsCollectionDb.find(filter).toArray()
+        const posts:PostDBType[]= await postsCollectionDb.find(filter).toArray()
         return posts.map((post:PostDBType) => ({
             blogId: post.blogId,
             blogName: post.blogName,
