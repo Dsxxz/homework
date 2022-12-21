@@ -1,10 +1,10 @@
 import { Router} from "express";
 import {blogInputNameValidation, blogInputYoutubeURLValidation} from '../MiddleWares/input-blog-validation';
-import {basicAuth} from "../middleWares/Authorization";
-import {inputBlogValidation} from "../middleWares/validation-middleware"
-import {blogService} from "../domain/blogs-service";
-import {postsService} from "../domain/posts-service";
-import {postsRouter} from "./postsRouters";
+import {basicAuth} from "../MiddleWares/autorization";
+import {inputBlogValidation} from "../MiddleWares/validation-middleware"
+import {blogService} from "../domain/blog-service";
+import {postsService} from "../domain/post-service";
+import {postsRouter} from "./posts_router";
 import {
     postBlogIDValidation, postBlogIDValidator,
     postContentValidation,

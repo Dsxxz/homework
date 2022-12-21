@@ -1,6 +1,6 @@
 import {MongoClient, ObjectId} from "mongodb";
-import * as dotenv from 'dotenv'
-dotenv.config()
+//import * as dotenv from 'dotenv'
+//dotenv.config()
 export type PostType = {
     id:string,
     blogId: string,

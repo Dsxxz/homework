@@ -1,4 +1,4 @@
-import {blogsRepository} from "./blogs-in-db-repository";
+import {blogsRepository} from "./blog_in_db_repository";
 import {postsCollectionDb, PostDBType, PostType} from "./db";
 import {ObjectId} from "mongodb";
 

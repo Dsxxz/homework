@@ -1,6 +1,6 @@
 import express  from 'express';
-import {blogsRouter} from "./routes/blogsRouters";
-import {postsRouter} from "./routes/postsRouters";
+import {blogsRouter} from "./routes/blogs_router";
+import {postsRouter} from "./routes/posts_router";
 import {blogsCollectionDb, postsCollectionDb, runDb} from "./repositories/db";
 import bodyParser from "body-parser" ;
 const app = express();

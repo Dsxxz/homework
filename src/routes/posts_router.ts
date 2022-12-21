@@ -1,13 +1,13 @@
 import {Router} from "express";
-import {inputBlogValidation} from "../middleWares/validation-middleware"
+import {inputBlogValidation} from "../MiddleWares/validation-middleware"
 import {
     postBlogIDValidation, postBlogIDValidator,
     postContentValidation,
     postShortDescriptionValidation,
     postTitleValidation
-} from "../middleWares/input-post-validation"
-import {basicAuth} from "../middleWares/Authorization";
-import {postsService} from "../domain/posts-service";
+} from "../MiddleWares/input-post-validation"
+import {basicAuth} from "../MiddleWares/autorization";
+import {postsService} from "../domain/post-service";
 export const postsRouter=Router({});
 
 

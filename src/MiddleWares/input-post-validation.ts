@@ -1,4 +1,4 @@
-import {blogsRepository} from "../repositories/blogs-in-db-repository";
+import {blogsRepository} from "../repositories/blog_in_db_repository";
 const {body } = require('express-validator');
 
 
