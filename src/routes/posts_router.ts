@@ -22,8 +22,8 @@ postsRouter.get('/', async (req:Request<{},{},{},QueryInputType>,res:Response)=>
         const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
-            "page": pageNumber,
-            "pageSize": pageSize,
+            "page": +pageNumber,
+            "pageSize": +pageSize,
             "totalCount": paginator.totalCount,
             "items": posts
         })

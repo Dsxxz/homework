@@ -24,8 +24,8 @@ blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
 
                 res.status(200).send({
                     "pagesCount": paginator.pagesCount,
-                    "page": pageNumber,
-                    "pageSize": pageSize,
+                    "page": +pageNumber,
+                    "pageSize": +pageSize,
                     "totalCount": paginator.totalCount,
                     "items": blogs
                 })

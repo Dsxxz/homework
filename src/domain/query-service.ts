@@ -67,7 +67,7 @@ export const postQueryService={
     }
     ,
     async findPostsByQuerySort(sortBy:string='createdAt',sortDirections:string,
-         pageNumber:number=1,pageSize:number=10,blogId?:string)
+         pageNumber:number,pageSize:number,blogId?:string)
             :Promise<Array<PostType>>
         {
             const filter = blogId ? {blogId:blogId} :{}
