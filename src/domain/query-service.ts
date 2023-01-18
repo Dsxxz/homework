@@ -29,7 +29,7 @@ export const blogQueryService={
 
         if(sortDirections==='asc') {
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
-                .sort({[sortBy]: 1})
+                .sort({[sortBy]: -1})
                 .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
                 .toArray();
@@ -44,7 +44,7 @@ export const blogQueryService={
 
         else{
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
-                .sort({[sortBy]: -1})
+                .sort({[sortBy]: 1})
                 .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
                 .toArray();
@@ -59,8 +59,9 @@ export const blogQueryService={
     }}
 
 export const postQueryService={
-    async paginationPage(pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
-        const   totalCount = await postsCollectionDb.countDocuments()
+    async paginationPage(pageNumber:number=1,pageSize:number=10,blogId?:string):Promise<paginationType>{
+        const filter = blogId ? {blogId:blogId} :{}
+        const   totalCount = await postsCollectionDb.countDocuments(filter)
         const   pagesCount = Math.ceil(totalCount / pageSize)
 
         return {totalCount,pagesCount};
@@ -73,7 +74,7 @@ export const postQueryService={
             const filter = blogId ? {blogId:blogId} :{}
             if(sortDirections==='asc') {
                 const posts: PostDBType[] = await postsCollectionDb.find(filter)
-                    .sort({[sortBy]: 1})
+                    .sort({[sortBy]: -1})
                     .skip((pageNumber-1)*pageSize)
                     .limit(pageSize)
                     .toArray();
@@ -88,7 +89,7 @@ export const postQueryService={
                 }))}
         else{
             const posts: PostDBType[] = await postsCollectionDb.find(filter)
-                .sort({[sortBy]: -1})
+                .sort({[sortBy]: 1})
                 .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
                 .toArray();
