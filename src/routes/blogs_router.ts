@@ -11,10 +11,10 @@ import {
     postTitleValidation
 } from "../MiddleWares/input-post-validation";
 import {BlogType} from "../repositories/db";
-import {blogQueryService, paginationType, QueryInputBlogsType} from "../domain/query-service";
+import {blogQueryService, paginationType, QueryInputType} from "../domain/query-service";
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', async (req:Request<{},{},{},QueryInputBlogsType>,res:Response)=>{
+blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
             try{
                 const { pageNumber, pageSize, sortBy, sortDirections, searchNameTerm} = req.query;
 
@@ -72,10 +72,25 @@ blogsRouter.post('/:blogId/posts',basicAuth,postTitleValidation, postShortDescri
         if (newPost) {
             res.status(201).send( newPost);
         } else {
-            res.sendStatus(400);
+            res.sendStatus(404);
         }
     })
-blogsRouter.get('/:blogId/posts',async (req, res)=> {
-    const postsArray = await postsService.findPosts()
-    res.status(200).send(postsArray)
+blogsRouter.get('/:blogId/posts',async (req:Request<{},{},{},QueryInputType>,res:Response)=> {
+    try{
+        const { pageNumber, pageSize, sortBy, sortDirections, searchNameTerm} = req.query;
+
+        const blog: Array<BlogType> = await blogQueryService.findBlogsByQuerySort( sortBy?.toString(),
+            sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
+        const paginator:paginationType = await blogQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
+        res.status(200).send({
+            "pagesCount": paginator.pagesCount,
+            "page": pageNumber,
+            "pageSize": pageSize,
+            "totalCount": paginator.totalCount,
+            "items": blog
+        })
+    }
+    catch (e){
+        res.sendStatus(404)
+    }
 })

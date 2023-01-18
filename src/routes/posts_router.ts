@@ -1,4 +1,4 @@
-import {Router} from "express";
+import {Request, Response, Router} from "express";
 import {inputBlogValidation} from "../MiddleWares/validation-middleware"
 import {
     postBlogIDValidation, postBlogIDValidator,
@@ -8,12 +8,29 @@ import {
 } from "../MiddleWares/input-post-validation"
 import {basicAuth} from "../MiddleWares/autorization";
 import {postsService} from "../domain/post-service";
+import {PostType} from "../repositories/db";
+import {paginationType, postQueryService, QueryInputType} from "../domain/query-service";
 export const postsRouter=Router({});
 
 
-postsRouter.get('/', async (req,res)=>{
-    const postsArray = await postsService.findPosts()
-    res.status(200).send(postsArray)
+postsRouter.get('/', async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
+    try{
+        const { pageNumber, pageSize, sortBy, sortDirections, searchNameTerm} = req.query;
+
+        const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
+            sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
+        const paginator:paginationType = await postQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
+        res.status(200).send({
+            "pagesCount": paginator.pagesCount,
+            "page": pageNumber,
+            "pageSize": pageSize,
+            "totalCount": paginator.totalCount,
+            "items": posts
+        })
+    }
+    catch (e){
+        res.sendStatus(404)
+    }
 })
 postsRouter.get('/:id',async (req,res)=>{
     let foundPostById = await postsService.findPostById(req.params.id)

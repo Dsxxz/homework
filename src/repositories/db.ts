@@ -36,13 +36,7 @@ export type BlogDbType = {
     description:string
 }
 
-export type PaginatorType={
-    pagesCount: number
-    page:number
-    pageSize:number
-    totalCount:number
-}
-export enum SortDirections{asc, desc}
+
 const mongoUri = process.env.MONGO_URL;
 if(!mongoUri){
     throw new Error("URL doesnt found")
