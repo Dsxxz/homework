@@ -53,7 +53,7 @@ blogsRouter.post('/',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValida
     }
 })
 blogsRouter.put('/:id',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputBlogValidation, async (req, res)=> {
-    let findBlogById = await blogService.updateBlog(req.params.id, req.body.name, req.body.youtubeUrl,req.body.description)
+    let findBlogById = await blogService.updateBlog(req.params.id, req.body.name, req.body.websiteUrl,req.body.description)
     if (findBlogById) {
         res.sendStatus(204)
     }

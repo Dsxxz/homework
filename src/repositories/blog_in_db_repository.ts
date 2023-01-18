@@ -2,7 +2,7 @@ import {BlogDbType, blogsCollectionDb, BlogType} from "./db"
 import {ObjectId} from "mongodb";
 
 export const blogsRepository={
-    async createNewBlog(newBlog:BlogDbType):Promise<BlogType >{
+    async createNewBlog(newBlog:BlogDbType):Promise<BlogType>{
         await blogsCollectionDb.insertOne(newBlog)
 
         return {
