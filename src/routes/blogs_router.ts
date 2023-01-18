@@ -92,7 +92,7 @@ blogsRouter.get('/:blogId/posts',async (req:Request<{blogId:string},{},{},QueryI
 
         const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
             sortDirections?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.blogId!)
-        const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize)
+        const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize,req.params.blogId!)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
             "page": +pageNumber,
