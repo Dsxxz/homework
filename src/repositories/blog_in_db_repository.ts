@@ -13,19 +13,6 @@ export const blogsRepository={
             description: newBlog.description
         }
     },
-    async findBlogs():Promise<Array<BlogType>>{
-
-        const blogs = await blogsCollectionDb.find({}).toArray()
-
-        return blogs.map((blog:BlogDbType) => ({
-            id: blog._id.toString(),
-            name: blog.name,
-            websiteUrl: blog.websiteUrl,
-            createdAt: blog.createdAt,
-            description: blog.description
-        }))
-    },
-
     async findBlogById(id: string):Promise<BlogType | null>{
         if(!ObjectId.isValid(id)) {
             return null
