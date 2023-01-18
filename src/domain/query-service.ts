@@ -27,7 +27,7 @@ export const blogQueryService={
     {
         const finding = new RegExp("[" + searchNameTerm + "]", "i")
         const filter = searchNameTerm ? {name: {$regex: finding}}:{}
-        if(sortDirection==="asc") {
+        if(sortDirection==="asc")  {
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
                 .sort({[sortBy]: 1})
                 .skip((pageNumber-1)*pageSize)
