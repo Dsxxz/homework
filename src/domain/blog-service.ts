@@ -14,10 +14,6 @@ export const blogService={
         return await blogsRepository.createNewBlog(newBlog)
 
     },
-    async findBlogs():Promise<Array<BlogType>>{
-        return await blogsRepository.findBlogs()
-    },
-
     async findBlogById(id: string):Promise<BlogType | null>{
         return  await blogsRepository.findBlogById(id);
     },
