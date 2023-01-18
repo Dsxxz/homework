@@ -10,7 +10,6 @@ const port = process.env.PORT || 3000
 app.use(bodyParser.json());
 app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
-
 app.delete('/testing/all-data', async (req, res)=>{
     try {
         await blogsCollectionDb.deleteMany({})

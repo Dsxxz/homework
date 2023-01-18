@@ -4,7 +4,7 @@ export const blogInputNameValidation = body('name').trim().isLength({min:3, max:
 
 const regex= new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
 
-export const blogInputYoutubeURLValidation = body('youtubeUrl').trim().isLength({min:3, max:100}).withMessage('YoutubeUrl should be from 3 to 100 symbols')
-    .matches(regex).withMessage('YoutubeUrl incorrect')
+export const blogInputWebsiteUrlValidation = body('websiteUrl').trim().isLength({min:3, max:100}).withMessage('websiteUrl should be from 3 to 100 symbols')
+    .matches(regex).withMessage('websiteUrl incorrect')
 
 

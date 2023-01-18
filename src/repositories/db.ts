@@ -20,22 +20,29 @@ export type PostDBType={
     shortDescription: string,
     title: string
 }
-export type BlogsType ={
+export type BlogType ={
     createdAt:string,
     id: string,
     name:string,
-    youtubeUrl:string
+    websiteUrl:string,
+    description:string
 }
 
 export type BlogDbType = {
     _id: ObjectId,
     createdAt:string,
     name:string,
-    youtubeUrl:string
+    websiteUrl:string,
+    description:string
 }
 
-
-
+export type PaginatorType={
+    pagesCount: number
+    page:number
+    pageSize:number
+    totalCount:number
+}
+export enum SortDirections{asc, desc}
 const mongoUri = process.env.MONGO_URL;
 if(!mongoUri){
     throw new Error("URL doesnt found")

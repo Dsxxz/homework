@@ -1,24 +1,37 @@
-import { Router} from "express";
-import {blogInputNameValidation, blogInputYoutubeURLValidation} from '../MiddleWares/input-blog-validation';
+import { Router,Request,Response} from "express";
+import {blogInputNameValidation, blogInputWebsiteUrlValidation} from '../MiddleWares/input-blog-validation';
 import {basicAuth} from "../MiddleWares/autorization";
 import {inputBlogValidation} from "../MiddleWares/validation-middleware"
 import {blogService} from "../domain/blog-service";
 import {postsService} from "../domain/post-service";
-import {postsRouter} from "./posts_router";
 import {
-    postBlogIDValidation, postBlogIDValidator,
+  // postBlogIDValidation, postBlogIDValidator,
     postContentValidation,
     postShortDescriptionValidation,
     postTitleValidation
 } from "../MiddleWares/input-post-validation";
-import {BlogsType} from "../repositories/db";
+import {BlogType} from "../repositories/db";
+import {blogQueryService, paginationType, QueryInputBlogsType} from "../domain/query-service";
 export const blogsRouter = Router({});
 
-blogsRouter.get('/', async (req,res)=>{
-    const { pageNumber, pageSize, searchNameTerm, sortBy, sortDirection } = req.query
+blogsRouter.get('/', async (req:Request<{},{},{},QueryInputBlogsType>,res:Response)=>{
+            try{
+                const { pageNumber, pageSize, sortBy, sortDirections, searchNameTerm} = req.query;
 
-    const blogsArray = await blogService.findBlogs()
-    res.status(200).send(blogsArray)
+                const blog: Array<BlogType> = await blogQueryService.findBlogsByQuerySort( sortBy?.toString(),
+                    sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
+                const paginator:paginationType = await blogQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
+                res.status(200).send({
+                    "pagesCount": paginator.pagesCount,
+                    "page": pageNumber,
+                    "pageSize": pageSize,
+                    "totalCount": paginator.totalCount,
+                    "items": blog
+                })
+            }
+                catch (e){
+                    res.sendStatus(404)
+                }
 })
 blogsRouter.get('/:id',async (req,res)=>{
     let foundBlogById = await blogService.findBlogById(req.params.id)
@@ -29,12 +42,12 @@ blogsRouter.get('/:id',async (req,res)=>{
         res.sendStatus(404)
     }
 })
-blogsRouter.post('/',basicAuth,blogInputNameValidation,blogInputYoutubeURLValidation,inputBlogValidation,async (req, res)=>{
-    let newBlog=await blogService.createNewBlog(req.body.name, req.body.youtubeUrl)
+blogsRouter.post('/',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputBlogValidation,async (req, res)=>{
+    let newBlog=await blogService.createNewBlog(req.body.name, req.body.websiteUrl, req.body.description)
     res.status(201).send(newBlog)
 })
-blogsRouter.put('/:id',basicAuth,blogInputNameValidation,blogInputYoutubeURLValidation,inputBlogValidation, async (req, res)=> {
-    let findBlogById = await blogService.updateBlog(req.params.id, req.body.name, req.body.youtubeUrl)
+blogsRouter.put('/:id',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputBlogValidation, async (req, res)=> {
+    let findBlogById = await blogService.updateBlog(req.params.id, req.body.name, req.body.youtubeUrl,req.body.description)
     if (findBlogById) {
         res.sendStatus(204)
     }

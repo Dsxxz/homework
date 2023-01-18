@@ -1,33 +1,32 @@
-import {BlogDbType, blogsCollectionDb, BlogsType} from "./db"
+import {BlogDbType, blogsCollectionDb, BlogType} from "./db"
 import {ObjectId} from "mongodb";
 
 export const blogsRepository={
-    async createNewBlog(newBlog:BlogDbType):Promise<BlogsType >{
+    async createNewBlog(newBlog:BlogDbType):Promise<BlogType >{
         await blogsCollectionDb.insertOne(newBlog)
 
         return {
             createdAt: newBlog.createdAt,
             name: newBlog.name,
-            youtubeUrl: newBlog.youtubeUrl,
-            id: newBlog._id.toString()
+            websiteUrl: newBlog.websiteUrl,
+            id: newBlog._id.toString(),
+            description: newBlog.description
         }
     },
-    async findBlogs(title?:string):Promise<Array<BlogsType>>{
-        const filter: any = {}
-        if(title){
-            filter.title={$regex: title}
-        }
-        const blogs = await blogsCollectionDb.find(filter).toArray()
+    async findBlogs():Promise<Array<BlogType>>{
 
-        return blogs.map((blog) => ({
+        const blogs = await blogsCollectionDb.find({}).toArray()
+
+        return blogs.map((blog:BlogDbType) => ({
             id: blog._id.toString(),
             name: blog.name,
-            youtubeUrl: blog.youtubeUrl,
-            createdAt: blog.createdAt
+            websiteUrl: blog.websiteUrl,
+            createdAt: blog.createdAt,
+            description: blog.description
         }))
     },
 
-    async findBlogById(id: string):Promise<BlogsType | null>{
+    async findBlogById(id: string):Promise<BlogType | null>{
         if(!ObjectId.isValid(id)) {
             return null
         }
@@ -37,19 +36,20 @@ export const blogsRepository={
             return {
                 name: blog.name,
                 createdAt: blog.createdAt,
-                youtubeUrl: blog.youtubeUrl,
-                id: blog._id.toString()
+                websiteUrl: blog.websiteUrl,
+                id: blog._id.toString(),
+                description: blog.description
             }
         }
 
         return null
     },
 
-    async updateBlog(id:string,name:string, youtubeUrl:string): Promise<boolean>{
+    async updateBlog(id:string,name:string, websiteUrl:string,description:string): Promise<boolean>{
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const resultBlog= await blogsCollectionDb.updateOne({_id: new ObjectId(id)},{$set:{name,youtubeUrl}})
+        const resultBlog= await blogsCollectionDb.updateOne({_id: new ObjectId(id)},{$set:{name,websiteUrl,description}})
         return resultBlog.matchedCount===1 ;
     },
 
@@ -59,5 +59,6 @@ export const blogsRepository={
         }
         const result = await blogsCollectionDb.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
-    }
+    },
+
 }
