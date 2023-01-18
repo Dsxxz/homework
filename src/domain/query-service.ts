@@ -59,20 +59,19 @@ export const blogQueryService={
     }}
 
 export const postQueryService={
-    async paginationPage(searchNameTerm?:string,pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
-        const filter = searchNameTerm ? {name: {$regex: searchNameTerm}}:{}
-        const   totalCount = await postsCollectionDb.countDocuments(filter)
+    async paginationPage(pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
+        const   totalCount = await postsCollectionDb.countDocuments()
         const   pagesCount = Math.ceil(totalCount / pageSize)
 
         return {totalCount,pagesCount};
     }
     ,
-    async findPostsByQuerySort(sortBy:string='createdAt',sortDirections:string,searchNameTerm?:string,
-         pageNumber:number=1,pageSize:number=10):Promise<Array<PostType>>
+    async findPostsByQuerySort(sortBy:string='createdAt',sortDirections:string,
+         pageNumber:number=1,pageSize:number=10,blogId?:string)
+            :Promise<Array<PostType>>
         {
-        const filter = searchNameTerm ? {name: {$regex: searchNameTerm}}:{}
             if(sortDirections==='asc') {
-                const posts: PostDBType[] = await postsCollectionDb.find(filter)
+                const posts: PostDBType[] = await postsCollectionDb.find( {'blogId': [blogId]})
                     .sort({[sortBy]: 1})
                     .skip(pageNumber*pageSize)
                     .limit(pageSize)
@@ -87,7 +86,7 @@ export const postQueryService={
                     title: post.title
                 }))}
         else{
-            const posts: PostDBType[] = await postsCollectionDb.find(filter)
+            const posts: PostDBType[] = await postsCollectionDb.find({'blogId': [blogId]})
                 .sort({[sortBy]: -1})
                 .skip(pageNumber*pageSize)
                 .limit(pageSize)

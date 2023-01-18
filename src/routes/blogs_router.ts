@@ -10,8 +10,8 @@ import {
     postShortDescriptionValidation,
     postTitleValidation
 } from "../MiddleWares/input-post-validation";
-import {BlogType} from "../repositories/db";
-import {blogQueryService, paginationType, QueryInputType} from "../domain/query-service";
+import {BlogType, PostType} from "../repositories/db";
+import {blogQueryService, paginationType, postQueryService, QueryInputType} from "../domain/query-service";
 export const blogsRouter = Router({});
 
 blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
@@ -43,8 +43,13 @@ blogsRouter.get('/:id',async (req,res)=>{
     }
 })
 blogsRouter.post('/',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputBlogValidation,async (req, res)=>{
-    let newBlog=await blogService.createNewBlog(req.body.name, req.body.websiteUrl, req.body.description)
-    res.status(201).send(newBlog)
+    try{
+        let newBlog = await blogService.createNewBlog(req.body.name, req.body.websiteUrl, req.body.description)
+        res.status(201).send(newBlog)
+    }
+    catch (e) {
+        res.sendStatus(404)
+    }
 })
 blogsRouter.put('/:id',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputBlogValidation, async (req, res)=> {
     let findBlogById = await blogService.updateBlog(req.params.id, req.body.name, req.body.youtubeUrl,req.body.description)
@@ -75,22 +80,27 @@ blogsRouter.post('/:blogId/posts',basicAuth,postTitleValidation, postShortDescri
             res.sendStatus(404);
         }
     })
-blogsRouter.get('/:blogId/posts',async (req:Request<{},{},{},QueryInputType>,res:Response)=> {
+blogsRouter.get('/:blogId/posts',async (req:Request<{id:string},{},{},QueryInputType>,res:Response)=> {
+    let foundBlogById:BlogType | null = await blogService.findBlogById(req.params.id)
+    if(!foundBlogById){
+        res.sendStatus(404)
+    }
+    else{
     try{
-        const { pageNumber, pageSize, sortBy, sortDirections, searchNameTerm} = req.query;
+        const { pageNumber, pageSize, sortBy, sortDirections} = req.query;
 
-        const blog: Array<BlogType> = await blogQueryService.findBlogsByQuerySort( sortBy?.toString(),
-            sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
-        const paginator:paginationType = await blogQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
+        const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
+            sortDirections?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.id!)
+        const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
             "page": pageNumber,
             "pageSize": pageSize,
             "totalCount": paginator.totalCount,
-            "items": blog
+            "items": posts
         })
     }
     catch (e){
         res.sendStatus(404)
-    }
+    }}
 })

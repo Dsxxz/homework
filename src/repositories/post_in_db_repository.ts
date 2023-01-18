@@ -29,7 +29,7 @@ export const postsInDbRepository={
         }
     },
 
-    async findPosts(title?:string) :Promise<Array<PostType>> {
+  /*  async findPosts(title?:string) :Promise<Array<PostType>> {
         const filter: any = {}
         if(title){
             filter.title={$regex: title}
@@ -44,7 +44,7 @@ export const postsInDbRepository={
             shortDescription: post.shortDescription,
             title: post.title
         }))
-    },
+    },*/
     async findPostById(id:string) :Promise<PostType |null>{
         if(!ObjectId.isValid(id)){
             return null;

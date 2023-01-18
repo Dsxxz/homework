@@ -16,9 +16,9 @@ export const postsService={
         return await postsInDbRepository.createNewPost(newPost);
     },
 
-    async findPosts(title?:string) :Promise<Array<PostType>> {
+   /* async findPosts(title?:string) :Promise<Array<PostType>> {
         return await postsInDbRepository.findPosts(title);
-    },
+    },*/
     async findPostById(id:string) :Promise<PostType |null>{
         return await postsInDbRepository.findPostById(id);
     },

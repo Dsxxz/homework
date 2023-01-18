@@ -15,11 +15,11 @@ export const postsRouter=Router({});
 
 postsRouter.get('/', async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
     try{
-        const { pageNumber, pageSize, sortBy, sortDirections, searchNameTerm} = req.query;
+        const { pageNumber, pageSize, sortBy, sortDirections} = req.query;
 
         const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
-            sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
-        const paginator:paginationType = await postQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
+            sortDirections?.toString().toString(),+pageNumber?.toString(),+pageSize?.toString())
+        const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
             "page": pageNumber,
