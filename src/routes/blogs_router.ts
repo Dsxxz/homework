@@ -88,7 +88,7 @@ blogsRouter.get('/:blogId/posts',async (req:Request<{blogId:string},{},{},QueryI
     }
     else{
     try{
-        const { pageNumber, pageSize, sortBy, sortDirections} = req.query;
+        const { pageNumber=1, pageSize=10, sortBy, sortDirections} = req.query;
 
         const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
             sortDirections?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.blogId!)
