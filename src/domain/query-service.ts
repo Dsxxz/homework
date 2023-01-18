@@ -3,7 +3,7 @@ export  type QueryInputType = {
     pageNumber:string,
     pageSize:string,
     sortBy:string,
-    sortDirections:string,
+    sortDirection:string,
     searchNameTerm:string
 }
 
@@ -22,11 +22,11 @@ export const blogQueryService={
         return {totalCount,pagesCount};
     }
     ,
-    async findBlogsByQuerySort(sortBy:string='createdAt',sortDirections:string,searchNameTerm?:string,
+    async findBlogsByQuerySort(sortBy:string='createdAt',sortDirection:string,searchNameTerm?:string,
                                pageNumber:number=1,pageSize:number=10):Promise<Array<BlogType>>
     {
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm}}:{}
-        if(sortDirections=="asc") {
+        if(sortDirection==="asc") {
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
                 .sort({[sortBy]: 1})
                 .skip((pageNumber-1)*pageSize)
@@ -66,12 +66,12 @@ export const postQueryService={
         return {totalCount,pagesCount};
     }
     ,
-    async findPostsByQuerySort(sortBy:string='createdAt',sortDirections:string,
+    async findPostsByQuerySort(sortBy:string='createdAt',sortDirection:string,
          pageNumber:number=1,pageSize:number=10,blogId?:string)
             :Promise<Array<PostType>>
         {
             const filter = blogId ? {blogId:blogId} :{}
-            if(sortDirections=="asc") {
+            if(sortDirection==="asc") {
                 const posts: PostDBType[] = await postsCollectionDb.find(filter)
                     .sort({[sortBy]: 1})
                     .skip((pageNumber-1)*pageSize)

@@ -16,10 +16,10 @@ export const blogsRouter = Router({});
 
 blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
             try{
-                const { pageNumber=1, pageSize=10, sortBy, sortDirections, searchNameTerm} = req.query;
+                const { pageNumber=1, pageSize=10, sortBy, sortDirection, searchNameTerm} = req.query;
 
                 const blogs: Array<BlogType> = await blogQueryService.findBlogsByQuerySort( sortBy?.toString(),
-                    sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
+                    sortDirection?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
                 const paginator:paginationType = await blogQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
 
                 res.status(200).send({
@@ -88,10 +88,10 @@ blogsRouter.get('/:blogId/posts',async (req:Request<{blogId:string},{},{},QueryI
     }
     else{
     try{
-        const { pageNumber=1, pageSize=10, sortBy, sortDirections} = req.query;
+        const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
 
         const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
-            sortDirections?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.blogId!)
+            sortDirection?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.blogId!)
         const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize,req.params.blogId!)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
