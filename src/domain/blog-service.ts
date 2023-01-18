@@ -14,8 +14,8 @@ export const blogService={
         return await blogsRepository.createNewBlog(newBlog)
 
     },
-    async findBlogById(id: string):Promise<BlogType | null>{
-        return  await blogsRepository.findBlogById(id);
+    async findBlogById(blogId: string):Promise<BlogType | null>{
+        return  await blogsRepository.findBlogById(blogId);
     },
 
     async updateBlog(id:string,name:string, websiteUrl:string, description:string): Promise<boolean>{

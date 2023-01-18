@@ -70,7 +70,6 @@ export const postQueryService={
          pageNumber:number=1,pageSize:number=10,blogId?:string)
             :Promise<Array<PostType>>
         {
-          //  const filter = blogId ? {'blogId': {$regex: [blogId]}} : {}
             if(sortDirections==='asc') {
                 const posts: PostDBType[] = await postsCollectionDb.find()
                     .sort({[sortBy]: 1})

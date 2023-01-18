@@ -81,8 +81,8 @@ blogsRouter.post('/:blogId/posts',basicAuth,postTitleValidation, postShortDescri
             res.sendStatus(404);
         }
     })
-blogsRouter.get('/:blogId/posts',async (req:Request<{id:string},{},{},QueryInputType>,res:Response)=> {
-    let foundBlogById:BlogType | null = await blogService.findBlogById(req.params.id)
+blogsRouter.get('/:blogId/posts',async (req:Request<{blogId:string},{},{},QueryInputType>,res:Response)=> {
+    let foundBlogById:BlogType | null = await blogService.findBlogById(req.params.blogId)
     if(!foundBlogById){
         res.sendStatus(404)
     }
@@ -91,7 +91,7 @@ blogsRouter.get('/:blogId/posts',async (req:Request<{id:string},{},{},QueryInput
         const { pageNumber, pageSize, sortBy, sortDirections} = req.query;
 
         const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
-            sortDirections?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.id!)
+            sortDirections?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.blogId!)
         const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
