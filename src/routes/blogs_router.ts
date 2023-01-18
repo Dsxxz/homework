@@ -18,7 +18,7 @@ blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
             try{
                 const { pageNumber=1, pageSize=10, sortBy, sortDirections, searchNameTerm} = req.query;
 
-                const blog: Array<BlogType> = await blogQueryService.findBlogsByQuerySort( sortBy?.toString(),
+                const blogs: Array<BlogType> = await blogQueryService.findBlogsByQuerySort( sortBy?.toString(),
                     sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
                 const paginator:paginationType = await blogQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
 
@@ -27,7 +27,7 @@ blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
                     "page": pageNumber,
                     "pageSize": pageSize,
                     "totalCount": paginator.totalCount,
-                    "items": blog
+                    "items": blogs
                 })
             }
                 catch (e){

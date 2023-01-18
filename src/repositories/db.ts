@@ -29,11 +29,11 @@ export type BlogType ={
 }
 
 export type BlogDbType = {
-    _id: ObjectId,
-    createdAt:string,
-    name:string,
-    websiteUrl:string,
-    description:string
+    createdAt: string,
+    name: string,
+    websiteUrl: string,
+    id:  ObjectId,
+    description: string
 }
 
 
