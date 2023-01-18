@@ -30,7 +30,7 @@ export const blogQueryService={
         if(sortDirections==='asc') {
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
                 .sort({[sortBy]: 1})
-                .skip(pageNumber*pageSize)
+                .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
                 .toArray();
             return blogs.map((blog: BlogDbType) => ({
@@ -45,7 +45,7 @@ export const blogQueryService={
         else{
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
                 .sort({[sortBy]: -1})
-                .skip(pageNumber*pageSize)
+                .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
                 .toArray();
             return blogs.map((blog: BlogDbType) => ({
@@ -74,7 +74,7 @@ export const postQueryService={
             if(sortDirections==='asc') {
                 const posts: PostDBType[] = await postsCollectionDb.find(filter)
                     .sort({[sortBy]: 1})
-                    .skip(pageNumber*pageSize)
+                    .skip((pageNumber-1)*pageSize)
                     .limit(pageSize)
                     .toArray();
                 return posts.map((post:PostDBType) => ({
@@ -89,7 +89,7 @@ export const postQueryService={
         else{
             const posts: PostDBType[] = await postsCollectionDb.find(filter)
                 .sort({[sortBy]: -1})
-                .skip(pageNumber*pageSize)
+                .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
                 .toArray();
                 return posts.map((post:PostDBType) => ({
