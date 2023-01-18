@@ -32,7 +32,7 @@ export type BlogDbType = {
     createdAt: string,
     name: string,
     websiteUrl: string,
-    id:  ObjectId,
+    _id:  ObjectId,
     description: string
 }
 

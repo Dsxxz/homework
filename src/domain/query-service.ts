@@ -49,11 +49,11 @@ export const blogQueryService={
                 .limit(pageSize)
                 .toArray();
             return blogs.map((blog: BlogDbType) => ({
-                id: blog._id.toString(),
+                createdAt: blog.createdAt,
                 name: blog.name,
-                description: blog.description,
                 websiteUrl: blog.websiteUrl,
-                createdAt: blog.createdAt
+                id: blog._id.toString(),
+                description: blog.description
             }))
         }
     }}
