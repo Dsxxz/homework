@@ -16,11 +16,12 @@ export const blogsRouter = Router({});
 
 blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
             try{
-                const { pageNumber, pageSize, sortBy, sortDirections, searchNameTerm} = req.query;
+                const { pageNumber=1, pageSize=10, sortBy, sortDirections, searchNameTerm} = req.query;
 
                 const blog: Array<BlogType> = await blogQueryService.findBlogsByQuerySort( sortBy?.toString(),
                     sortDirections?.toString(),searchNameTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
                 const paginator:paginationType = await blogQueryService.paginationPage(searchNameTerm,+pageNumber,+pageSize)
+
                 res.status(200).send({
                     "pagesCount": paginator.pagesCount,
                     "page": pageNumber,
