@@ -70,8 +70,9 @@ export const postQueryService={
          pageNumber:number=1,pageSize:number=10,blogId?:string)
             :Promise<Array<PostType>>
         {
+            const filter = blogId ? {blogId:blogId} :{}
             if(sortDirections==='asc') {
-                const posts: PostDBType[] = await postsCollectionDb.find()
+                const posts: PostDBType[] = await postsCollectionDb.find(filter)
                     .sort({[sortBy]: 1})
                     .skip(pageNumber*pageSize)
                     .limit(pageSize)
@@ -86,7 +87,7 @@ export const postQueryService={
                     title: post.title
                 }))}
         else{
-            const posts: PostDBType[] = await postsCollectionDb.find()
+            const posts: PostDBType[] = await postsCollectionDb.find(filter)
                 .sort({[sortBy]: -1})
                 .skip(pageNumber*pageSize)
                 .limit(pageSize)
