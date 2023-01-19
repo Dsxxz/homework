@@ -15,7 +15,7 @@ export type paginationType={
 
 export const blogQueryService={
     async paginationPage(searchNameTerm?:string,pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
-        const filter = searchNameTerm ? {name: {$regex: searchNameTerm}}:{}
+        const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}}:{}
         const   totalCount = await blogsCollectionDb.countDocuments(filter)
         const   pagesCount = Math.ceil(totalCount / pageSize)
 
@@ -26,7 +26,6 @@ export const blogQueryService={
     async findBlogsByQuerySort(sortBy:string='createdAt',sortDirection:string,searchNameTerm?:string,
                                pageNumber:number=1,pageSize:number=10):Promise<Array<BlogType>>
     {
-       // const finding = new RegExp("^" + searchNameTerm?.toLowerCase() + "i")
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}}:{}
         if(sortDirection==="asc")  {
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
