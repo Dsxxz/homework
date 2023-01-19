@@ -26,8 +26,8 @@ export const blogQueryService={
     async findBlogsByQuerySort(sortBy:string='createdAt',sortDirection:string,searchNameTerm?:string,
                                pageNumber:number=1,pageSize:number=10):Promise<Array<BlogType>>
     {
-        const finding = new RegExp("[" + searchNameTerm + "]", "i")
-        const filter = searchNameTerm ? {name: {$regex: finding}}:{}
+       // const finding = new RegExp("^" + searchNameTerm?.toLowerCase() + "i")
+        const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}}:{}
         if(sortDirection==="asc")  {
             const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
                 .sort({[sortBy]: 1})
