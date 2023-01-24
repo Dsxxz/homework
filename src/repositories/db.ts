@@ -1,5 +1,6 @@
 import {MongoClient, ObjectId} from "mongodb";
 import * as dotenv from 'dotenv'
+import {UserInDbType} from "../models/userType";
 dotenv.config()
 export type PostType = {
     id:string,
@@ -42,10 +43,15 @@ if(!mongoUri){
     throw new Error("URL doesnt found")
 }
 export const client = new MongoClient(mongoUri)
+
 const dbPosts = client.db("postsCollection")
 export const postsCollectionDb = dbPosts.collection<PostDBType>("posts")
+
 const dbBlogs = client.db("blogsCollection")
 export const blogsCollectionDb = dbBlogs.collection<BlogDbType>("blogs")
+
+const dbUsers = client.db("usersCollection")
+export const usersCollectionDb = dbUsers.collection<UserInDbType>("users")
 
 
 

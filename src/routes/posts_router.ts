@@ -7,9 +7,9 @@ import {
     postTitleValidation
 } from "../MiddleWares/input-post-validation"
 import {basicAuth} from "../MiddleWares/autorization";
-import {postsService} from "../domain/post-service";
+import {postsService} from "../service/post-service";
 import {PostType} from "../repositories/db";
-import {paginationType, postQueryService, QueryInputType} from "../domain/query-service";
+import {paginationType, postQueryService, QueryInputType} from "../service/query-service";
 export const postsRouter=Router({});
 
 
@@ -18,7 +18,7 @@ postsRouter.get('/', async (req:Request<{},{},{},QueryInputType>,res:Response)=>
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
 
         const posts: Array<PostType> = await postQueryService.findPostsByQuerySort( sortBy?.toString(),
-            sortDirection?.toString().toString(),+pageNumber?.toString(),+pageSize?.toString())
+            sortDirection?.toString(),+pageNumber?.toString(),+pageSize?.toString())
         const paginator:paginationType = await postQueryService.paginationPage(+pageNumber,+pageSize)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,

@@ -1,4 +1,14 @@
-import {BlogDbType, blogsCollectionDb, BlogType, PostDBType, postsCollectionDb, PostType} from "../repositories/db";
+import {
+    BlogDbType,
+    blogsCollectionDb,
+    BlogType,
+    PostDBType,
+    postsCollectionDb,
+    PostType,
+    usersCollectionDb
+} from "../repositories/db";
+import {UserInDbType, UserInputModel, UserViewModel} from "../models/userType";
+import {ObjectId} from "mongodb";
 export  type QueryInputType = {
     pageNumber:string,
     pageSize:string,
@@ -103,3 +113,41 @@ export const postQueryService={
                     title: post.title
                 }))
         }}}
+
+export const userQueryService={
+    async paginationPage(pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
+        const   totalCount = await usersCollectionDb.countDocuments()
+        const   pagesCount = Math.ceil(totalCount / pageSize)
+        return {totalCount,pagesCount};
+    }
+    ,
+    async findUsersByQuerySort(sortBy:string='createdAt',searchLoginTerm:string='',searchEmailTerm:string='',
+                               pageNumber:number=1,pageSize:number=10,sortDirection:string='desc')
+        :Promise<Array<UserViewModel>>
+    {
+        const filterEmail = searchEmailTerm ? {email:searchEmailTerm} :{}
+        const filterLogin = searchLoginTerm ? {email:searchLoginTerm} :{}
+        if(sortDirection==="asc") {
+            const users: UserInDbType[] = await usersCollectionDb.find([filterEmail,filterLogin])
+                .sort({[sortBy]: 1})
+                .skip((pageNumber-1)*pageSize)
+                .limit(pageSize)
+                .toArray();
+            return users.map((user:UserInDbType) => ({
+                id:user._id.toString(),
+                login:user.userName,
+                email:user.email,
+                createdAt:user.createdAt
+            }))}
+        else{
+            const users: UserInDbType[] = await usersCollectionDb.find([filterEmail,filterLogin])
+                .sort({[sortBy]: -1})
+                .skip((pageNumber-1)*pageSize)
+                .limit(pageSize)
+                .toArray();
+            return users.map((user:UserInDbType) => ({
+                id:user._id.toString(),
+                login:user.userName,
+                email:user.email,
+                createdAt:user.createdAt
+            }))}}}
