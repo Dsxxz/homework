@@ -2,8 +2,7 @@ import {Router,Request,Response} from "express";
 import {userService} from "../service/user-service";
 export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
-import {paginationType, postQueryService, QueryInputType, userQueryService} from "../service/query-service";
-import {PostType} from "../repositories/db";
+import {paginationType,userQueryService} from "../service/query-service";
 import {UserViewModel} from "../models/userType";
 
 
@@ -32,7 +31,7 @@ userRouter.get('/',async (req:Request<{},{},{}>,res:Response)=>{
         })
     }
     catch (e){
-        res.sendStatus(404)
+        res.sendStatus(401)
     }
 })
 userRouter.delete('/:id', async (req:Request,res:Response)=>{
