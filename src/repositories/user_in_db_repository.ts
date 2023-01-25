@@ -13,8 +13,8 @@ export const userRepository={
         }
     },
     async findUserByLoginOrEmail(loginOrEmail:string):Promise<UserInDbType|null>{
-      const findingUser:UserInDbType|null =  await usersCollectionDb.findOne({$or:[{email:[loginOrEmail]},{userName:[loginOrEmail]}]})
-        return findingUser
+        return   await usersCollectionDb.findOne({$or:[{email:[loginOrEmail]},{userName:[loginOrEmail]}]})
+
     },
     async findUserById(id:string):Promise<UserViewModel|null>{
         if(!ObjectId.isValid(id)) {
