@@ -114,8 +114,11 @@ export const postQueryService={
         }}}
 
 export const userQueryService={
-    async paginationPage(pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
-        const   totalCount = await usersCollectionDb.countDocuments()
+    async paginationPage(searchLoginTerm:string,searchEmailTerm:string,
+                         pageNumber:number,pageSize:number):Promise<paginationType>{
+        const filterEmail = searchEmailTerm ? {email: {$regex: searchEmailTerm, $options: 'i'}} :{}
+        const filterLogin = searchLoginTerm ? {login: {$regex: searchLoginTerm, $options: 'i'}} :{}
+        const   totalCount = await usersCollectionDb.countDocuments({$or:[filterEmail, filterLogin]})
         const   pagesCount = Math.ceil(totalCount / pageSize)
         return {totalCount,pagesCount};
     }
@@ -125,7 +128,7 @@ export const userQueryService={
         :Promise<Array<UserViewModel>>
     {
         const filterEmail = searchEmailTerm ? {email: {$regex: searchEmailTerm, $options: 'i'}} :{}
-       const filterLogin = searchLoginTerm ? {userName: {$regex: searchLoginTerm, $options: 'i'}} :{}
+       const filterLogin = searchLoginTerm ? {login: {$regex: searchLoginTerm, $options: 'i'}} :{}
         if(sortDirection==='asc') {
             const users: UserInDbType[] = await usersCollectionDb.find({$or:[filterEmail, filterLogin]})
                 .sort({[sortBy]: 1})
