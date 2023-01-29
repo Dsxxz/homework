@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {inputBlogValidation} from "../MiddleWares/validation-middleware"
+import {inputDatesValidation} from "../MiddleWares/validation-middleware"
 import {
     postBlogIDValidation, postBlogIDValidator,
     postContentValidation,
@@ -42,7 +42,7 @@ postsRouter.get('/:id',async (req,res)=>{
     }
 })
 postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidation,postContentValidation,
-    postBlogIDValidation,postBlogIDValidator, inputBlogValidation,async (req, res)=>{
+    postBlogIDValidation,postBlogIDValidator, inputDatesValidation,async (req, res)=>{
         let newPost = await  postsService.createNewPost(req.body.title, req.body.shortDescription,
             req.body.content, req.body.blogId)
 
@@ -54,7 +54,7 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
         }
     })
 postsRouter.put('/:id',basicAuth,postShortDescriptionValidation,postTitleValidation,postContentValidation,
-    postBlogIDValidation, postBlogIDValidator, inputBlogValidation,async (req, res)=> {
+    postBlogIDValidation, postBlogIDValidator, inputDatesValidation,async (req, res)=> {
         let findPostById = await postsService.updatePost(req.params.id, req.body.title, req.body.shortDescription,
             req.body.content, req.body.blogId)
         if (findPostById) {

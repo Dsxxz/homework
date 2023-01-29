@@ -1,7 +1,7 @@
 import { Router,Request,Response} from "express";
 import {blogInputNameValidation, blogInputWebsiteUrlValidation} from '../MiddleWares/input-blog-validation';
 import {basicAuth} from "../MiddleWares/autorization";
-import {inputBlogValidation} from "../MiddleWares/validation-middleware"
+import {inputDatesValidation} from "../MiddleWares/validation-middleware"
 import {blogService} from "../service/blog-service";
 import {postsService} from "../service/post-service";
 import {
@@ -42,7 +42,7 @@ blogsRouter.get('/:id',async (req,res)=>{
         res.sendStatus(404)
     }
 })
-blogsRouter.post('/',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputBlogValidation,async (req, res)=>{
+blogsRouter.post('/',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputDatesValidation,async (req, res)=>{
     try{
         let newBlog = await blogService.createNewBlog(req.body.name, req.body.websiteUrl, req.body.description)
         res.status(201).send(newBlog)
@@ -51,7 +51,7 @@ blogsRouter.post('/',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValida
         res.sendStatus(404)
     }
 })
-blogsRouter.put('/:id',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputBlogValidation, async (req, res)=> {
+blogsRouter.put('/:id',basicAuth,blogInputNameValidation,blogInputWebsiteUrlValidation,inputDatesValidation, async (req, res)=> {
     let findBlogById = await blogService.updateBlog(req.params.id, req.body.name, req.body.websiteUrl,req.body.description)
     if (findBlogById) {
         res.sendStatus(204)
@@ -70,7 +70,7 @@ blogsRouter.delete('/:id',basicAuth, async (req,res)=>{
     }
 })
 blogsRouter.post('/:blogId/posts',basicAuth,postTitleValidation, postShortDescriptionValidation,
-    postContentValidation, inputBlogValidation,async (req, res)=> {
+    postContentValidation, inputDatesValidation,async (req, res)=> {
         let newPost = await postsService.createNewPost(req.body.title, req.body.shortDescription,
             req.body.content, req.params.blogId)
 

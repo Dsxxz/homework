@@ -7,7 +7,7 @@ export const myValidationResult = validationResult.withDefaults({
         return { message: error.msg, field: error.param };
     }
 })
-export const inputBlogValidation = ((req:Request, res:Response, next: NextFunction)=> {
+export const inputDatesValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });

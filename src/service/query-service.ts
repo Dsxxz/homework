@@ -124,8 +124,8 @@ export const userQueryService={
                                pageNumber:number=1,pageSize:number=10,sortDirection:string)
         :Promise<Array<UserViewModel>>
     {
-        const filterEmail = searchEmailTerm ? {email:searchEmailTerm} :{}
-       const filterLogin = searchLoginTerm ? {login:searchLoginTerm} :{}
+        const filterEmail = searchEmailTerm ? {email: {$regex: searchEmailTerm, $options: 'i'}} :{}
+       const filterLogin = searchLoginTerm ? {login: {$regex: searchLoginTerm, $options: 'i'}} :{}
         if(sortDirection==="asc") {
             const users: UserInDbType[] = await usersCollectionDb.find({$or:[filterEmail, filterLogin]})
                 .sort({[sortBy]: 1})

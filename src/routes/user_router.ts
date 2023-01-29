@@ -4,10 +4,12 @@ export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
 import {paginationType,userQueryService} from "../service/query-service";
 import {UserViewModel} from "../models/userType";
+import {inputDatesValidation} from "../MiddleWares/validation-middleware"
 
 
-userRouter.post('/',userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation, async (req:Request<{},
-    {password:string,login:string,email:string}>,res:Response)=>{
+
+userRouter.post('/',userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation, inputDatesValidation,async (req:Request<{},
+    {password:string,login:string,email:string}>, res:Response)=>{
         const newUser = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
        if(newUser) {
            res.status(201).send(newUser)
