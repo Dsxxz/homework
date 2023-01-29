@@ -20,20 +20,14 @@ export const userService = {
     async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<boolean>{
         const user:UserInDbType|null = await userRepository.findUserByLoginOrEmail(loginOrEmail)
         if(!user){
-                return false
+                return false;
         }
         const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)
-        if(user.userPasswordHash!==passwordHash){
-            return false
-        }
-        return true
+        return user.userPasswordHash===passwordHash
     },
     async generateHash(password:string,salt:string){
         return  bcrypt.hash(password,salt);
     },
-  /*  async findUsersById(id:string):Promise<UserViewModel|null>{
-        return  await userRepository.findUserById(id);
-    },*/
     async deleteUser(id:string):Promise<boolean>{
         return await userRepository.deleteUser(id);
     }
