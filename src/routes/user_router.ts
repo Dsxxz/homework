@@ -15,7 +15,7 @@ userRouter.post('/',userInputLoginValidation,userInputEmailValidation,userInputP
            res.status(201).send(newUser)
        }
     else {
-           res.sendStatus(400)
+           res.sendStatus(401)
        }
 
 })
