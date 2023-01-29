@@ -18,12 +18,12 @@ userRouter.post('/',userInputLoginValidation,userInputEmailValidation,userInputP
 
 })
 userRouter.get('/',async (req:Request<{},{},{},{pageNumber:string, pageSize:string, sortBy:string,
-    searchLoginTerm:string,searchEmailTerm:string}>,res:Response)=>{
+    searchLoginTerm:string,searchEmailTerm:string,sortDirection:string}>,res:Response)=>{
     try{
-        const { pageNumber=1, pageSize=10, sortBy, searchLoginTerm,searchEmailTerm} = req.query;
+        const { pageNumber=1, pageSize=10, sortBy, searchLoginTerm,searchEmailTerm,sortDirection} = req.query;
 
         const users: Array<UserViewModel> = await userQueryService.findUsersByQuerySort( sortBy?.toString(),
-            searchLoginTerm?.toString(),searchEmailTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString())
+            searchLoginTerm?.toString(),searchEmailTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString(),sortDirection?.toString())
         const paginator:paginationType = await userQueryService.paginationPage(+pageNumber,+pageSize)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,

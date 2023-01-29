@@ -121,7 +121,7 @@ export const userQueryService={
     }
     ,
     async findUsersByQuerySort(sortBy:string='createdAt',searchLoginTerm:string='',searchEmailTerm:string='',
-                               pageNumber:number=1,pageSize:number=10,sortDirection:string='desc')
+                               pageNumber:number=1,pageSize:number=10,sortDirection:string)
         :Promise<Array<UserViewModel>>
     {
         const filterEmail = searchEmailTerm ? {email:searchEmailTerm} :{}
