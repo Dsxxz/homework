@@ -5,14 +5,14 @@ const bcrypt = require('bcrypt');
 
 export const userService = {
     async createNewUser(password:string,login:string,email:string){
-        const passwordSalt = await bcrypt.genSalt(10)
-        const passwordHash = await this.generateHash(password,passwordSalt)
+        const passwordSalt:string = await bcrypt.genSalt(10)
+        const passwordHash:string = await this.generateHash(password,passwordSalt)
         const newUser:UserInDbType = {
             _id:new ObjectId(),
             userName:login,
             email:email,
-            passwordHash:passwordHash,
-            passwordSalt:passwordSalt,
+            userPasswordHash:passwordHash,
+            userPasswordSalt:passwordSalt,
             createdAt: new Date().toString()
         }
          return    await userRepository.createNewUser(newUser)
@@ -22,19 +22,18 @@ export const userService = {
         if(!user){
                 return false
         }
-        const passwordHash = await this.generateHash(password,user.passwordSalt)
-        if(user.passwordHash!==passwordHash){
+        const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)
+        if(user.userPasswordHash!==passwordHash){
             return false
         }
         return true
     },
     async generateHash(password:string,salt:string){
-        const hash = bcrypt.hash(password,salt);
-        return hash;
+        return  bcrypt.hash(password,salt);
     },
-    async findUsersById(id:string):Promise<UserViewModel|null>{
+  /*  async findUsersById(id:string):Promise<UserViewModel|null>{
         return  await userRepository.findUserById(id);
-    },
+    },*/
     async deleteUser(id:string):Promise<boolean>{
         return await userRepository.deleteUser(id);
     }

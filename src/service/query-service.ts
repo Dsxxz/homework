@@ -7,8 +7,7 @@ import {
     PostType,
     usersCollectionDb
 } from "../repositories/db";
-import {UserInDbType, UserInputModel, UserViewModel} from "../models/userType";
-import {ObjectId} from "mongodb";
+import {UserInDbType, UserViewModel} from "../models/userType";
 export  type QueryInputType = {
     pageNumber:string,
     pageSize:string,
@@ -126,9 +125,9 @@ export const userQueryService={
         :Promise<Array<UserViewModel>>
     {
         const filterEmail = searchEmailTerm ? {email:searchEmailTerm} :{}
-        const filterLogin = searchLoginTerm ? {email:searchLoginTerm} :{}
+       const filterLogin = searchLoginTerm ? {login:searchLoginTerm} :{}
         if(sortDirection==="asc") {
-            const users: UserInDbType[] = await usersCollectionDb.find([filterEmail,filterLogin])
+            const users: UserInDbType[] = await usersCollectionDb.find({$or:[filterEmail, filterLogin]})
                 .sort({[sortBy]: 1})
                 .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
@@ -140,7 +139,7 @@ export const userQueryService={
                 createdAt:user.createdAt
             }))}
         else{
-            const users: UserInDbType[] = await usersCollectionDb.find([filterEmail,filterLogin])
+            const users: UserInDbType[] = await usersCollectionDb.find({$or:[filterEmail, filterLogin]})
                 .sort({[sortBy]: -1})
                 .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)

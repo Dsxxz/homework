@@ -19,7 +19,7 @@ export type UserInDbType={
     _id:ObjectId,
     userName:string,
     email:string,
-    passwordHash:string,
-    passwordSalt:string,
+    userPasswordHash:string,
+    userPasswordSalt:string,
     createdAt: string
 }
