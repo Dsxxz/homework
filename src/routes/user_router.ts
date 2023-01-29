@@ -4,11 +4,11 @@ export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
 import {paginationType,userQueryService} from "../service/query-service";
 import {UserViewModel} from "../models/userType";
-import {inputDatesValidation} from "../MiddleWares/validation-middleware"
+import {inputUsersValidation} from "../MiddleWares/validation-middleware"
 
 
 
-userRouter.post('/',userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation, inputDatesValidation,async (req:Request<{},
+userRouter.post('/',userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation, inputUsersValidation,async (req:Request<{},
     {password:string,login:string,email:string}>, res:Response)=>{
         const newUser = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
        if(newUser) {
@@ -22,7 +22,7 @@ userRouter.post('/',userInputLoginValidation,userInputEmailValidation,userInputP
 userRouter.get('/',async (req:Request<{},{},{},{pageNumber:string, pageSize:string, sortBy:string,
     searchLoginTerm:string,searchEmailTerm:string,sortDirection:string}>,res:Response)=>{
     try{
-        const { pageNumber=1, pageSize=10, sortBy, searchLoginTerm,searchEmailTerm,sortDirection} = req.query;
+        const { pageNumber=1, pageSize=10, sortBy, searchLoginTerm,searchEmailTerm,sortDirection='desc'} = req.query;
 
         const users: Array<UserViewModel> = await userQueryService.findUsersByQuerySort( sortBy?.toString(),
             searchLoginTerm?.toString(),searchEmailTerm?.toString(),+pageNumber?.toString(),+pageSize?.toString(),sortDirection?.toString())

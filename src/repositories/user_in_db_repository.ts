@@ -7,13 +7,13 @@ export const userRepository={
         await usersCollectionDb.insertOne(newUser);
         return {
             id:newUser._id.toString(),
-            login:newUser.userName,
+            login:newUser.login,
             email:newUser.email,
             createdAt:newUser.createdAt
         }
     },
     async findUserByLoginOrEmail(loginOrEmail:string):Promise<UserInDbType|null>{
-        return   await usersCollectionDb.findOne({$or:[{email:[loginOrEmail]},{userName:[loginOrEmail]}]})
+        return   await usersCollectionDb.findOne({$or:[{email:[loginOrEmail]},{login:[loginOrEmail]}]})
 
     },
     async findUserById(id:string):Promise<UserViewModel|null>{
@@ -24,7 +24,7 @@ export const userRepository={
         if (user) {
             return {
                 id:user._id.toString(),
-                login:user.userName,
+                login:user.login,
                 email:user.email,
                 createdAt:user.createdAt
             }

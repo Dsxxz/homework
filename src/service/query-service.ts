@@ -120,13 +120,13 @@ export const userQueryService={
         return {totalCount,pagesCount};
     }
     ,
-    async findUsersByQuerySort(sortBy:string='createdAt',searchLoginTerm:string='',searchEmailTerm:string='',
-                               pageNumber:number=1,pageSize:number=10,sortDirection:string)
+    async findUsersByQuerySort(sortBy:string='createdAt',searchLoginTerm:string,searchEmailTerm:string,
+                               pageNumber:number,pageSize:number,sortDirection:string)
         :Promise<Array<UserViewModel>>
     {
         const filterEmail = searchEmailTerm ? {email: {$regex: searchEmailTerm, $options: 'i'}} :{}
-       const filterLogin = searchLoginTerm ? {login: {$regex: searchLoginTerm, $options: 'i'}} :{}
-        if(sortDirection==="asc") {
+       const filterLogin = searchLoginTerm ? {userName: {$regex: searchLoginTerm, $options: 'i'}} :{}
+        if(sortDirection==='asc') {
             const users: UserInDbType[] = await usersCollectionDb.find({$or:[filterEmail, filterLogin]})
                 .sort({[sortBy]: 1})
                 .skip((pageNumber-1)*pageSize)
@@ -134,7 +134,7 @@ export const userQueryService={
                 .toArray();
             return users.map((user:UserInDbType) => ({
                 id:user._id.toString(),
-                login:user.userName,
+                login:user.login,
                 email:user.email,
                 createdAt:user.createdAt
             }))}
@@ -146,7 +146,7 @@ export const userQueryService={
                 .toArray();
             return users.map((user:UserInDbType) => ({
                 id:user._id.toString(),
-                login:user.userName,
+                login:user.login,
                 email:user.email,
                 createdAt:user.createdAt
             }))}}}

@@ -17,7 +17,7 @@ export type LoginInputModel = {
 }
 export type UserInDbType={
     _id:ObjectId,
-    userName:string,
+    login:string,
     email:string,
     userPasswordHash:string,
     userPasswordSalt:string,
