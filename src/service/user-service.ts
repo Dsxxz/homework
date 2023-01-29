@@ -1,4 +1,4 @@
-import {UserInDbType, UserViewModel} from "../models/userType";
+import {UserInDbType} from "../models/userType";
 import {userRepository} from "../repositories/user_in_db_repository"
 import {ObjectId} from "mongodb";
 const bcrypt = require('bcrypt');
@@ -13,7 +13,7 @@ export const userService = {
             email:email,
             userPasswordHash:passwordHash,
             userPasswordSalt:passwordSalt,
-            createdAt: new Date().toString()
+            createdAt: new Date().toISOString()
         }
          return    await userRepository.createNewUser(newUser)
     },
