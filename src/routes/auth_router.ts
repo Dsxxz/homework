@@ -6,7 +6,7 @@ authRouter.post('/login',
     async (req:Request<{},{},{loginOrEmail:string,password:string}>,res:Response)=>{
    const checkResult:boolean = await userService.checkLoginAndPassword(req.body.loginOrEmail, req.body.password)
     if(checkResult){
-        res.sendStatus(201)
+        res.sendStatus(204)
     }
 
     else{
