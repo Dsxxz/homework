@@ -3,7 +3,7 @@ import {userService} from "../service/user-service";
 export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
 import {paginationType,userQueryService} from "../service/query-service";
-import {UserViewModel} from "../models/userType";
+import {LoginInputModel, UserViewModel} from "../models/userType";
 import {inputUsersValidation} from "../MiddleWares/validation-middleware"
 
 
@@ -39,7 +39,11 @@ userRouter.get('/',async (req:Request<{},{},{},{pageNumber:string, pageSize:stri
         res.sendStatus(401)
     }
 })
-userRouter.delete('/:id', async (req:Request,res:Response)=>{
+userRouter.delete('/:id', async (req:Request<{id: string},{},LoginInputModel>,res:Response)=>{
+    const checkResult:boolean= await userService.checkLoginAndPassword(req.body.loginOrEmail!, req.body.password!)
+    if(!checkResult){
+        res.sendStatus(401)
+    }
     const deletedUser = await userService.deleteUser(req.params.id)
     if(!deletedUser){
         res.sendStatus(404)
