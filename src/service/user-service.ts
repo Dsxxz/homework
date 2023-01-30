@@ -19,6 +19,8 @@ export const userService = {
     },
     async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<boolean>{
         const user:UserInDbType|null = await userRepository.findUserByLoginOrEmail(loginOrEmail)
+        console.log('user ',user)
+
         if(!user){
                 return false;
         }
