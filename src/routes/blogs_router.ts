@@ -7,12 +7,13 @@ import {postsService} from "../service/post-service";
 import {postContentValidation,
     postShortDescriptionValidation,
     postTitleValidation} from "../MiddleWares/input-post-validation";
-import {blogQueryService, paginationType, postQueryService, QueryInputType} from "../service/query-service";
+import {blogQueryService, postQueryService} from "../service/query-service";
 import {BlogType} from "../models/blogs-types";
 import {PostType} from "../models/posts-types";
+import {paginationType, QueryInputBlogAndPostType} from "../models/query_input_models";
 export const blogsRouter = Router({});
 
-blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
+blogsRouter.get('/',async (req:Request<{},{},{},QueryInputBlogAndPostType>,res:Response)=>{
             try{
                 const { pageNumber=1, pageSize=10, sortBy, sortDirection, searchNameTerm} = req.query;
 
@@ -79,7 +80,7 @@ blogsRouter.post('/:blogId/posts',basicAuth,postTitleValidation, postShortDescri
             res.sendStatus(404);
         }
     })
-blogsRouter.get('/:blogId/posts',async (req:Request<{blogId:string},{},{},QueryInputType>,res:Response)=> {
+blogsRouter.get('/:blogId/posts',async (req:Request<{blogId:string},{},{},QueryInputBlogAndPostType>,res:Response)=> {
     let foundBlogById:BlogType | null = await blogService.findBlogById(req.params.blogId)
     if(!foundBlogById){
         res.sendStatus(404)

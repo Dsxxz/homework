@@ -1,20 +1,9 @@
-import {blogsCollectionDb, postsCollectionDb, usersCollectionDb} from "../repositories/db";
+import {blogsCollectionDb, commentsCollectionDb, postsCollectionDb, usersCollectionDb} from "../repositories/db";
 import {UserInDbType, UserViewModel} from "../models/userType";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 import {PostDBType, PostType} from "../models/posts-types";
-export  type QueryInputType = {
-    pageNumber:string,
-    pageSize:string,
-    sortBy:string,
-    sortDirection:string,
-    searchNameTerm:string
-}
-
-export type paginationType={
-    totalCount:number,
-    pagesCount:number
-}
-
+import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
+import {paginationType} from "../models/query_input_models";
 
 export const blogQueryService={
     async paginationPage(searchNameTerm?:string,pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
@@ -149,3 +138,42 @@ export const userQueryService={
                 email:user.email,
                 createdAt:user.createdAt
             }))}}}
+export const commentsQueryService={
+    async paginationPage(pageNumber: number = 1, pageSize: number = 10): Promise<paginationType> {
+
+        const totalCount = await blogsCollectionDb.countDocuments()
+        const pagesCount = Math.ceil(totalCount / pageSize)
+        return {totalCount, pagesCount};
+    },
+    async getCommentsForPost(sortBy:string='createdAt',sortDirection:string,postId:string,
+                             pageNumber:number=1,pageSize:number=10):Promise<Array<CommentsViewType>>
+    {
+        if(sortDirection==="asc")  {
+            const comments: Array<CommentsInDbType> = await commentsCollectionDb.find({postId: [postId]})
+                .sort({[sortBy]: 1})
+                .skip((pageNumber-1)*pageSize)
+                .limit(pageSize)
+                .toArray();
+            return comments.map((comment: CommentsInDbType) => ({
+                id:comment.id,
+                content:comment.content,
+                commentatorInfo:comment.commentatorInfo,
+                createdAt:comment.createdAt
+            }))
+        }
+
+        else{
+            const comments: CommentsInDbType[] = await commentsCollectionDb.find({postId: [postId]})
+                .sort({[sortBy]: -1})
+                .skip((pageNumber-1)*pageSize)
+                .limit(pageSize)
+                .toArray();
+            return comments.map((comment: CommentsInDbType) => ({
+                id:comment.id,
+                content:comment.content,
+                commentatorInfo:comment.commentatorInfo,
+                createdAt:comment.createdAt
+            }))
+        }
+    }
+}

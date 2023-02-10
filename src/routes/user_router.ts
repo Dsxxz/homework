@@ -2,10 +2,11 @@ import {Router,Request,Response} from "express";
 import {userService} from "../service/user-service";
 export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
-import {paginationType,userQueryService} from "../service/query-service";
+import {userQueryService} from "../service/query-service";
 import { UserViewModel} from "../models/userType";
 import {inputUsersValidation} from "../MiddleWares/validation-middleware"
 import {basicAuth} from "../MiddleWares/autorization";
+import {paginationType} from "../models/query_input_models";
 
 
 

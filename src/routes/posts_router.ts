@@ -8,14 +8,15 @@ import {
 } from "../MiddleWares/input-post-validation"
 import {basicAuth} from "../MiddleWares/autorization";
 import {postsService} from "../service/post-service";
-import {paginationType, postQueryService, QueryInputType} from "../service/query-service";
+import {commentsQueryService, postQueryService} from "../service/query-service";
 import {PostType} from "../models/posts-types";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
-import {authMiddleWare} from "../MiddleWares/auth-middleWare";
+import {paginationType, QueryInputBlogAndPostType, QueryInputCommentsType} from "../models/query_input_models";
+import {CommentsViewType} from "../models/comments-types";
 export const postsRouter=Router({});
 
 
-postsRouter.get('/', async (req:Request<{},{},{},QueryInputType>,res:Response)=>{
+postsRouter.get('/', async (req:Request<{},{},{},QueryInputBlogAndPostType>,res:Response)=>{
     try{
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
 
@@ -56,7 +57,7 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
         }
     })
 postsRouter.post('/:id/comments',async (req, res)=>{
-        const newComment = await  commentsRepository.createComment(req.body.content,req.user!._id.toString())
+        const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
         if(newComment) {
             res.status(201).send(newComment);
         }
@@ -64,6 +65,25 @@ postsRouter.post('/:id/comments',async (req, res)=>{
             res.sendStatus(404);
         }
     })
+postsRouter.get('/:id/comments',async (req:Request<{},{},{},QueryInputCommentsType>,res:Response)=>{
+    try{
+        const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
+        const comments:Array<CommentsViewType> = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),
+            sortDirection?.toString(),pageNumber?.toString(),+pageSize?.toString())
+
+        const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize)
+        res.status(201).send({
+            "pagesCount": paginator.pagesCount,
+            "page": +pageNumber,
+            "pageSize": +pageSize,
+            "totalCount": paginator.totalCount,
+            "items": comments
+        })
+    }
+    catch (e){
+        res.sendStatus(404)
+    }
+})
 postsRouter.put('/:id',basicAuth,postShortDescriptionValidation,postTitleValidation,postContentValidation,
     postBlogIDValidation, postBlogIDValidator, inputBlogsAndPostsValidation,async (req, res)=> {
         let findPostById = await postsService.updatePost(req.params.id, req.body.title, req.body.shortDescription,

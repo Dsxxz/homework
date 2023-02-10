@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'
 import {UserInDbType} from "../models/userType";
 import {PostDBType} from "../models/posts-types";
 import {BlogDbType} from "../models/blogs-types";
-import {CommentsInDbType} from "../models/comments-types";
+import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL;

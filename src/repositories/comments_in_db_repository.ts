@@ -1,26 +1,36 @@
 import {commentsCollectionDb, usersCollectionDb} from "./db"
 import {ObjectId} from "mongodb";
-import {CommentatorInfo, CommentsInDbType} from "../models/comments-types";
+import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {userService} from "../service/user-service";
 
 export const commentsRepository={
-    async createComment(content:string,userId:string):Promise<CommentsInDbType|null>{
-        const user = await userService.findUsersById(new ObjectId((userId)))
+    async createComment(content:string,userId:ObjectId, postId:string):Promise<CommentsViewType|null>{
+        const user = await userService.findUsersById(userId)
         if(!user){return null;}
         const newComment:CommentsInDbType = {
             id:new ObjectId().toString(),
             content:content,
-            commentatorInfo:{userId:userId,userLogin:user.login},
-            createdAt:new Date().toISOString()
+            commentatorInfo:{userId:user._id.toString(),userLogin:user.login},
+            createdAt:new Date().toISOString(),
+            postId:postId
         }
         await commentsCollectionDb.insertOne(newComment)
-        return newComment;
+        return {
+            id:newComment.id,
+            content:newComment.content,
+            commentatorInfo:newComment.commentatorInfo,
+            createdAt:newComment.createdAt
+                }
     },
-    async getCommentById(id:string):Promise<CommentsInDbType|null>{
-        if(!ObjectId.isValid(id)) {
-            return null
+    async getCommentById(id:string):Promise<CommentsViewType|null>{
+        const findComment:CommentsInDbType|null = await commentsCollectionDb.findOne({id: id})
+        if(!findComment){return null;}
+        return {
+            id:findComment.id,
+            content:findComment.content,
+            commentatorInfo:findComment.commentatorInfo,
+            createdAt:findComment.createdAt
         }
-        return await commentsCollectionDb.findOne({_id: new ObjectId(id)})
     },
     async updateComment(id:string,content:string):Promise<boolean>{
         if(!ObjectId.isValid(id)){
