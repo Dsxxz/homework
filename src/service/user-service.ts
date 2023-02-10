@@ -20,7 +20,8 @@ export const userService = {
     async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<UserInDbType|null>{
         const user:UserInDbType|null = await userRepository.findUserByLoginOrEmail(loginOrEmail)
         console.log('user ',user)
-        if(user){const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)}
+        if(user){const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)
+        if (passwordHash!==user.userPasswordHash)return null;}
         return user
     },
     async findUsersById(userID:ObjectId):Promise<UserInDbType|null>{

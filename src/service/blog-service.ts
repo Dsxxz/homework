@@ -10,7 +10,7 @@ export const blogService={
             name: name,
             websiteUrl: websiteUrl,
             description: description,
-            isMembership: true
+            isMembership: false
         }
         return await blogsRepository.createNewBlog(newBlog)
 
