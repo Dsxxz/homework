@@ -13,6 +13,8 @@ import {PostType} from "../models/posts-types";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {paginationType, QueryInputBlogAndPostType, QueryInputCommentsType} from "../models/query_input_models";
 import {CommentsViewType} from "../models/comments-types";
+import {CommentInputValidation} from "../MiddleWares/input-comment-pagination";
+import {authMiddleWare} from "../MiddleWares/auth-middleWare";
 export const postsRouter=Router({});
 
 
@@ -56,7 +58,8 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
             res.sendStatus(400);
         }
     })
-postsRouter.post('/:id/comments',async (req, res)=>{
+postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (req, res)=>{
+
         const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
         if(newComment) {
             res.status(201).send(newComment);

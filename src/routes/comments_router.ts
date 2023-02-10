@@ -1,5 +1,6 @@
-import { Router,Request,Response} from "express";
+import { Router} from "express";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
+import {authMiddleWare} from "../MiddleWares/auth-middleWare";
 
 export const commentsRouter = Router({});
 
@@ -10,7 +11,7 @@ commentsRouter.get('/:id',async (req,res)=>{
     }
     res.status(200).send(findComment)
 })
-commentsRouter.delete('/:id',async (req,res)=>{
+commentsRouter.delete('/:id',authMiddleWare,async (req,res)=>{
     const findComment = await commentsRepository.deleteComment(req.params.id)
     if(!findComment){
         res.sendStatus(404)
