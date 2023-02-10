@@ -4,7 +4,7 @@ import {ObjectId} from "mongodb";
 const bcrypt = require('bcrypt');
 
 export const userService = {
-    async createNewUser(password:string,login:string,email:string){
+    async createNewUser(password:string,login:string,email:string):Promise<UserViewModel>{
         const passwordSalt:string = await bcrypt.genSalt(10)
         const passwordHash:string = await this.generateHash(password,passwordSalt)
         const newUser:UserInDbType = {
@@ -15,11 +15,12 @@ export const userService = {
             userPasswordSalt:passwordSalt,
             createdAt: new Date().toISOString()
         }
-         return    await userRepository.createNewUser(newUser)
+        console.log("NewUser in userService : ", newUser)
+        return await userRepository.createNewUser(newUser)
     },
     async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<UserInDbType|null>{
         const user:UserInDbType|null = await userRepository.findUserByLoginOrEmail(loginOrEmail)
-        console.log('user ',user)
+        console.log('user in checkLoginAndPassword: ',user)
         if(user){const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)
         if (passwordHash!==user.userPasswordHash)return null;}
         return user

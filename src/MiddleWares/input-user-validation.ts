@@ -5,6 +5,7 @@ const regexLogin = new RegExp("^[a-zA-Z0-9_-]*$")
 export const userInputLoginValidation = body('login').trim().isLength({min:3, max:10})
     .withMessage('Login should be from 3 to 10 symbols')
     .matches(regexLogin).withMessage('Login incorrect')
+
 const regexEmail= new RegExp("^[\\w-\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
 
 export const userInputEmailValidation = body('email').trim()

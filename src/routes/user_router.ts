@@ -3,19 +3,19 @@ import {userService} from "../service/user-service";
 export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
 import {userQueryService} from "../service/query-service";
-import { UserViewModel} from "../models/userType";
-import {inputUsersValidation} from "../MiddleWares/validation-middleware"
+import {UserInputModel, UserViewModel} from "../models/userType";
+import {inputValidation} from "../MiddleWares/validation-middleware"
 import {basicAuth} from "../MiddleWares/autorization";
 import {paginationType} from "../models/query_input_models";
 
 
 
 userRouter.post('/',basicAuth,userInputLoginValidation,userInputEmailValidation,
-    userInputPasswordValidation, inputUsersValidation,async (req:Request<{},
-    {password:string,login:string,email:string}>, res:Response)=>{
-        const newUser = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
+    userInputPasswordValidation,inputValidation,async (req:Request<{},{},UserInputModel>, res:Response)=>{
+        const newUser:UserViewModel|null = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
+        console.log("NewUser in userRouter.post : ", newUser)
        if(newUser) {
-           res.status(201).send(newUser)
+           res.status(201).send(newUser);
        }
     else {
            res.sendStatus(401)

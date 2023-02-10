@@ -1,7 +1,7 @@
 import express  from 'express';
 import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
-import {blogsCollectionDb, postsCollectionDb, runDb, usersCollectionDb} from "./repositories/db";
+import {blogsCollectionDb, commentsCollectionDb, postsCollectionDb, runDb, usersCollectionDb} from "./repositories/db";
 import bodyParser from "body-parser" ;
 import {userRouter} from "./routes/user_router";
 import {authRouter} from "./routes/auth_router";
@@ -21,6 +21,7 @@ app.delete('/testing/all-data', async (req, res)=>{
         await blogsCollectionDb.deleteMany({})
         await postsCollectionDb.deleteMany({})
         await usersCollectionDb.deleteMany({})
+        await commentsCollectionDb.deleteMany({})
         res.sendStatus(204)
     }
     catch{

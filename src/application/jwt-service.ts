@@ -4,7 +4,7 @@ import {UserInDbType} from "../models/userType";
 import {JWT_SECRET} from '../repositories/db'
 export const jwtService={
     async createJWT(user:UserInDbType){
-        const token = jwt.sign({userID:user._id}, JWT_SECRET,{expiresIn:'1h'})
+        const token = jwt.sign({userID:user._id}, JWT_SECRET,{expiresIn:'10m'})
         console.log('token in jwtService: ',token)
         return token;
     },
