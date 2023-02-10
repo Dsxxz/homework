@@ -1,16 +1,20 @@
-import {commentsCollectionDb} from "./db"
+import {commentsCollectionDb, usersCollectionDb} from "./db"
 import {ObjectId} from "mongodb";
 import {CommentatorInfo, CommentsInDbType} from "../models/comments-types";
+import {userService} from "../service/user-service";
 
 export const commentsRepository={
-    async createComment(content:string,userId:string,userLogin:string){
+    async createComment(content:string,userId:string):Promise<CommentsInDbType|null>{
+        const user = await userService.findUsersById(new ObjectId((userId)))
+        if(!user){return null;}
         const newComment:CommentsInDbType = {
             id:new ObjectId().toString(),
             content:content,
-            commentatorInfo:{userId:userId,userLogin:userLogin},
+            commentatorInfo:{userId:userId,userLogin:user.login},
             createdAt:new Date().toISOString()
         }
-       return  await commentsCollectionDb.insertOne(newComment)
+        await commentsCollectionDb.insertOne(newComment)
+        return newComment;
     },
     async getCommentById(id:string):Promise<CommentsInDbType|null>{
         if(!ObjectId.isValid(id)) {

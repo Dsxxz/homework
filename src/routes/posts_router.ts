@@ -11,6 +11,7 @@ import {postsService} from "../service/post-service";
 import {paginationType, postQueryService, QueryInputType} from "../service/query-service";
 import {PostType} from "../models/posts-types";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
+import {authMiddleWare} from "../MiddleWares/auth-middleWare";
 export const postsRouter=Router({});
 
 
@@ -55,7 +56,7 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
         }
     })
 postsRouter.post('/:id/comments',async (req, res)=>{
-        const newComment = await  commentsRepository.createComment(req.body.content,req.user!._id.toString(),req.user!.login)
+        const newComment = await  commentsRepository.createComment(req.body.content,req.user!._id.toString())
         if(newComment) {
             res.status(201).send(newComment);
         }
