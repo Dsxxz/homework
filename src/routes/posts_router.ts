@@ -68,9 +68,6 @@ postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (re
         if(newComment) {
             res.status(201).send(newComment);
             return;
-        } else {
-            res.sendStatus(401)
-            return;
         }
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
