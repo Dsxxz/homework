@@ -13,7 +13,7 @@ import {PostType} from "../models/posts-types";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {paginationType, QueryInputBlogAndPostType, QueryInputCommentsType} from "../models/query_input_models";
 import {CommentsViewType} from "../models/comments-types";
-import {CommentInputValidation} from "../MiddleWares/input-comment-pagination";
+import {CommentInputValidation} from "../MiddleWares/input-comment-validation";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
 export const postsRouter=Router({});
 
@@ -59,7 +59,10 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
         }
     })
 postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (req, res)=>{
-
+    let foundPostById = await postsService.findPostById(req.params.id)
+    if(foundPostById){
+        res.sendStatus(404)
+    }
         const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
         if(newComment) {
             res.status(201).send(newComment);
@@ -68,7 +71,11 @@ postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (re
             res.sendStatus(404);
         }
     })
-postsRouter.get('/:id/comments',async (req:Request<{},{},{},QueryInputCommentsType>,res:Response)=>{
+postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
+    let foundPostById = await postsService.findPostById(req.params.id)
+    if(foundPostById){
+        res.sendStatus(404)
+    }
     try{
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
         const comments:Array<CommentsViewType> = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),

@@ -16,3 +16,6 @@ authRouter.post('/login',
         res.sendStatus(401)
     }
 })
+authRouter.get('/me',(req,res)=>{
+
+})
