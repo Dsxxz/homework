@@ -62,19 +62,19 @@ postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (re
     let foundPostById = await postsService.findPostById(req.params.id)
     if(foundPostById){
         res.sendStatus(404);
+        return;
     }
         const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
         if(newComment) {
             res.status(201).send(newComment);
-        }
-        else{
-            res.sendStatus(404);
+            return;
         }
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
     if(foundPostById){
-        res.sendStatus(404)
+        res.sendStatus(404);
+        return;
     }
     try{
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
@@ -89,9 +89,11 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
             "totalCount": paginator.totalCount,
             "items": comments
         })
+        return;
     }
     catch (e){
         res.sendStatus(404)
+        return;
     }
 })
 postsRouter.put('/:id',basicAuth,postShortDescriptionValidation,postTitleValidation,postContentValidation,
