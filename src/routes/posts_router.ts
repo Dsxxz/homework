@@ -8,15 +8,13 @@ import {
 } from "../MiddleWares/input-post-validation"
 import {basicAuth} from "../MiddleWares/autorization";
 import {postsService} from "../service/post-service";
-import {commentsQueryService, postQueryService, userQueryService} from "../service/query-service";
+import {commentsQueryService, postQueryService} from "../service/query-service";
 import {PostType} from "../models/posts-types";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {paginationType, QueryInputBlogAndPostType, QueryInputCommentsType} from "../models/query_input_models";
 import {CommentsViewType} from "../models/comments-types";
 import {CommentInputValidation} from "../MiddleWares/input-comment-validation";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
-import {usersCollectionDb} from "../repositories/db";
-import {userRepository} from "../repositories/user_in_db_repository";
 export const postsRouter=Router({});
 
 
