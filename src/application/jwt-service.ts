@@ -6,12 +6,7 @@ export const jwtService={
     async createJWT(user:UserInDbType){
         const token = jwt.sign({userID:user._id}, JWT_SECRET,{expiresIn:'1h'})
         console.log('token in jwtService: ',token)
-        return {
-            resultCode:0,
-            data:{
-                token:token
-            }
-        }
+        return token;
     },
     async getUserIdByToken(token:string){
         try {
