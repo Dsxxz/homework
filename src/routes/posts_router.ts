@@ -60,7 +60,7 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
     })
 postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (req, res)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
-    if(foundPostById){
+    if(!foundPostById){
         res.sendStatus(404);
         return;
     }
@@ -68,20 +68,23 @@ postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (re
         if(newComment) {
             res.status(201).send(newComment);
             return;
+        } else {
+            res.sendStatus(401)
+            return
         }
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
-    if(foundPostById){
+    if(!foundPostById){
         res.sendStatus(404);
         return;
     }
     try{
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
         const comments:Array<CommentsViewType> = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),
-            sortDirection?.toString(),pageNumber?.toString(),+pageSize?.toString())
+            sortDirection?.toString(), req.params.id, +pageNumber, +pageSize)
 
-        const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize)
+        const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize, req.params.id)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
             "page": +pageNumber,

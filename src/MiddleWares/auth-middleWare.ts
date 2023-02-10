@@ -14,5 +14,5 @@ export const authMiddleWare = async (req:Request,res:Response,next:NextFunction)
         next()
     }
     res.send(401);
-    next();
+    //next();
 }
