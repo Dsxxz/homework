@@ -67,7 +67,7 @@ postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (re
         return;
     }
     //const user = userRepository.findUserById(req.user!._id)
-    if(!user){}
+    //if(!user){}
         const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
         if(newComment) {
             res.status(201).send(newComment);
