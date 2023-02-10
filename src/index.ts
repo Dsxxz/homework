@@ -5,6 +5,7 @@ import {blogsCollectionDb, postsCollectionDb, runDb, usersCollectionDb} from "./
 import bodyParser from "body-parser" ;
 import {userRouter} from "./routes/user_router";
 import {authRouter} from "./routes/auth_router";
+import {commentsRouter} from "./routes/comments_router";
 const app = express();
 const port = process.env.PORT || 3000
 
@@ -14,6 +15,7 @@ app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
+app.use('/comments', commentsRouter)
 app.delete('/testing/all-data', async (req, res)=>{
     try {
         await blogsCollectionDb.deleteMany({})

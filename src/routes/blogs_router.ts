@@ -4,13 +4,12 @@ import {basicAuth} from "../MiddleWares/autorization";
 import {inputBlogsAndPostsValidation} from "../MiddleWares/validation-middleware"
 import {blogService} from "../service/blog-service";
 import {postsService} from "../service/post-service";
-import {
-    postContentValidation,
+import {postContentValidation,
     postShortDescriptionValidation,
-    postTitleValidation
-} from "../MiddleWares/input-post-validation";
-import {BlogType, PostType} from "../repositories/db";
+    postTitleValidation} from "../MiddleWares/input-post-validation";
 import {blogQueryService, paginationType, postQueryService, QueryInputType} from "../service/query-service";
+import {BlogType} from "../models/blogs-types";
+import {PostType} from "../models/posts-types";
 export const blogsRouter = Router({});
 
 blogsRouter.get('/',async (req:Request<{},{},{},QueryInputType>,res:Response)=>{

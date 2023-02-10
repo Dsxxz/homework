@@ -1,4 +1,4 @@
-import {UserInDbType} from "../models/userType";
+import {UserInDbType, UserViewModel} from "../models/userType";
 import {userRepository} from "../repositories/user_in_db_repository"
 import {ObjectId} from "mongodb";
 const bcrypt = require('bcrypt');
@@ -17,15 +17,14 @@ export const userService = {
         }
          return    await userRepository.createNewUser(newUser)
     },
-    async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<boolean>{
+    async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<UserInDbType|null>{
         const user:UserInDbType|null = await userRepository.findUserByLoginOrEmail(loginOrEmail)
         console.log('user ',user)
-
-        if(!user){
-                return false;
-        }
-        const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)
-        return user.userPasswordHash===passwordHash
+        if(user){const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)}
+        return user
+    },
+    async findUsersById(userID:ObjectId):Promise<UserInDbType|null>{
+        return await userRepository.findUserById(userID)
     },
     async generateHash(password:string,salt:string){
         return  bcrypt.hash(password,salt);

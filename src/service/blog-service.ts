@@ -1,6 +1,6 @@
 import {blogsRepository} from "../repositories/blog_in_db_repository";
-import {BlogDbType, BlogType} from "../repositories/db";
 import {ObjectId} from "mongodb";
+import {BlogDbType, BlogType} from "../models/blogs-types";
 
 export const blogService={
     async createNewBlog(name: string, websiteUrl: string, description: string):Promise<BlogType>{
@@ -9,7 +9,8 @@ export const blogService={
             _id: new ObjectId(),
             name: name,
             websiteUrl: websiteUrl,
-            description: description
+            description: description,
+            isMembership: true
         }
         return await blogsRepository.createNewBlog(newBlog)
 

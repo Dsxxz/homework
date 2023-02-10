@@ -8,8 +8,9 @@ import {
 } from "../MiddleWares/input-post-validation"
 import {basicAuth} from "../MiddleWares/autorization";
 import {postsService} from "../service/post-service";
-import {PostType} from "../repositories/db";
 import {paginationType, postQueryService, QueryInputType} from "../service/query-service";
+import {PostType} from "../models/posts-types";
+import {commentsRepository} from "../repositories/comments_in_db_repository";
 export const postsRouter=Router({});
 
 
@@ -51,6 +52,15 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
         }
         else{
             res.sendStatus(400);
+        }
+    })
+postsRouter.post('/:id/comments',async (req, res)=>{
+        const newComment = await  commentsRepository.createComment(req.body.content,req.user!._id.toString(),req.user!.login)
+        if(newComment) {
+            res.status(201).send(newComment);
+        }
+        else{
+            res.sendStatus(404);
         }
     })
 postsRouter.put('/:id',basicAuth,postShortDescriptionValidation,postTitleValidation,postContentValidation,

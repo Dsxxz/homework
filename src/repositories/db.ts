@@ -1,42 +1,10 @@
-import {MongoClient, ObjectId} from "mongodb";
+import {MongoClient} from "mongodb";
 import * as dotenv from 'dotenv'
 import {UserInDbType} from "../models/userType";
+import {PostDBType} from "../models/posts-types";
+import {BlogDbType} from "../models/blogs-types";
+import {CommentsInDbType} from "../models/comments-types";
 dotenv.config()
-export type PostType = {
-    id:string,
-    blogId: string,
-    blogName: string,
-    content: string,
-    createdAt:string,
-    shortDescription: string,
-    title: string
-}
-
-export type PostDBType={
-    _id:ObjectId,
-    blogId: string,
-    blogName: string,
-    content: string,
-    createdAt:string,
-    shortDescription: string,
-    title: string
-}
-export type BlogType ={
-    createdAt:string,
-    id: string,
-    name:string,
-    websiteUrl:string,
-    description:string
-}
-
-export type BlogDbType = {
-    createdAt: string,
-    name: string,
-    websiteUrl: string,
-    _id:  ObjectId,
-    description: string
-}
-
 
 const mongoUri = process.env.MONGO_URL;
 if(!mongoUri){
@@ -45,7 +13,7 @@ if(!mongoUri){
 export const client = new MongoClient(mongoUri)
 
 const dbPosts = client.db("postsCollection")
-export const postsCollectionDb = dbPosts.collection<PostDBType>("posts")
+export const postsCollectionDb = dbPosts.collection<PostDBType>("posts");
 
 const dbBlogs = client.db("blogsCollection")
 export const blogsCollectionDb = dbBlogs.collection<BlogDbType>("blogs")
@@ -53,6 +21,8 @@ export const blogsCollectionDb = dbBlogs.collection<BlogDbType>("blogs")
 const dbUsers = client.db("usersCollection")
 export const usersCollectionDb = dbUsers.collection<UserInDbType>("users")
 
+const dbComments = client.db("commentsCollection")
+export const commentsCollectionDb = dbComments.collection<CommentsInDbType>("comments")
 
 
 export async function runDb(){
@@ -61,9 +31,11 @@ export async function runDb(){
         await client.db("posts").command({ping: 1});
         await client.db("blogs").command({ping: 1});
         await client.db("users").command({ping: 1});
+        await client.db("comments").command({ping: 1});
         console.log("mongod connected")
     }
     catch {
         await client.close();
     }
 }
+export const JWT_SECRET = process.env.JWT_SECRET || '123'

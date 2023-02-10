@@ -1,5 +1,6 @@
-import {BlogDbType, blogsCollectionDb, BlogType} from "./db"
+import { blogsCollectionDb} from "./db"
 import {ObjectId} from "mongodb";
+import {BlogDbType, BlogType} from "../models/blogs-types";
 
 export const blogsRepository={
     async createNewBlog(newBlog:BlogDbType):Promise<BlogType>{
@@ -10,7 +11,8 @@ export const blogsRepository={
             name: newBlog.name,
             websiteUrl: newBlog.websiteUrl,
             id: newBlog._id.toString(),
-            description: newBlog.description
+            description: newBlog.description,
+            isMembership:newBlog.isMembership
         }
     },
     async findBlogById(id: string):Promise<BlogType | null>{
@@ -25,7 +27,8 @@ export const blogsRepository={
                 createdAt: blog.createdAt,
                 websiteUrl: blog.websiteUrl,
                 id: blog._id.toString(),
-                description: blog.description
+                description: blog.description,
+                isMembership:blog.isMembership
             }
         }
 
@@ -46,6 +49,5 @@ export const blogsRepository={
         }
         const result = await blogsCollectionDb.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
-    },
-
+    }
 }

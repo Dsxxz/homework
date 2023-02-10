@@ -18,21 +18,15 @@ export const userRepository={
         return   await usersCollectionDb.findOne({$or:[filterEmail,filterLogin]})
 
     },
-   /* async findUserById(id:string):Promise<UserViewModel|null>{
+    async findUserById(id:ObjectId):Promise<UserInDbType|null>{
         if(!ObjectId.isValid(id)) {
             return null
         }
-        const user = await usersCollectionDb.findOne({_id: new ObjectId(id)})
+        const user = await usersCollectionDb.findOne({_id: id})
         if (user) {
-            return {
-                id:user._id.toString(),
-                login:user.login,
-                email:user.email,
-                createdAt:user.createdAt
-            }
-        }
+            return user}
         return null
-    },*/
+    },
     async deleteUser(id:string):Promise<boolean>{
         if(!ObjectId.isValid(id)){
             return false;

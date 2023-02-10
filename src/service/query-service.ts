@@ -1,13 +1,7 @@
-import {
-    BlogDbType,
-    blogsCollectionDb,
-    BlogType,
-    PostDBType,
-    postsCollectionDb,
-    PostType,
-    usersCollectionDb
-} from "../repositories/db";
+import {blogsCollectionDb, postsCollectionDb, usersCollectionDb} from "../repositories/db";
 import {UserInDbType, UserViewModel} from "../models/userType";
+import {BlogDbType, BlogType} from "../models/blogs-types";
+import {PostDBType, PostType} from "../models/posts-types";
 export  type QueryInputType = {
     pageNumber:string,
     pageSize:string,
@@ -47,7 +41,8 @@ export const blogQueryService={
                 name: blog.name,
                 websiteUrl: blog.websiteUrl,
                 id: blog._id.toString(),
-                description: blog.description
+                description: blog.description,
+                isMembership:blog.isMembership
             }))
         }
 
@@ -62,7 +57,8 @@ export const blogQueryService={
                 name: blog.name,
                 websiteUrl: blog.websiteUrl,
                 id: blog._id.toString(),
-                description: blog.description
+                description: blog.description,
+                isMembership:blog.isMembership
             }))
         }
     }}

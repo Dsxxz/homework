@@ -1,6 +1,7 @@
 import {blogsRepository} from "./blog_in_db_repository";
-import {postsCollectionDb, PostDBType, PostType} from "./db";
+import {postsCollectionDb} from "./db";
 import {ObjectId} from "mongodb";
+import {PostDBType, PostType} from "../models/posts-types";
 
 export const postsInDbRepository={
     async createNewPost(creatingPost:PostDBType): Promise<PostType| null> {
@@ -28,23 +29,6 @@ export const postsInDbRepository={
             title: newPost.title
         }
     },
-
-  /*  async findPosts(title?:string) :Promise<Array<PostType>> {
-        const filter: any = {}
-        if(title){
-            filter.title={$regex: title}
-        }
-        const posts:PostDBType[]= await postsCollectionDb.find(filter).toArray()
-        return posts.map((post:PostDBType) => ({
-            blogId: post.blogId,
-            blogName: post.blogName,
-            content: post.content,
-            createdAt: post.createdAt,
-            id: post._id.toString(),
-            shortDescription: post.shortDescription,
-            title: post.title
-        }))
-    },*/
     async findPostById(id:string) :Promise<PostType |null>{
         if(!ObjectId.isValid(id)){
             return null;
