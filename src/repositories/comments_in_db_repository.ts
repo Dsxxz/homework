@@ -1,4 +1,4 @@
-import {commentsCollectionDb, usersCollectionDb} from "./db"
+import {commentsCollectionDb} from "./db"
 import {ObjectId} from "mongodb";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {userService} from "../service/user-service";

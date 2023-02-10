@@ -10,7 +10,8 @@ import {paginationType} from "../models/query_input_models";
 
 
 
-userRouter.post('/',basicAuth,userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation, inputUsersValidation,async (req:Request<{},
+userRouter.post('/',basicAuth,userInputLoginValidation,userInputEmailValidation,
+    userInputPasswordValidation, inputUsersValidation,async (req:Request<{},
     {password:string,login:string,email:string}>, res:Response)=>{
         const newUser = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
        if(newUser) {

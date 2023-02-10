@@ -61,7 +61,7 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
 postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (req, res)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
     if(foundPostById){
-        res.sendStatus(404)
+        res.sendStatus(404);
     }
         const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
         if(newComment) {
@@ -82,7 +82,7 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
             sortDirection?.toString(),pageNumber?.toString(),+pageSize?.toString())
 
         const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize)
-        res.status(201).send({
+        res.status(200).send({
             "pagesCount": paginator.pagesCount,
             "page": +pageNumber,
             "pageSize": +pageSize,

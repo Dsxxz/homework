@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'
 import {UserInDbType} from "../models/userType";
 import {PostDBType} from "../models/posts-types";
 import {BlogDbType} from "../models/blogs-types";
-import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
+import {CommentsInDbType} from "../models/comments-types";
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL;
@@ -32,7 +32,7 @@ export async function runDb(){
         await client.db("blogs").command({ping: 1});
         await client.db("users").command({ping: 1});
         await client.db("comments").command({ping: 1});
-        console.log("mongod connected")
+        console.log("mongodb connected")
     }
     catch {
         await client.close();
