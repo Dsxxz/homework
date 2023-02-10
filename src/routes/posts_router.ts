@@ -66,16 +66,14 @@ postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (re
         res.sendStatus(404);
         return;
     }
-    //const user = userRepository.findUserById(req.user!._id)
-    //if(!user){}
         const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
         if(newComment) {
             res.status(201).send(newComment);
             return;
-        } /*else {
+        } else {
             res.sendStatus(401)
             return;
-        }*/
+        }
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)

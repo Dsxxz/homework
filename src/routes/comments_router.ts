@@ -13,14 +13,14 @@ commentsRouter.get('/:id',async (req,res)=>{
     }
     res.status(200).send(findComment)
 })
-commentsRouter.delete('/:id',authMiddleWare,checkOwnerOfComments,async (req,res)=>{
+commentsRouter.delete('/:id',checkOwnerOfComments,authMiddleWare,async (req,res)=>{
     const findComment = await commentsRepository.deleteComment(req.params.id)
     if(!findComment){
-        res.sendStatus(404)
+        res.sendStatus(401)
     }
     res.sendStatus(204)
 })
-commentsRouter.put('/:id',authMiddleWare,checkOwnerOfComments,CommentInputValidation, async (req,res)=>{
+commentsRouter.put('/:id',checkOwnerOfComments,authMiddleWare,CommentInputValidation, async (req,res)=>{
     const findComment = await commentsRepository.updateComment(req.params.id,req.body.content)
     if(!findComment){
         res.sendStatus(404)
