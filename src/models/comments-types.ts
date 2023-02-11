@@ -1,6 +1,3 @@
-export type CommentInputModel={
-    content:string
-}
 export type CommentsViewType ={
     id:string,
     content:string,
@@ -17,7 +14,4 @@ export type CommentsInDbType={
 export  type  CommentatorInfo={
     userId:string
     userLogin:string
-}
-export  type LoginSuccessViewModel={
-    accessToken:string
 }

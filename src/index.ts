@@ -30,7 +30,7 @@ app.delete('/testing/all-data', async (req, res)=>{
 })
 
 
-const startApp = async ():Promise<void>=>{
+const startApp = async ()=>{
     await runDb();
 }
 startApp();

@@ -1,27 +1,28 @@
 import {Router,Request,Response} from "express";
-import {userService} from "../service/user-service";
 export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
 import {userQueryService} from "../service/query-service";
 import {UserInputModel, UserViewModel} from "../models/userType";
-import {inputValidation} from "../MiddleWares/validation-middleware"
+import {inputUserValidation} from "../MiddleWares/validation-middleware"
 import {basicAuth} from "../MiddleWares/autorization";
 import {paginationType} from "../models/query_input_models";
+import {userService} from "../service/user-service";
+
 
 
 
 userRouter.post('/',basicAuth,userInputLoginValidation,userInputEmailValidation,
-    userInputPasswordValidation,inputValidation,async (req:Request<{},{},UserInputModel>, res:Response)=>{
-        const newUser:UserViewModel|null = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
-        console.log("NewUser in userRouter.post : ", newUser)
-       if(newUser) {
-           res.status(201).send(newUser);
-       }
-    else {
-           res.sendStatus(401)
-       }
-
-})
+    userInputPasswordValidation,inputUserValidation,async (req:Request<{},{},UserInputModel>, res:Response)=> {
+        try {
+            const newUser: UserViewModel | null = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
+            if (newUser) {
+                res.status(201).send(newUser);
+            }
+        }
+        catch (e){
+            throw new Error('e')
+        }
+    })
 userRouter.get('/',async (req:Request<{},{},{},{pageNumber:string, pageSize:string, sortBy:string,
     searchLoginTerm:string,searchEmailTerm:string,sortDirection:string}>,res:Response)=>{
     try{

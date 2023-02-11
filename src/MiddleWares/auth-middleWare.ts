@@ -4,7 +4,7 @@ import {jwtService} from "../application/jwt-service";
 
 export const authMiddleWare = async (req:Request,res:Response,next:NextFunction)=>{
     if(!req.headers.authorization){
-        res.send(401);
+        res.sendStatus(401);
         return;
     }
     const token = req.headers.authorization.split(' ')[1]
@@ -12,8 +12,8 @@ export const authMiddleWare = async (req:Request,res:Response,next:NextFunction)
     console.log('authMiddleware: ', token)
     if(userID){
         req.user = await userService.findUsersById(userID)
-        next()
+        next();
     }
-    res.send(401);
-    //next();
+    res.sendStatus(401);
+    next();
 }
