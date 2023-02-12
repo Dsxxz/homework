@@ -6,7 +6,7 @@ import {userService} from "../service/user-service";
 export const commentsRepository={
     async createComment(content:string,userId:ObjectId, postId:string):Promise<CommentsViewType|null>{
         const user = await userService.findUsersById(userId)
-        if(!user){return null;}
+        if(!user) return null
         const newComment:CommentsInDbType = {
             id:new ObjectId().toString(),
             content:content,

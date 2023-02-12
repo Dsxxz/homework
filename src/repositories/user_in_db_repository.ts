@@ -25,9 +25,7 @@ export const userRepository={
             return null
         }
         const user = await usersCollectionDb.findOne({_id: id})
-        if (user) {
-            return user}
-        return null
+        return user
     },
     async deleteUser(id:string):Promise<boolean>{
         if(!ObjectId.isValid(id)){

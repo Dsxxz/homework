@@ -26,7 +26,7 @@ export const userService = {
         return user
     },
     async findUsersById(userID:ObjectId):Promise<UserInDbType|null>{
-        return await userRepository.findUserById(userID)
+        return userRepository.findUserById(userID)
     },
     async generateHash(password:string,salt:string){
         return  bcrypt.hash(password,salt);

@@ -58,13 +58,18 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
             res.sendStatus(400);
         }
     })
-postsRouter.post('/:id/comments',CommentInputValidation,authMiddleWare,async (req, res)=>{
+postsRouter.post('/:id/comments',
+    CommentInputValidation,
+    authMiddleWare,
+    inputValidation,
+    async (req:Request<{id: string}, {}, {content: string}>, res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
     if(!foundPostById){
         res.sendStatus(404);
         return;
     }
-        const newComment:CommentsViewType|null = await  commentsRepository.createComment(req.body.content,req.user!._id,req.params.id)
+        const newComment:CommentsViewType|null = await commentsRepository.createComment
+        (req.body.content, req.user!._id, foundPostById.id)
         if(newComment) {
             res.status(201).send(newComment);
             return;

@@ -10,18 +10,23 @@ authRouter.post('/login',
    const checkResult:UserInDbType|null= await userService.checkLoginAndPassword(req.body.loginOrEmail!, req.body.password!)
     if(checkResult){
         const token = await jwtService.createJWT(checkResult)
-        console.log('token in authRouter: ',token)
-        res.status(200).send({"accessToken":token})
+        res.status(200).send({accessToken: token.data.token})
     }
     else{
         res.sendStatus(401)
     }
 })
 authRouter.get('/me',authMiddleWare,async (req,res)=>{
-    const email = req.user?.email
-    const login = req.user?.login
-    const userID = req.user?._id
-    res.status(200).send({"email": email,
-    "login": login,
-    "userID": userID})
+    try{
+        const email = req.user?.email
+        const login = req.user?.login
+        const userID = req.user?._id
+        res.status(200).send({
+            "email": email,
+            "login": login,
+            "userID": userID})
+    }
+    catch (e) {
+        res.status(401).send('not found')
+    }
 })

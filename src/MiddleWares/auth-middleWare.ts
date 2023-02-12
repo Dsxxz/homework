@@ -9,11 +9,11 @@ export const authMiddleWare = async (req:Request,res:Response,next:NextFunction)
     }
     const token = req.headers.authorization.split(' ')[1]
     const userID = await jwtService.getUserIdByToken(token)
-    console.log('authMiddleware: ', token)
     if(userID){
         req.user = await userService.findUsersById(userID)
         next();
+    } else {
+        res.sendStatus(401);
+        return;
     }
-    res.sendStatus(401);
-    next();
 }
