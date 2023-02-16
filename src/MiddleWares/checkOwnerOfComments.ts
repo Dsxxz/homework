@@ -6,7 +6,7 @@ export const checkOwnerOfComments=async (req:Request,res:Response,next:NextFunct
     if(!comment){
         res.status(404).send('Comments doesn\'t exist')
     }
-    if(req.user?._id.toString()!==comment!.commentatorInfo.userId){
+    if(req.user!._id.toString()!==comment!.commentatorInfo.userId){
         res.status(403).send('You\'re not owner of this comment!')
     }
     next();

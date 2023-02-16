@@ -33,16 +33,10 @@ export const commentsRepository={
         }
     },
     async updateComment(id:string,content:string):Promise<boolean>{
-        if(!ObjectId.isValid(id)){
-            return false;
-        }
         const resultBlog= await commentsCollectionDb.updateOne({_id: new ObjectId(id)},{$set: {content}})
         return resultBlog.matchedCount===1 ;
     },
     async deleteComment(id:string): Promise<boolean>{
-        if(!ObjectId.isValid(id)){
-            return false;
-        }
         const result = await commentsCollectionDb.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     }
