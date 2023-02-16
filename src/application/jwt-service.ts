@@ -5,7 +5,6 @@ import {UserInDbType} from "../models/userType";
 export const jwtService={
     async createJWT(user:UserInDbType){
         const token = jwt.sign({userID:user._id}, "JWT_Secret",{expiresIn:'1h'})
-        console.log('token in jwtService: ',token)
         return {
             resultCode:0,
             data:{

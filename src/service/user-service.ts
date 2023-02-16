@@ -15,12 +15,10 @@ export const userService = {
             userPasswordSalt:passwordSalt,
             createdAt: new Date().toISOString()
         }
-        console.log("NewUser in userService : ", newUser)
         return await userRepository.createNewUser(newUser)
     },
     async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<UserInDbType|null>{
         const user:UserInDbType|null = await userRepository.findUserByLoginOrEmail(loginOrEmail)
-        console.log('user in checkLoginAndPassword: ',user)
         if(user){const passwordHash:string = await this.generateHash(password,user.userPasswordSalt)
         if (passwordHash!==user.userPasswordHash)return null;}
         return user
