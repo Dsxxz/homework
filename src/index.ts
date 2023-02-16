@@ -29,10 +29,10 @@ app.delete('/testing/all-data', async (req, res)=>{
 })
 
 
-const startApp = async ()=>{
+const startApp = async ():Promise<void>=>{
     await runDb();
 }
-startApp();
+ startApp();
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })

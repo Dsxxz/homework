@@ -25,7 +25,7 @@ const dbComments = client.db("commentsCollection")
 export const commentsCollectionDb = dbComments.collection<CommentsInDbType>("comments")
 
 
-export async function runDb(){
+export async function runDb():Promise<void>{
     try{
         await client.connect();
         await client.db("posts").command({ping: 1});
@@ -33,9 +33,11 @@ export async function runDb(){
         await client.db("users").command({ping: 1});
         await client.db("comments").command({ping: 1});
         console.log("mongodb connected")
+        return;
     }
     catch {
         await client.close();
+        return;
     }
 }
 export const JWT_SECRET = process.env.JWT_SECRET || '123'
