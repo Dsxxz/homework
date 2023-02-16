@@ -15,12 +15,13 @@ export const commentsRepository={
             postId:postId
         }
         await commentsCollectionDb.insertOne(newComment)
+        console.log("createComment in commentsRepository",newComment)
         return {
-            id:newComment._id.toString(),
-            content:newComment.content,
             commentatorInfo:newComment.commentatorInfo,
-            createdAt:newComment.createdAt
-                }
+            content:newComment.content,
+            createdAt:newComment.createdAt,
+            id:newComment._id.toString()
+        }
     },
     async getCommentById(id:string):Promise<CommentsViewType|null>{
         const findComment:CommentsInDbType|null = await commentsCollectionDb.findOne({_id: new ObjectId(id) })
@@ -33,7 +34,7 @@ export const commentsRepository={
         }
     },
     async getAllCommentsForSpecificPost(postId:string):Promise<Array<CommentsViewType>>{
-        const findComments:Array<CommentsInDbType> = await commentsCollectionDb.find({postId: [postId]}).toArray()
+        const findComments:Array<CommentsInDbType> = await commentsCollectionDb.find({postId: postId}).toArray()
         return findComments.map((comment: CommentsInDbType) => ({
             id:comment._id.toString(),
             content:comment.content,

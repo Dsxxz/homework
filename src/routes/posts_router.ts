@@ -70,7 +70,9 @@ postsRouter.post('/:id/comments',
     }
     const newComment:CommentsViewType|null = await commentsRepository.createComment
         (req.body.content, req.user!._id, foundPostById.id)
-            res.status(201).send(newComment);
+        console.log("'postsRouter'post '/:id/comments' ",newComment)
+
+        res.status(201).send(newComment);
             return;
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
