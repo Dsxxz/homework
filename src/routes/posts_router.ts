@@ -68,12 +68,10 @@ postsRouter.post('/:id/comments',
         res.sendStatus(404);
         return;
     }
-        const newComment:CommentsViewType|null = await commentsRepository.createComment
+    const newComment:CommentsViewType|null = await commentsRepository.createComment
         (req.body.content, req.user!._id, foundPostById.id)
-        if(newComment) {
             res.status(201).send(newComment);
             return;
-        }
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
