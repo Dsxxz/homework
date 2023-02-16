@@ -22,7 +22,7 @@ commentsRouter.delete('/:id',checkOwnerOfComments,authMiddleWare,async (req,res)
     res.sendStatus(204);
     return;
 })
-commentsRouter.put('/:id',checkOwnerOfComments,authMiddleWare,CommentInputValidation, async (req,res)=>{
+commentsRouter.put('/:id',CommentInputValidation,checkOwnerOfComments,authMiddleWare, async (req,res)=>{
     const findComment = await commentsRepository.updateComment(req.params.id,req.body.content)
     if(!findComment){
         res.sendStatus(404)
