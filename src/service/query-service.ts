@@ -155,7 +155,7 @@ export const commentsQueryService={
                 .limit(pageSize)
                 .toArray();
             return comments.map((comment: CommentsInDbType) => ({
-                id:comment.id,
+                id:comment._id.toString(),
                 content:comment.content,
                 commentatorInfo:comment.commentatorInfo,
                 createdAt:comment.createdAt
@@ -169,7 +169,7 @@ export const commentsQueryService={
                 .limit(pageSize)
                 .toArray();
             return comments.map((comment: CommentsInDbType) => ({
-                id:comment.id,
+                id:comment._id.toString(),
                 content:comment.content,
                 commentatorInfo:comment.commentatorInfo,
                 createdAt:comment.createdAt
