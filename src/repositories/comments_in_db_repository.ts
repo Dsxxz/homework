@@ -8,7 +8,7 @@ export const commentsRepository={
         const user = await userService.findUsersById(userId)
         if(!user) return null
         const newComment:CommentsInDbType = {
-            id:new ObjectId().toString(),
+            _id:new ObjectId(),
             content:content,
             commentatorInfo:{userId:user._id.toString(),userLogin:user.login},
             createdAt:new Date().toISOString(),
@@ -16,17 +16,17 @@ export const commentsRepository={
         }
         await commentsCollectionDb.insertOne(newComment)
         return {
-            id:newComment.id,
+            id:newComment._id.toString(),
             content:newComment.content,
             commentatorInfo:newComment.commentatorInfo,
             createdAt:newComment.createdAt
                 }
     },
     async getCommentById(id:string):Promise<CommentsViewType|null>{
-        const findComment:CommentsInDbType|null = await commentsCollectionDb.findOne({id: id})
+        const findComment:CommentsInDbType|null = await commentsCollectionDb.findOne({_id: new ObjectId(id) })
         if(!findComment){return null;}
         return {
-            id:findComment.id,
+            id:findComment._id.toString(),
             content:findComment.content,
             commentatorInfo:findComment.commentatorInfo,
             createdAt:findComment.createdAt
