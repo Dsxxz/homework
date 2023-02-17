@@ -141,7 +141,7 @@ export const userQueryService={
 export const commentsQueryService={
     async paginationPage(pageNumber: number = 1, pageSize: number = 10, postId: string): Promise<paginationType> {
 
-        const totalCount = await commentsCollectionDb.countDocuments({postId: [postId]})
+        const totalCount = await commentsCollectionDb.countDocuments({postId: postId})
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {totalCount, pagesCount};
     },
