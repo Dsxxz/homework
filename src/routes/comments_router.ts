@@ -29,5 +29,6 @@ commentsRouter.put('/:id',CommentInputValidation,checkOwnerOfComments,authMiddle
     if(!findComment){
         res.sendStatus(404)
     }
-    res.sendStatus(204)
+
+    res.status(204).send(await commentsRepository.getCommentById(req.params.id))
 })
