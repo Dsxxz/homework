@@ -145,7 +145,7 @@ export const commentsQueryService={
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {totalCount, pagesCount};
     },
-    async getCommentsForPost(sortBy:string='createdAt',sortDirection:string,postId:string,
+    async getCommentsForPost(sortBy:string='createdAt',sortDirection:string='desc',postId:string,
                              pageNumber:number=1,pageSize:number=10):Promise<Array<CommentsViewType>>
     {
         if(sortDirection==="asc")  {
