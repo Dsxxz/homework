@@ -81,7 +81,7 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
         return;
     }
     try{
-        const { pageNumber, pageSize, sortBy, sortDirection} = req.query;
+        const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
         const comments:Array<CommentsViewType> = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),
             sortDirection?.toString(), req.params.id, +pageNumber, +pageSize)
 
