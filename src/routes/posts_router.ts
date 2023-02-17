@@ -11,7 +11,7 @@ import {postsService} from "../service/post-service";
 import {commentsQueryService, postQueryService} from "../service/query-service";
 import {PostType} from "../models/posts-types";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
-import {paginationType, QueryInputBlogAndPostType} from "../models/query_input_models";
+import {paginationType, QueryInputBlogAndPostType, QueryInputCommentsType} from "../models/query_input_models";
 import {CommentsViewType} from "../models/comments-types";
 import {CommentInputValidation} from "../MiddleWares/input-comment-validation";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
@@ -47,7 +47,7 @@ postsRouter.get('/:id',async (req,res)=>{
     }
 })
 postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidation,postContentValidation,
-    postBlogIDValidation,postBlogIDValidator, inputValidation,async (req, res)=>{
+    postBlogIDValidation,postBlogIDValidator, inputValidation,async (req:Request, res:Response)=>{
         let newPost = await  postsService.createNewPost(req.body.title, req.body.shortDescription,
             req.body.content, req.body.blogId)
 
@@ -74,7 +74,7 @@ postsRouter.post('/:id/comments',
         res.status(201).send(newComment);
             return;
     })
-postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{}>,res:Response)=>{
+postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
     if(!foundPostById){
         res.sendStatus(404);
@@ -86,6 +86,7 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{}>,res:Respon
             sortDirection?.toString(), req.params.id, +pageNumber, +pageSize)
 
         const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize, req.params.id)
+
 
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
