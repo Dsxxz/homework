@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {inputValidation} from "../MiddleWares/validation-middleware"
+import {inputCommentsValidation, inputValidation} from "../MiddleWares/validation-middleware"
 import {
     postBlogIDValidation, postBlogIDValidator,
     postContentValidation,
@@ -61,7 +61,7 @@ postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidatio
 postsRouter.post('/:id/comments',
     CommentInputContentValidation,
     authMiddleWare,
-    inputValidation,
+    inputCommentsValidation,
     async (req:Request<{id: string}, {}, {content: string}>, res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
     if(!foundPostById){
