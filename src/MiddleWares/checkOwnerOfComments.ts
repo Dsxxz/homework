@@ -7,7 +7,7 @@ export const checkOwnerOfComments=async (req:Request,res:Response,next:NextFunct
         res.sendStatus(404)
         return;
     }
-    if(req.user && req.user._id.toString()!==comment!.commentatorInfo.userId){
+    if( req.user!._id.toString()!==comment.commentatorInfo.userId){
         res.sendStatus(403);
         return;
     }
