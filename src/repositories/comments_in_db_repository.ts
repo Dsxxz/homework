@@ -32,14 +32,6 @@ export const commentsRepository={
             createdAt:findComment.createdAt
         }
     },
-    async getAllCommentsForSpecificPost(postId:string):Promise<Array<CommentsViewType>>{
-        const findComments:Array<CommentsInDbType> = await commentsCollectionDb.find({postId: postId}).toArray()
-        return findComments.map((comment: CommentsInDbType) => ({
-            id:comment._id.toString(),
-            content:comment.content,
-            commentatorInfo:comment.commentatorInfo,
-            createdAt:comment.createdAt
-        }))},
     async updateComment(id:string,content:string):Promise<boolean>{
         const resultBlog= await commentsCollectionDb.updateOne({_id: new ObjectId(id)},{$set: {content}})
         return resultBlog.matchedCount===1 ;

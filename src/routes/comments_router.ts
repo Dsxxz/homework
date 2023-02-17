@@ -7,11 +7,12 @@ import {CommentInputValidation} from "../MiddleWares/input-comment-validation";
 export const commentsRouter = Router({});
 
 commentsRouter.get('/:id',async (req,res)=>{
-    const findComment = await commentsRepository.getAllCommentsForSpecificPost(req.params.id)
+    const findComment = await commentsRepository.getCommentById(req.params.id)
     if(!findComment){
         res.sendStatus(404);
         return;
     }
+    console.log(findComment)
     res.status(200).send(findComment);
     return;
 })
