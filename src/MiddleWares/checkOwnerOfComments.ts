@@ -4,11 +4,11 @@ import {commentsRepository} from "../repositories/comments_in_db_repository";
 export const checkOwnerOfComments=async (req:Request,res:Response,next:NextFunction)=>{
     const comment = await commentsRepository.getCommentById(req.params.id)
     if(!comment){
-        res.status(404).send("Comments doesn\'t exist" );
+        res.sendStatus(404)
         return;
     }
-    if(req.user?._id.toString()!==comment!.commentatorInfo.userId){
-        res.status(403).send("You\'re not owner of this comment!");
+    if(req.user && req.user._id.toString()!==comment!.commentatorInfo.userId){
+        res.sendStatus(403);
         return;
     }
     next();
