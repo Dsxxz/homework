@@ -70,7 +70,6 @@ postsRouter.post('/:id/comments',
     }
     const newComment:CommentsViewType|null = await commentsRepository.createComment
         (req.body.content, req.user!._id, foundPostById.id)
-        console.log("'postsRouter'post '/:id/comments' ",newComment)
 
         res.status(201).send(newComment);
             return;
@@ -81,12 +80,12 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
         res.sendStatus(404);
         return;
     }
+    try{
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
         const comments:Array<CommentsViewType> = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),
             sortDirection?.toString(), req.params.id, +pageNumber, +pageSize)
 
         const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize, req.params.id)
-        console.log("postsRouter.get('/:id/comments' ' ",comments)
 
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
@@ -96,6 +95,11 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
             "items": comments
         })
         return;
+    }
+    catch (e){
+        res.sendStatus(404)
+        return;
+    }
 })
 postsRouter.put('/:id',basicAuth,postShortDescriptionValidation,postTitleValidation,postContentValidation,
     postBlogIDValidation, postBlogIDValidator, inputValidation,async (req, res)=> {

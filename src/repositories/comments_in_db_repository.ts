@@ -15,7 +15,6 @@ export const commentsRepository={
             postId:postId
         }
         await commentsCollectionDb.insertOne(newComment)
-        console.log("createComment in commentsRepository",newComment)
         return {
             commentatorInfo:newComment.commentatorInfo,
             content:newComment.content,
