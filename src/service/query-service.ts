@@ -149,7 +149,7 @@ export const commentsQueryService={
                              pageNumber:number=1,pageSize:number=10):Promise<Array<CommentsViewType>>
     {
         if(sortDirection==="asc")  {
-            const comments: Array<CommentsInDbType> = await commentsCollectionDb.find({postId: [postId]})
+            const comments: Array<CommentsInDbType> = await commentsCollectionDb.find({postId: postId})
                 .sort({[sortBy]: 1})
                 .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
@@ -163,7 +163,7 @@ export const commentsQueryService={
         }
 
         else{
-            const comments: CommentsInDbType[] = await commentsCollectionDb.find({postId: [postId]})
+            const comments: CommentsInDbType[] = await commentsCollectionDb.find({postId: postId})
                 .sort({[sortBy]: -1})
                 .skip((pageNumber-1)*pageSize)
                 .limit(pageSize)
