@@ -7,7 +7,7 @@ import {inputCommentsValidation} from "../MiddleWares/validation-middleware";
 
 export const commentsRouter = Router({});
 
-commentsRouter.get('/:id',async (req,res)=>{
+commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
     const findComment = await commentsRepository.getCommentById(req.params.id)
     if(!findComment){
         res.sendStatus(404);
@@ -21,7 +21,7 @@ commentsRouter.delete('/:id',
     checkOwnerOfComments,
     authMiddleWare,
     inputCommentsValidation,
-    async (req,res)=>{
+    async (req:Request<{ id: string }>,res:Response)=>{
     const findComment = await commentsRepository.deleteComment(req.params.id)
     if(!findComment){
         res.sendStatus(404);
@@ -33,13 +33,15 @@ commentsRouter.delete('/:id',
 commentsRouter.put('/:id',
     CommentInputContentValidation,
     checkOwnerOfComments,
-    authMiddleWare,
     inputCommentsValidation,
+    authMiddleWare,
     async (req:Request<{ id: string }, {}, {content: string}>, res:Response)=>{
     const findComment = await commentsRepository.updateComment(req.params.id,req.body.content)
     if(!findComment){
-        res.sendStatus(404)
+        res.sendStatus(404);
+        return;
     }
 
-    res.status(204).send(await commentsRepository.getCommentById(req.params.id))
+    res.status(204).send(await commentsRepository.getCommentById(req.params.id));
+    return;
 })
