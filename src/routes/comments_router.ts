@@ -3,7 +3,7 @@ import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
 import {checkOwnerOfComments} from "../MiddleWares/checkOwnerOfComments";
 import {CommentInputContentValidation} from "../MiddleWares/input-comment-validation";
-import {inputUserValidation} from "../MiddleWares/validation-middleware";
+import {inputCommentsValidation} from "../MiddleWares/validation-middleware";
 
 export const commentsRouter = Router({});
 
@@ -20,7 +20,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
 commentsRouter.delete('/:id',
     checkOwnerOfComments,
     authMiddleWare,
-    inputUserValidation,
+    inputCommentsValidation,
     async (req:Request<{ id: string }>,res:Response)=>{
     const findComment = await commentsRepository.deleteComment(req.params.id)
     if(!findComment){
@@ -33,7 +33,7 @@ commentsRouter.delete('/:id',
 commentsRouter.put('/:id',
     CommentInputContentValidation,
     checkOwnerOfComments,
-    inputUserValidation,
+    inputCommentsValidation,
     authMiddleWare,
     async (req:Request<{ id: string }, {}, {content: string}>, res:Response)=>{
     const findComment = await commentsRepository.updateComment(req.params.id,req.body.content)
