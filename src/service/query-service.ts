@@ -159,7 +159,7 @@ export const commentsQueryService={
                 commentatorInfo:comment.commentatorInfo,
                 content:comment.content,
                 createdAt:comment.createdAt,
-                _id:comment._id.toString()
+                id:comment._id.toString()
             }))
         }
 
@@ -173,7 +173,7 @@ export const commentsQueryService={
                 commentatorInfo:comment.commentatorInfo,
                 content:comment.content,
                 createdAt:comment.createdAt,
-                _id:comment._id.toString()
+                id:comment._id.toString()
             }))
         }
     }
