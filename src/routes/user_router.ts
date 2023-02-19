@@ -23,7 +23,7 @@ userRouter.post('/',basicAuth,userInputLoginValidation,userInputEmailValidation,
             throw new Error('e')
         }
     })
-userRouter.get('/',async (req:Request<{},{},{},{pageNumber:string, pageSize:string, sortBy:string,
+userRouter.get('/',basicAuth,async (req:Request<{},{},{},{pageNumber:string, pageSize:string, sortBy:string,
     searchLoginTerm:string,searchEmailTerm:string,sortDirection:string}>,res:Response)=>{
     try{
         const { pageNumber=1, pageSize=10, sortBy, searchLoginTerm,searchEmailTerm,sortDirection='desc'} = req.query;

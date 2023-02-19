@@ -18,8 +18,8 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
     return;
 })
 commentsRouter.delete('/:id',
-    checkOwnerOfComments,
     authMiddleWare,
+    checkOwnerOfComments,
     inputCommentsValidation,
     async (req:Request<{ id: string }>,res:Response)=>{
     const findComment = await commentsRepository.deleteComment(req.params.id)
@@ -31,10 +31,10 @@ commentsRouter.delete('/:id',
     return;
 })
 commentsRouter.put('/:id',
+    authMiddleWare,
     CommentInputContentValidation,
     checkOwnerOfComments,
     inputCommentsValidation,
-    authMiddleWare,
     async (req:Request<{ id: string }, {}, {content: string}>, res:Response)=>{
     const findComment = await commentsRepository.updateComment(req.params.id,req.body.content)
     if(!findComment){
