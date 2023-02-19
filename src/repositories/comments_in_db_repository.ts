@@ -22,15 +22,10 @@ export const commentsRepository={
             id:newComment._id.toString()
         }
     },
-    async getCommentById(id:string):Promise<CommentsViewType|null>{
+    async getCommentById(id:string):Promise<CommentsInDbType|null>{
         const findComment:CommentsInDbType|null = await commentsCollectionDb.findOne({_id: new ObjectId(id) })
         if(!findComment){return null;}
-        return {
-            id:findComment._id.toString(),
-            content:findComment.content,
-            commentatorInfo:findComment.commentatorInfo,
-            createdAt:findComment.createdAt
-        }
+        return findComment
     },
     async updateComment(id:string,content:string):Promise<boolean>{
         const resultBlog= await commentsCollectionDb.updateOne({_id: new ObjectId(id)},{$set: {content}})
