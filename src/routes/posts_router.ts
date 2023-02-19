@@ -70,6 +70,7 @@ postsRouter.post('/:id/comments',
     }
     const newComment:CommentsViewType|null = await commentsRepository.createComment
         (req.body.content, req.user!._id, foundPostById.id)
+        console.log(newComment)
 
         res.status(201).send(newComment);
             return;

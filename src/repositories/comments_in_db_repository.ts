@@ -16,10 +16,10 @@ export const commentsRepository={
         }
         await commentsCollectionDb.insertOne(newComment)
         return {
+            _id:newComment._id.toString(),
             commentatorInfo:newComment.commentatorInfo,
             content:newComment.content,
             createdAt:newComment.createdAt,
-            id:newComment._id.toString()
         }
     },
     async getCommentById(id:string):Promise<CommentsInDbType|null>{

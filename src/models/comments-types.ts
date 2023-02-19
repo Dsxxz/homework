@@ -1,7 +1,7 @@
 import {ObjectId} from "mongodb";
 
 export type CommentsViewType ={
-    id:string,
+    _id:string,
     content:string,
     commentatorInfo:CommentatorInfo
     createdAt:string
