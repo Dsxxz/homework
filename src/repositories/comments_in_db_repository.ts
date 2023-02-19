@@ -19,7 +19,7 @@ export const commentsRepository={
             id:newComment._id.toString(),
             commentatorInfo:newComment.commentatorInfo,
             content:newComment.content,
-            createdAt:newComment.createdAt,
+            createdAt:newComment.createdAt
         }
     },
     async getCommentById(id:string):Promise<CommentsInDbType|null>{
