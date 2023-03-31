@@ -38,16 +38,16 @@ authRouter.get('/me',authMiddleWare,async (req,res)=>{
     }
 })
 authRouter.post('/registration',userInputEmailValidation,userInputLoginValidation,userInputPasswordValidation,inputEmailValidation, async (req:Request,res:Response)=>{
-    try{
-        const existLogin = await userRepository.findUserByLoginOrEmail(req.body.login)
-        const existEmail = await userRepository.findUserByLoginOrEmail(req.body.email)
-        if(existLogin){
-            res.status(400).send({"errorsMessages":[{"message":"already exist","field":"login"}]})
-        }
-        if(existEmail){
-            res.status(400).send({"errorsMessages":[{"message":"already exist","field":"email"}]})
-        }
 
+    if(await userRepository.findUserByLoginOrEmail(req.body.login)){
+        res.status(400).send({"errorsMessages":[{"message":"already exist","field":"login"}]})
+    }
+    if(await userRepository.findUserByLoginOrEmail(req.body.email)){
+        res.status(400).send({"errorsMessages":[{"message":"already exist","field":"email"}]})
+    }
+
+
+    try{
     const user = await authService.createNewUser(req.body.login,req.body.email,req.body.password)
         res.status(204).send(user)
     }

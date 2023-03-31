@@ -23,7 +23,7 @@ export const authService = {
                     confirmationCode: uuidv4(),
                     expirationDate:add(new Date(),
                         {
-                            hours:1,
+                            minutes:3,
                         }),
                     isConfirmed:false
         }}
@@ -60,5 +60,5 @@ export const authService = {
         if (user.emailConfirmation.confirmationCode !== code) {return false;}
         if(user.emailConfirmation.expirationDate < new Date()){return false;}
 
-        return await userRepository.updateConfirmation(user._id);
+            return await userRepository.updateConfirmation(user._id);
 }}
