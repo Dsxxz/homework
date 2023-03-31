@@ -15,11 +15,22 @@ export type LoginInputModel = {
     loginOrEmail:string,
     password:string
 }
-export type UserInDbType={
-    _id:ObjectId,
-    login:string,
+export type AccountDataType = {
+    userName:string,
     email:string,
     userPasswordHash:string,
     userPasswordSalt:string,
-    createdAt: string
+    createdAt:string
+}
+export type UserAccountDbType = {
+    _id:ObjectId,
+    accountData: AccountDataType,
+    emailConfirmation: {
+        confirmationCode: string,
+        expirationDate:any,
+        isConfirmed:boolean
+    }
+}
+export type RegistrationDataType = {
+    ip:string
 }

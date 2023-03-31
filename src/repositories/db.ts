@@ -1,6 +1,6 @@
 import {MongoClient} from "mongodb";
 import * as dotenv from 'dotenv'
-import {UserInDbType} from "../models/userType";
+import {UserAccountDbType} from "../models/userType";
 import {PostDBType} from "../models/posts-types";
 import {BlogDbType} from "../models/blogs-types";
 import {CommentsInDbType} from "../models/comments-types";
@@ -19,7 +19,7 @@ const dbBlogs = client.db("blogsCollection")
 export const blogsCollectionDb = dbBlogs.collection<BlogDbType>("blogs")
 
 const dbUsers = client.db("usersCollection")
-export const usersCollectionDb = dbUsers.collection<UserInDbType>("users")
+export const usersCollectionDb = dbUsers.collection<UserAccountDbType>("users")
 
 const dbComments = client.db("commentsCollection")
 export const commentsCollectionDb = dbComments.collection<CommentsInDbType>("comments")

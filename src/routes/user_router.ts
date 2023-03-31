@@ -2,11 +2,11 @@ import {Router,Request,Response} from "express";
 export const userRouter = Router({});
 import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValidation} from "../MiddleWares/input-user-validation";
 import {userQueryService} from "../service/query-service";
-import {UserInputModel, UserViewModel} from "../models/userType";
+import {UserAccountDbType, UserInputModel, UserViewModel} from "../models/userType";
 import {inputUserValidation} from "../MiddleWares/validation-middleware"
 import {basicAuth} from "../MiddleWares/autorization";
 import {paginationType} from "../models/query_input_models";
-import {userService} from "../service/user-service";
+import {authService} from "../service/auth-service";
 
 
 
@@ -14,9 +14,14 @@ import {userService} from "../service/user-service";
 userRouter.post('/',basicAuth,userInputLoginValidation,userInputEmailValidation,
     userInputPasswordValidation,inputUserValidation,async (req:Request<{},{},UserInputModel>, res:Response)=> {
         try {
-            const newUser: UserViewModel | null = await userService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
+            const newUser: UserAccountDbType | null = await authService.createNewUser(req.body.password!, req.body.login!, req.body.email!)
             if (newUser) {
-                res.status(201).send(newUser);
+                res.status(201).send({
+                    id:newUser._id.toString(),
+                    login:newUser.accountData.userName,
+                    email:newUser.accountData.email,
+                    createdAt:newUser.accountData.createdAt
+                });
             }
         }
         catch (e){
@@ -44,7 +49,7 @@ userRouter.get('/',basicAuth,async (req:Request<{},{},{},{pageNumber:string, pag
     }
 })
 userRouter.delete('/:id', basicAuth, async (req:Request,res:Response)=>{
-    const deletedUser = await userService.deleteUser(req.params.id)
+    const deletedUser = await authService.deleteUser(req.params.id)
     if(!deletedUser){
         res.sendStatus(404)
     }

@@ -1,24 +1,23 @@
 import {usersCollectionDb} from "./db";
-import {UserInDbType, UserViewModel} from "../models/userType";
+import {UserAccountDbType} from "../models/userType";
 import {ObjectId} from "mongodb";
 
 export const userRepository={
-    async createNewUser(newUser:UserInDbType):Promise<UserViewModel>{
+    async createNewUser(newUser:UserAccountDbType):Promise<UserAccountDbType>{
         await usersCollectionDb.insertOne(newUser);
-        return {
-            id:newUser._id.toString(),
-            login:newUser.login,
-            email:newUser.email,
-            createdAt:newUser.createdAt
-        }
+        return newUser
     },
-    async findUserByLoginOrEmail(loginOrEmail:string):Promise<UserInDbType|null>{
+    async findUserByLoginOrEmail(loginOrEmail:string):Promise<UserAccountDbType|null>{
         const filterEmail = {email: {$regex: loginOrEmail, $options: 'i'}}
         const filterLogin = {login: {$regex: loginOrEmail, $options: 'i'}}
         return   await usersCollectionDb.findOne({$or:[filterEmail,filterLogin]})
 
     },
-    async findUserById(id:ObjectId):Promise<UserInDbType|null>{
+    async findUserByConfirmationCode(emailConfirmationCode:string):Promise<UserAccountDbType|null>{
+    return   await usersCollectionDb.findOne({'emailConfirmation.confirmationCode':emailConfirmationCode})
+
+    },
+    async findUserById(id:ObjectId):Promise<UserAccountDbType|null>{
         if(!ObjectId.isValid(id)) {
             return null
         }
@@ -30,6 +29,10 @@ export const userRepository={
         }
         const result = await usersCollectionDb.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
+    },
+    async updateConfirmation(_id:ObjectId):Promise<boolean>{
+        let result = await usersCollectionDb.updateOne({_id},{$set:{'emailConfirmation.isConfirmed':true}})
+        return result.modifiedCount ===1;
     }
 }
 
