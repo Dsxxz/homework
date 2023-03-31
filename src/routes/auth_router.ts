@@ -3,8 +3,13 @@ import {authService} from "../service/auth-service";
 import {LoginInputModel, UserAccountDbType} from "../models/userType";
 import {jwtService} from "../application/jwt-service";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
-import {userInputEmailValidation} from "../MiddleWares/input-user-validation";
+import {
+    userInputEmailValidation,
+    userInputLoginValidation,
+    userInputPasswordValidation
+} from "../MiddleWares/input-user-validation";
 import {inputEmailValidation} from "../MiddleWares/validation-middleware";
+import {userRepository} from "../repositories/user_in_db_repository";
 
 export const authRouter = Router({});
 authRouter.post('/login',
@@ -32,13 +37,22 @@ authRouter.get('/me',authMiddleWare,async (req,res)=>{
         res.status(401).send('not found')
     }
 })
-authRouter.post('/registration',userInputEmailValidation,inputEmailValidation, async (req:Request,res:Response)=>{
+authRouter.post('/registration',userInputEmailValidation,userInputLoginValidation,userInputPasswordValidation,inputEmailValidation, async (req:Request,res:Response)=>{
+    try{
+        const existLogin = await userRepository.findUserByLoginOrEmail(req.body.login)
+        const existEmail = await userRepository.findUserByLoginOrEmail(req.body.email)
+        if(existLogin){
+            res.status(400).send({"errorsMessages":[{"message":"already exist","field":"login"}]})
+        }
+        if(existEmail){
+            res.status(400).send({"errorsMessages":[{"message":"already exist","field":"email"}]})
+        }
+
     const user = await authService.createNewUser(req.body.login,req.body.email,req.body.password)
-    if (user) {
         res.status(204).send(user)
-    }else {
-        res.status(400).send({"errorsMessages":[{"message":"string","field":"string"}]})
     }
+    catch (e)
+    {res.send(e)}
 })
 authRouter.post('/registration-confirmation', userInputEmailValidation,inputEmailValidation, async (req:Request,res:Response)=>{
     const result = await authService.confirmEmail(req.body.code)
