@@ -7,7 +7,7 @@ export const emailAdapter = {
             secure:true,
             auth:{
                 user:'dsxxz92@gmail.com',
-                pass:process.env.email_password
+                pass :process.env.email_password
             }
         });
         return await transporter.sendMail({
