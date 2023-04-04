@@ -46,10 +46,11 @@ authRouter.post('/registration',
     userInputPasswordValidation,
     inputEmailValidation,
     async (req:Request,res:Response)=>{
-    const user = await authService.checkLoginAndPassword(req.body.email,req.body.password)
-        console.log(user)
+    const user1 = await userRepository.findUserByLoginOrEmail(req.body.email)
+    const user2 = await userRepository.findUserByLoginOrEmail(req.body.login)
+        console.log(user1,user2)
 
-        if(user)
+        if(user1||user2)
         {
             res.status(400).send({
                 "errorsMessages": [
