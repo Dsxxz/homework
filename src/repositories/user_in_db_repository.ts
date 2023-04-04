@@ -8,8 +8,8 @@ export const userRepository={
         return newUser
     },
     async findUserByLoginOrEmail(loginOrEmail:string):Promise<UserAccountDbType|null>{
-        const filterEmail = {email: {$regex: loginOrEmail, $options: 'i'}}
-        const filterLogin = {login: {$regex: loginOrEmail, $options: 'i'}}
+        const filterEmail = {"accountData.email": {$regex: loginOrEmail, $options: 'i'}}
+        const filterLogin = {"accountData.login": {$regex: loginOrEmail, $options: 'i'}}
         return   await usersCollectionDb.findOne({$or:[filterEmail,filterLogin]})
 
     },
@@ -31,7 +31,7 @@ export const userRepository={
         return result.deletedCount===1
     },
     async updateConfirmation(_id:ObjectId):Promise<boolean>{
-        let result = await usersCollectionDb.updateOne({_id},{$set:{'emailConfirmation.isConfirmed':true}})
+        let result = await usersCollectionDb.updateOne({_id},{$set:{"emailConfirmation.isConfirmed":true}})
         return result.modifiedCount ===1;
     }
 }

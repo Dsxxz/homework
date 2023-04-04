@@ -7,7 +7,7 @@ import add from 'date-fns/add'
 import {emailManager} from "../managers/email_manager";
 
 export const authService = {
-    async createNewUser(login:string,email:string,password:string):Promise<UserAccountDbType | null>{
+    async createNewUser(password:string,login:string,email:string):Promise<UserAccountDbType | null>{
         const passwordSalt:string = await bcrypt.genSalt(10)
         const passwordHash:string = await this.generateHash(password,passwordSalt)
         const newUser:UserAccountDbType = {
@@ -31,7 +31,6 @@ export const authService = {
         try {
             await emailManager.sendEmailConfirmationCode(newUser)
         }catch (e) {
-            console.log("auth-service, error: " ,e)
             await userRepository.deleteUser(newUser._id.toString())
             return null;
         }
@@ -57,7 +56,7 @@ export const authService = {
         if (!user) {return false;}
         if (user.emailConfirmation.isConfirmed) {return false;}
         if (user.emailConfirmation.confirmationCode !== code) {return false;}
-        if(user.emailConfirmation.expirationDate < new Date()){return false;}
+       if(user.emailConfirmation.expirationDate < new Date()){return false;}
 
             return await userRepository.updateConfirmation(user._id);
 }}

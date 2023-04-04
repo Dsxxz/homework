@@ -46,20 +46,29 @@ authRouter.post('/registration',
     userInputPasswordValidation,
     inputEmailValidation,
     async (req:Request,res:Response)=>{
+    const user = await authService.checkLoginAndPassword(req.body.email,req.body.password)
+        console.log(user)
 
-    if(await userRepository.findUserByLoginOrEmail(req.body.login)){
-        res.status(400).send({"errorsMessages":[{"message":"already exist","field":"login"}]})
-    }
-    if(await userRepository.findUserByLoginOrEmail(req.body.email)){
-        res.status(400).send({"errorsMessages":[{"message":"already exist","field":"email"}]})
-    }
+        if(user)
+        {
+            res.status(400).send({
+                "errorsMessages": [
+                    {
+                        "message": "Any<String>",
+                        "field": "email"
+                    }
+                ]
+            });
+            return;
+        }
     try{
-        await authService.createNewUser(req.body.login,req.body.email,req.body.password)
-        await authService.confirmEmail(req.body.code)
-        res.sendStatus(204)
+        await authService.createNewUser(req.body.password,req.body.login,req.body.email)
+        res.sendStatus(204);
+        return;
     }
     catch (e)
-    {res.status(400).send(e)}
+    {res.status(400).send(e);
+    return;}
 })
 authRouter.post('/registration-confirmation',
     async (req:Request,res:Response)=>{
