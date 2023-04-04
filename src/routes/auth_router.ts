@@ -62,8 +62,6 @@ authRouter.post('/registration',
     {res.status(400).send(e)}
 })
 authRouter.post('/registration-confirmation',
-    userInputEmailValidation,
-    inputEmailValidation,
     async (req:Request,res:Response)=>{
     try{
       await authService.confirmEmail(req.body.code)
