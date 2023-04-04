@@ -28,9 +28,8 @@ export const authService = {
                     isConfirmed:false
         }}
         const createResult:UserAccountDbType = await userRepository.createNewUser(newUser)
-        console.log("auth-service, method: createNewUser", createResult)
         try {
-            await emailManager.sendEmailRecovery(newUser)
+            await emailManager.sendEmailConfirmationCode(newUser)
         }catch (e) {
             console.log("auth-service, error: " ,e)
             await userRepository.deleteUser(newUser._id.toString())

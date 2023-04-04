@@ -23,7 +23,9 @@ authRouter.post('/login',
         res.sendStatus(401)
     }
 })
-authRouter.get('/me',authMiddleWare,async (req,res)=>{
+authRouter.get('/me',
+    authMiddleWare,
+    async (req,res)=>{
     try{
         const email = req.user?.accountData.email
         const login = req.user?.accountData.userName
@@ -37,7 +39,13 @@ authRouter.get('/me',authMiddleWare,async (req,res)=>{
         res.status(401).send('not found')
     }
 })
-authRouter.post('/registration',userInputEmailValidation,userInputLoginValidation,userInputPasswordValidation,inputEmailValidation, async (req:Request,res:Response)=>{
+
+authRouter.post('/registration',
+    userInputEmailValidation,
+    userInputLoginValidation,
+    userInputPasswordValidation,
+    inputEmailValidation,
+    async (req:Request,res:Response)=>{
 
     if(await userRepository.findUserByLoginOrEmail(req.body.login)){
         res.status(400).send({"errorsMessages":[{"message":"already exist","field":"login"}]})
@@ -45,28 +53,35 @@ authRouter.post('/registration',userInputEmailValidation,userInputLoginValidatio
     if(await userRepository.findUserByLoginOrEmail(req.body.email)){
         res.status(400).send({"errorsMessages":[{"message":"already exist","field":"email"}]})
     }
-
-
     try{
-    const user = await authService.createNewUser(req.body.login,req.body.email,req.body.password)
-        res.status(204).send(user)
+        await authService.createNewUser(req.body.login,req.body.email,req.body.password)
+        await authService.confirmEmail(req.body.code)
+        res.sendStatus(204)
     }
     catch (e)
-    {res.send(e)}
+    {res.status(400).send(e)}
 })
-authRouter.post('/registration-confirmation', userInputEmailValidation,inputEmailValidation, async (req:Request,res:Response)=>{
-    const result = await authService.confirmEmail(req.body.code)
-    if (result) {
-        res.status(204).send()
-    }else {
-        res.sendStatus(400)
-    }
-})
-authRouter.post('/registration-email-resending',userInputEmailValidation,inputEmailValidation, async (req:Request,res:Response)=>{
-    const result = await authService.confirmEmail(req.body.code)
-    if (result) {
+authRouter.post('/registration-confirmation',
+    userInputEmailValidation,
+    inputEmailValidation,
+    async (req:Request,res:Response)=>{
+    try{
+      await authService.confirmEmail(req.body.code)
         res.sendStatus(204)
-    }else {
-        res.status(400).send({"errorsMessages":[{"message":"string","field":"string"}]})
     }
+    catch (e) {
+        res.status(400).send(e)
+    }
+})
+authRouter.post('/registration-email-resending',
+    userInputEmailValidation,
+    inputEmailValidation,
+    async (req:Request,res:Response)=>{
+        try{
+            await authService.confirmEmail(req.body.code)
+            res.sendStatus(204)
+        }
+        catch (e) {
+            res.status(400).send(e)
+        }
 })
