@@ -23,7 +23,6 @@ export const authService = {
                     confirmationCode: uuidv4(),
                     expirationDate:add(new Date(),
                         {
-                            hours:1,
                             minutes:1,
                         }),
                     isConfirmed:false
@@ -53,20 +52,12 @@ export const authService = {
         return await userRepository.deleteUser(id);
     },
     async checkExistCode(code:string):Promise<boolean>{
-        const user =await userRepository.findUserByConfirmationCode(code);
-        if(!user){
-            return false
-        }
-        else{
-            return true;
-        }
+        const user= await userRepository.findUserByConfirmationCode(code);
+        return !!user;
     },
     async checkIsConfirmCode(code:string):Promise<boolean>{
         const user =await userRepository.findUserByConfirmationCode(code);
-        if(user?.emailConfirmation.isConfirmed){
-            return true;
-        }
-            return false;
+            return !user?.emailConfirmation.isConfirmed;
     },
     async updateConfirmEmail(code:string):Promise<boolean>{
         let user = await userRepository.findUserByConfirmationCode(code)
@@ -74,5 +65,10 @@ export const authService = {
         if (user.emailConfirmation.isConfirmed){return false;}
        if(user.emailConfirmation.expirationDate < new Date()) {return false;}
 
-       return await userRepository.updateConfirmation(user!._id);
-}}
+       return await userRepository.updateConfirmationIsConfirmed(user!._id);
+},
+    async updateUserConfirmCode(user:UserAccountDbType):Promise<UserAccountDbType|null>{
+        console.log(4)
+        return await userRepository.updateConfirmationCode(user)
+    }
+}

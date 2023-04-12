@@ -74,7 +74,6 @@ authRouter.post('/registration-confirmation',
         else{
            try {
                 await authService.updateConfirmEmail(req.body.code);
-               console.log(await authService.updateConfirmEmail(req.body.code))
                res.sendStatus(204)
             }
             catch (e){
@@ -89,16 +88,24 @@ authRouter.post('/registration-email-resending',
     const user = await userRepository.findUserByLoginOrEmail(req.body.email)
             try {
                 if(user) {
+                    console.log(1,user.emailConfirmation.confirmationCode)
                     if(user.emailConfirmation.isConfirmed){
-                        res.status(404).send({ errorsMessages: [{ message: "Confirmation Code already confirm", field: "code" }] });
+                        res.status(400).send({ errorsMessages: [{ message: "Confirmation Code already confirm", field: "email" }] });
                         return;
                     }
-                        await emailManager.sendEmailConfirmationCode(user)
+                        const updateUser:UserAccountDbType|null = await authService.updateUserConfirmCode(user);
+                    console.log(2,updateUser?.emailConfirmation.confirmationCode)
+                    if(!updateUser){
+                        res.sendStatus(404)
+                    }
+                       else {
+                        await emailManager.sendEmailConfirmationCode(updateUser)
                         res.sendStatus(204);
-                    return;
+                        return;
+                    }
             }
     else{
-                    res.sendStatus(404);
+                    res.sendStatus(400);
                     return;
                 }
     } catch (e) {
