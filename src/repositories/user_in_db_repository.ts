@@ -15,7 +15,6 @@ export const userRepository={
     },
     async findUserByConfirmationCode(emailConfirmationCode:string):Promise<UserAccountDbType|null>{
     return   await usersCollectionDb.findOne({'emailConfirmation.confirmationCode':emailConfirmationCode})
-
     },
     async findUserById(id:ObjectId):Promise<UserAccountDbType|null>{
         if(!ObjectId.isValid(id)) {

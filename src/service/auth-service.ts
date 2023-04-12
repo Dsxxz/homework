@@ -51,13 +51,16 @@ export const authService = {
     async deleteUser(id:string){
         return await userRepository.deleteUser(id);
     },
+    async checkConfirmCode(code:string):Promise<boolean>{
+        const isConfirmed =await userRepository.findUserByConfirmationCode(code);
+        if(isConfirmed){return true;}
+        else {return false;}
+    },
     async confirmEmail(code:string):Promise<boolean>{
         let user = await userRepository.findUserByConfirmationCode(code)
         if (!user) {return false;}
-        if (user.emailConfirmation.isConfirmed)
-        {throw new Error(`{ errorsMessages: [{ message: "Confirmation Code already exist", field: "code" }] }`)}
-        if (user.emailConfirmation.confirmationCode !== code)
-        {throw new Error(`{ errorsMessages: [{ message: "Confirmation Code is not correct", field: "code" }] }`)}
+        if (user.emailConfirmation.isConfirmed){return false;}
+        if (user.emailConfirmation.confirmationCode !== code){return false;}
        if(user.emailConfirmation.expirationDate < new Date()){return false;}
 
             return await userRepository.updateConfirmation(user._id);

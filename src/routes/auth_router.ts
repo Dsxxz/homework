@@ -60,6 +60,9 @@ authRouter.post('/registration',
 authRouter.post('/registration-confirmation',
     async (req:Request,res:Response)=>{
     try{
+        if (await authService.checkConfirmCode(req.body.code)){
+            res.status(404).send({ errorsMessages: [{ message: "Confirmation Code is not correct", field: "code" }] })
+        }
         const confirmCode = await authService.confirmEmail(req.body.code)
         if(confirmCode) {
             res.sendStatus(204)
@@ -75,7 +78,11 @@ authRouter.post('/registration-email-resending',
     existingEmailValidation,
     async (req:Request,res:Response)=>{
     const user = await userRepository.findUserByLoginOrEmail(req.body.email)
+
         if(user) {
+            if(user.emailConfirmation.isConfirmed){
+                res.status(404).send({ errorsMessages: [{ message: "Confirmation Code already exist", field: "code" }] })
+            }
             try {
                 await emailManager.sendEmailConfirmationCode(user)
                 res.sendStatus(204)
