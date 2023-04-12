@@ -40,9 +40,9 @@ authRouter.get('/me',
 })
 
 authRouter.post('/registration',
-    authInputLoginValidation,
     authInputEmailValidation,
     authInputPasswordValidation,
+    authInputLoginValidation,
     inputAuthValidation,
     async (req:Request,res:Response)=>{
     try{
