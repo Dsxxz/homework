@@ -3,12 +3,15 @@ import {authService} from "../service/auth-service";
 import {LoginInputModel, UserAccountDbType} from "../models/userType";
 import {jwtService} from "../application/jwt-service";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
-import {inputAuthValidation} from "../MiddleWares/validation-middleware";
+import {existingEmailValidation, inputAuthValidation} from "../MiddleWares/validation-middleware";
 import {
     authInputEmailValidation,
     authInputLoginValidation,
     authInputPasswordValidation
 } from "../MiddleWares/auth-registration";
+import {inputEmailValidationForResending} from "../MiddleWares/registration-email-resending";
+import {emailManager} from "../managers/email_manager";
+import {userRepository} from "../repositories/user_in_db_repository";
 
 export const authRouter = Router({});
 authRouter.post('/login',
@@ -57,21 +60,30 @@ authRouter.post('/registration',
 authRouter.post('/registration-confirmation',
     async (req:Request,res:Response)=>{
     try{
-      await authService.confirmEmail(req.body.code)
-        res.sendStatus(204)
+        const confirmCode = await authService.confirmEmail(req.body.code)
+        if(confirmCode) {
+            res.sendStatus(204)
+        }
+        else {res.sendStatus(400)}
     }
     catch (e) {
         res.status(400).send(e)
     }
 })
 authRouter.post('/registration-email-resending',
-    authMiddleWare,
+    inputEmailValidationForResending,
+    existingEmailValidation,
     async (req:Request,res:Response)=>{
-        try{
-            await authService.confirmEmail(req.body.code)
-            res.sendStatus(204)
+    const user = await userRepository.findUserByLoginOrEmail(req.body.email)
+        if(user) {
+            try {
+                await emailManager.sendEmailConfirmationCode(user)
+                res.sendStatus(204)
+            } catch (e) {
+                return e;
+            }
         }
-        catch (e) {
-            res.status(400).send(e)
+        else{
+            res.sendStatus(404)
         }
 })
