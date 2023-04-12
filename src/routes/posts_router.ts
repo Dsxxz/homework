@@ -6,7 +6,7 @@ import {
     postShortDescriptionValidation,
     postTitleValidation
 } from "../MiddleWares/input-post-validation"
-import {basicAuth} from "../MiddleWares/autorization";
+import {basicAuth} from "../MiddleWares/admin_basic_autorization";
 import {postsService} from "../service/post-service";
 import {commentsQueryService, postQueryService} from "../service/query-service";
 import {PostType} from "../models/posts-types";

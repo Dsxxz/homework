@@ -4,7 +4,7 @@ import {userInputLoginValidation,userInputEmailValidation,userInputPasswordValid
 import {userQueryService} from "../service/query-service";
 import {UserAccountDbType, UserInputModel, UserViewModel} from "../models/userType";
 import {inputUserValidation} from "../MiddleWares/validation-middleware"
-import {basicAuth} from "../MiddleWares/autorization";
+import {basicAuth} from "../MiddleWares/admin_basic_autorization";
 import {paginationType} from "../models/query_input_models";
 import {authService} from "../service/auth-service";
 

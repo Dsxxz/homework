@@ -3,9 +3,7 @@ import {authService} from "../service/auth-service";
 import {LoginInputModel, UserAccountDbType} from "../models/userType";
 import {jwtService} from "../application/jwt-service";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
-import {userInputEmailValidation} from "../MiddleWares/input-user-validation";
-import {inputAuthValidation, inputEmailValidation} from "../MiddleWares/validation-middleware";
-import {userRepository} from "../repositories/user_in_db_repository";
+import {inputAuthValidation} from "../MiddleWares/validation-middleware";
 import {
     authInputEmailValidation,
     authInputLoginValidation,
@@ -67,8 +65,7 @@ authRouter.post('/registration-confirmation',
     }
 })
 authRouter.post('/registration-email-resending',
-    userInputEmailValidation,
-    inputEmailValidation,
+    authMiddleWare,
     async (req:Request,res:Response)=>{
         try{
             await authService.confirmEmail(req.body.code)

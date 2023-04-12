@@ -1,6 +1,6 @@
 import { Router,Request,Response} from "express";
 import {blogInputNameValidation, blogInputWebsiteUrlValidation} from '../MiddleWares/input-blog-validation';
-import {basicAuth} from "../MiddleWares/autorization";
+import {basicAuth} from "../MiddleWares/admin_basic_autorization";
 import {inputBlogsAndPostsValidation} from "../MiddleWares/validation-middleware"
 import {blogService} from "../service/blog-service";
 import {postsService} from "../service/post-service";
