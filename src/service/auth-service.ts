@@ -23,7 +23,8 @@ export const authService = {
                     confirmationCode: uuidv4(),
                     expirationDate:add(new Date(),
                         {
-                            minutes:3,
+                            hours:1,
+                            minutes:1,
                         }),
                     isConfirmed:false
         }}
@@ -51,17 +52,27 @@ export const authService = {
     async deleteUser(id:string){
         return await userRepository.deleteUser(id);
     },
-    async checkConfirmCode(code:string):Promise<boolean>{
-        const isConfirmed =await userRepository.findUserByConfirmationCode(code);
-        if(isConfirmed){return true;}
-        else {return false;}
+    async checkExistCode(code:string):Promise<boolean>{
+        const user =await userRepository.findUserByConfirmationCode(code);
+        if(!user){
+            return false
+        }
+        else{
+            return true;
+        }
     },
-    async confirmEmail(code:string):Promise<boolean>{
+    async checkIsConfirmCode(code:string):Promise<boolean>{
+        const user =await userRepository.findUserByConfirmationCode(code);
+        if(user?.emailConfirmation.isConfirmed){
+            return true;
+        }
+            return false;
+    },
+    async updateConfirmEmail(code:string):Promise<boolean>{
         let user = await userRepository.findUserByConfirmationCode(code)
-        if (!user) {return false;}
+       if (!user) {return false;}
         if (user.emailConfirmation.isConfirmed){return false;}
-        if (user.emailConfirmation.confirmationCode !== code){return false;}
-       if(user.emailConfirmation.expirationDate < new Date()){return false;}
+       if(user.emailConfirmation.expirationDate < new Date()) {return false;}
 
-            return await userRepository.updateConfirmation(user._id);
+       return await userRepository.updateConfirmation(user!._id);
 }}

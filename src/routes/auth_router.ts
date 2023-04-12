@@ -49,8 +49,8 @@ authRouter.post('/registration',
     inputAuthValidation,
     async (req:Request,res:Response)=>{
     try{
-        await authService.createNewUser(req.body.password,req.body.login,req.body.email)
-        res.sendStatus(204);
+        const user = await authService.createNewUser(req.body.password,req.body.login,req.body.email)
+        res.status(204).send(user?.emailConfirmation.isConfirmed);
         return;
     }
     catch (e)
@@ -59,38 +59,49 @@ authRouter.post('/registration',
 })
 authRouter.post('/registration-confirmation',
     async (req:Request,res:Response)=>{
-    try{
-        if (await authService.checkConfirmCode(req.body.code)){
-            res.status(404).send({ errorsMessages: [{ message: "Confirmation Code is not correct", field: "code" }] })
+    const correctCode = await authService.checkExistCode(req.body.code)
+        if(!correctCode)
+        {
+            res.status(400).send({ errorsMessages: [{ message: "Confirmation Code is not correct", field: "code" }] })
+        return;
         }
-        const confirmCode = await authService.confirmEmail(req.body.code)
-        if(confirmCode) {
-            res.sendStatus(204)
+        const confirmCode = await authService.checkIsConfirmCode(req.body.code)
+        if(confirmCode)
+        {
+            res.status(400).send({ errorsMessages: [{ message: "Confirmation Code already confirm", field: "code" }] })
+            return;
         }
-        else {res.sendStatus(400)}
-    }
-    catch (e) {
-        res.status(400).send(e)
-    }
+        else{
+           try {
+                await authService.updateConfirmEmail(req.body.code);
+               console.log(await authService.updateConfirmEmail(req.body.code))
+               res.sendStatus(204)
+            }
+            catch (e){
+               return e;
+            }
+        }
 })
 authRouter.post('/registration-email-resending',
     inputEmailValidationForResending,
     existingEmailValidation,
     async (req:Request,res:Response)=>{
     const user = await userRepository.findUserByLoginOrEmail(req.body.email)
-
-        if(user) {
-            if(user.emailConfirmation.isConfirmed){
-                res.status(404).send({ errorsMessages: [{ message: "Confirmation Code already exist", field: "code" }] })
-            }
             try {
-                await emailManager.sendEmailConfirmationCode(user)
-                res.sendStatus(204)
-            } catch (e) {
+                if(user) {
+                    if(user.emailConfirmation.isConfirmed){
+                        res.status(404).send({ errorsMessages: [{ message: "Confirmation Code already confirm", field: "code" }] });
+                        return;
+                    }
+                        await emailManager.sendEmailConfirmationCode(user)
+                        res.sendStatus(204);
+                    return;
+            }
+    else{
+                    res.sendStatus(404);
+                    return;
+                }
+    } catch (e) {
                 return e;
             }
-        }
-        else{
-            res.sendStatus(404)
-        }
 })

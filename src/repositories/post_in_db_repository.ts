@@ -53,7 +53,7 @@ export const postsInDbRepository={
             return false;
         }
         const resultPost = await postsCollectionDb.updateOne({_id: new ObjectId(id)},{$set:{title,shortDescription,content,blogId}})
-        return resultPost.matchedCount===1
+        return resultPost.matchedCount===1;
 
     },
 

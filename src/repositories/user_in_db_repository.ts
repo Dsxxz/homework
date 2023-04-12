@@ -14,7 +14,7 @@ export const userRepository={
 
     },
     async findUserByConfirmationCode(emailConfirmationCode:string):Promise<UserAccountDbType|null>{
-    return   await usersCollectionDb.findOne({'emailConfirmation.confirmationCode':emailConfirmationCode})
+    return   await usersCollectionDb.findOne({"emailConfirmation.confirmationCode":emailConfirmationCode})
     },
     async findUserById(id:ObjectId):Promise<UserAccountDbType|null>{
         if(!ObjectId.isValid(id)) {
@@ -31,7 +31,7 @@ export const userRepository={
     },
     async updateConfirmation(_id:ObjectId):Promise<boolean>{
         let result = await usersCollectionDb.updateOne({_id},{$set:{"emailConfirmation.isConfirmed":true}})
-        return result.modifiedCount ===1;
+        return result.modifiedCount === 1;
     }
 }
 
