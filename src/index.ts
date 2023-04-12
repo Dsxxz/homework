@@ -5,7 +5,7 @@ import {blogsCollectionDb, commentsCollectionDb, postsCollectionDb, runDb, users
 import {userRouter} from "./routes/user_router";
 import {authRouter} from "./routes/auth_router";
 import {commentsRouter} from "./routes/comments_router";
-const app = express();
+export  const app = express();
 const port = process.env.PORT || 3000
 
 
@@ -30,9 +30,9 @@ app.delete('/testing/all-data', async (req, res)=>{
 
 
 const startApp = async ()=>{
-    await runDb();
+    await runDb()
+    await startApp();
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)})
 }
- startApp();
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+

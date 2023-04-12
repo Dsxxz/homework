@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {inputCommentsValidation, inputValidation} from "../MiddleWares/validation-middleware"
+import {inputCommentsValidation, inputBlogsAndPostsValidation} from "../MiddleWares/validation-middleware"
 import {
     postBlogIDValidation, postBlogIDValidator,
     postContentValidation,
@@ -47,7 +47,7 @@ postsRouter.get('/:id',async (req,res)=>{
     }
 })
 postsRouter.post('/',basicAuth,postTitleValidation,postShortDescriptionValidation,postContentValidation,
-    postBlogIDValidation,postBlogIDValidator, inputValidation,async (req:Request, res:Response)=>{
+    postBlogIDValidation,postBlogIDValidator, inputBlogsAndPostsValidation,async (req:Request, res:Response)=>{
         let newPost = await  postsService.createNewPost(req.body.title, req.body.shortDescription,
             req.body.content, req.body.blogId)
 
@@ -103,7 +103,7 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
     }
 })
 postsRouter.put('/:id',basicAuth,postShortDescriptionValidation,postTitleValidation,postContentValidation,
-    postBlogIDValidation, postBlogIDValidator, inputValidation,async (req, res)=> {
+    postBlogIDValidation, postBlogIDValidator, inputBlogsAndPostsValidation,async (req, res)=> {
         let findPostById = await postsService.updatePost(req.params.id, req.body.title, req.body.shortDescription,
             req.body.content, req.body.blogId)
         if (findPostById) {

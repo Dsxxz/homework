@@ -3,13 +3,14 @@ import {authService} from "../service/auth-service";
 import {LoginInputModel, UserAccountDbType} from "../models/userType";
 import {jwtService} from "../application/jwt-service";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
-import {
-    userInputEmailValidation,
-    userInputLoginValidation,
-    userInputPasswordValidation
-} from "../MiddleWares/input-user-validation";
-import {inputEmailValidation} from "../MiddleWares/validation-middleware";
+import {userInputEmailValidation} from "../MiddleWares/input-user-validation";
+import {inputAuthValidation, inputEmailValidation} from "../MiddleWares/validation-middleware";
 import {userRepository} from "../repositories/user_in_db_repository";
+import {
+    authInputEmailValidation,
+    authInputLoginValidation,
+    authInputPasswordValidation
+} from "../MiddleWares/auth-registration";
 
 export const authRouter = Router({});
 authRouter.post('/login',
@@ -41,10 +42,10 @@ authRouter.get('/me',
 })
 
 authRouter.post('/registration',
-    userInputEmailValidation,
-    userInputLoginValidation,
-    userInputPasswordValidation,
-    inputEmailValidation,
+    authInputLoginValidation,
+    authInputEmailValidation,
+    authInputPasswordValidation,
+    inputAuthValidation,
     async (req:Request,res:Response)=>{
     const user1 = await userRepository.findUserByLoginOrEmail(req.body.email)
     const user2 = await userRepository.findUserByLoginOrEmail(req.body.login)

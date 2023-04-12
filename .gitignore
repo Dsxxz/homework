@@ -3,3 +3,4 @@ dist
 .idea
 yarn.lock
 .env
+__tests__

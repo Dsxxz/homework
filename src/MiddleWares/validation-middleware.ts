@@ -7,7 +7,7 @@ export const myValidationResult = validationResult.withDefaults({
         return { message: error.msg, field: error.param };
     }
 })
-export const inputValidation = ((req:Request, res:Response, next: NextFunction)=> {
+export const inputBlogsAndPostsValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
@@ -35,3 +35,11 @@ export const inputEmailValidation = ((req:Request, res:Response, next: NextFunct
     }
     else next();
 })
+export const inputAuthValidation = ((req:Request, res:Response, next: NextFunction)=> {
+    const errorsMessages = myValidationResult(req)
+    if (!errorsMessages.isEmpty()) {
+        return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
+    }
+    else next();
+})
+
