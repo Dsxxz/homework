@@ -47,22 +47,6 @@ authRouter.post('/registration',
     authInputPasswordValidation,
     inputAuthValidation,
     async (req:Request,res:Response)=>{
-    const user1 = await userRepository.findUserByLoginOrEmail(req.body.email)
-    const user2 = await userRepository.findUserByLoginOrEmail(req.body.login)
-        console.log(user1,user2)
-
-        if(user1||user2)
-        {
-            res.status(400).send({
-                "errorsMessages": [
-                    {
-                        "message": "Any<String>",
-                        "field": "email"
-                    }
-                ]
-            });
-            return;
-        }
     try{
         await authService.createNewUser(req.body.password,req.body.login,req.body.email)
         res.sendStatus(204);
