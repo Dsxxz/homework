@@ -57,7 +57,7 @@ export const authService = {
     },
     async checkIsConfirmCode(code:string):Promise<boolean>{
         const user =await userRepository.findUserByConfirmationCode(code);
-            return !user?.emailConfirmation.isConfirmed;
+            return !!user?.emailConfirmation.isConfirmed;
     },
     async updateConfirmEmail(code:string):Promise<boolean>{
         let user = await userRepository.findUserByConfirmationCode(code)
