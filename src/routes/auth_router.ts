@@ -19,6 +19,7 @@ authRouter.post('/login',
    const checkResult:UserAccountDbType|null= await authService.checkLoginAndPassword(req.body.loginOrEmail!, req.body.password!)
     if(checkResult){
         const token = await jwtService.createJWT(checkResult)
+        res.cookie('refreshToken', token,{maxAge: 30*24*60*60*1000, httpOnly:true})
         res.status(200).send({accessToken: token.data.token})
     }
     else{

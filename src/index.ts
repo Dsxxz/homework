@@ -7,9 +7,13 @@ import {authRouter} from "./routes/auth_router";
 import {commentsRouter} from "./routes/comments_router";
 export  const app = express();
 const port = process.env.PORT || 3000
+const cookieParser = require('cookieParser')
+const cors = require('cors')
 
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors());
 app.use('/blogs', blogsRouter)
 app.use('/posts', postsRouter)
 app.use('/users', userRouter)
