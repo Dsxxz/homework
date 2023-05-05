@@ -112,3 +112,8 @@ authRouter.post('/registration-email-resending',
                 return e;
             }
 })
+authRouter.post('/logout',
+    async (req,res)=>{
+
+            res.status(200).send({
+    })})
