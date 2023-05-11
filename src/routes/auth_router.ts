@@ -126,3 +126,15 @@ authRouter.post('/logout',
 
             res.status(200).send({
     })})
+authRouter.post('/refresh-token',
+    async (req,res)=>{
+            const user = await jwtService.getUserByRefreshToken(req.cookies.refreshToken)
+        if(user){
+            const token = await jwtService.createJWT(user)
+            const refreshToken = await jwtService.signToken(user)
+            res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,sameSite: "none",
+                secure:true})
+            res.status(200).send({accessToken: token.data.token})
+        }
+        else{
+            res.sendStatus(401)}})
