@@ -18,9 +18,16 @@ export const authRouter = Router({});
 authRouter.post('/login',
     async (req:Request<{},{},LoginInputModel>,res:Response)=>{
    const checkResult:UserAccountDbType|null= await authService.checkLoginAndPassword(req.body.loginOrEmail!, req.body.password!)
+        console.log('loginOrEmail', req.body.loginOrEmail,
+            'password',req.body.password
+            )
+
+        console.log('checkResult', checkResult)
     if(checkResult){
         const token = await jwtService.createJWT(checkResult)
-        res.cookie('refreshToken', token,{maxAge: 30*24*60*60*1000, httpOnly:true})
+        const refreshToken = await jwtService.signToken(checkResult)
+        res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,sameSite: "none",
+            secure:true})
         res.status(200).send({accessToken: token.data.token})
     }
     else{

@@ -9,8 +9,11 @@ export const userRepository= {
         return newUser
     },
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDbType | null> {
+        console.log(["loginOrEmail", loginOrEmail])
+
         const filterEmail = {"accountData.email": {$regex: `${loginOrEmail}`, $options: 'i'}}
         const filterLogin = {"accountData.userName": {$regex: `${loginOrEmail}`, $options: 'i'}}
+        console.log([filterEmail, filterLogin])
         return await usersCollectionDb.findOne({$or: [filterEmail, filterLogin]})
 
     },

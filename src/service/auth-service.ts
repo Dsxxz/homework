@@ -38,6 +38,7 @@ export const authService = {
     },
     async checkLoginAndPassword(loginOrEmail:string,password:string):Promise<UserAccountDbType|null>{
         const user:UserAccountDbType|null = await userRepository.findUserByLoginOrEmail(loginOrEmail)
+        console.log('user',user)
         if(user){const passwordHash:string = await this.generateHash(password,user.accountData.userPasswordSalt)
         if (passwordHash!==user.accountData.userPasswordHash)return null;}
         return user
