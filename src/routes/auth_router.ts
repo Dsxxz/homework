@@ -120,9 +120,10 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-        const verifyRefresh = await token_repository.verifyTokens(req.cookies.refreshToken)
-        if (verifyRefresh){
-            await token_repository.destroyTokens(verifyRefresh)
+        const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
+        const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+        if (verifyRefreshRepo&&verifyRefreshJwt){
+            await token_repository.destroyTokens(verifyRefreshRepo)
             res.sendStatus(204)
         }
         else {
@@ -131,7 +132,7 @@ authRouter.post('/logout',
         })
 authRouter.post('/refresh-token',
     async (req,res)=>{
-    if(req.cookies.refreshToken){
+    if(!req.cookies.refreshToken){
         res.sendStatus(401)
          return;
     }
@@ -140,18 +141,16 @@ authRouter.post('/refresh-token',
 
         if(verifyRefreshInTokenRepo) {
            const user = await userRepository.findUserById(verifyRefreshInTokenRepo)
-        if(!verifyRefreshInJwt ){
+        if(!verifyRefreshInJwt && !user){
             res.sendStatus(401)
         return;}
            const token = await jwtService.createAccess(user!)
            const refreshToken = await jwtService.createRefresh(user!)
            await token_repository.changeTokensList(user!._id,refreshToken,token.data.token)
 
-           res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,sameSite: "none",
+           res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,
                secure:true})
            res.status(200).send({accessToken: token.data.token})
            return;
-       }
-        res.sendStatus(401)
-}
+       }}
 )
