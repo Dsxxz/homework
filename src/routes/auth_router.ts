@@ -23,7 +23,7 @@ authRouter.post('/login',
         const token = await jwtService.createAccess(checkResult)
         const refreshToken = await jwtService.createRefresh(checkResult)
         await token_repository.createList(checkResult._id,refreshToken,token.data.token)
-        res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,
+        res.cookie('refreshToken', refreshToken,{ httpOnly:true,
             secure:true})
         res.status(200).send({accessToken: token.data.token})
     }
@@ -152,7 +152,7 @@ authRouter.post('/refresh-token',
            const refreshToken = await jwtService.createRefresh(user!)
            await token_repository.changeTokensList(user!._id,refreshToken,token.data.token)
 
-           res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,
+           res.cookie('refreshToken', refreshToken,{ httpOnly:true,
                secure:true})
            res.status(200).send({accessToken: token.data.token})
            return;
