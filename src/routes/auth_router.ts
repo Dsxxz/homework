@@ -27,9 +27,7 @@ authRouter.post('/login',
         res.cookie('refreshToken', refreshToken,{ httpOnly:true,
             secure:true})
         res.status(200).send({accessToken: token.data.token})
-    }
-    else{
-        res.sendStatus(401)
+        return;
     }
 })
 authRouter.get('/me',
@@ -143,21 +141,18 @@ authRouter.post('/refresh-token',
         const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
 
-        if(!verifyRefreshInJwt ){
+        if(!verifyRefreshInJwt &&!verifyRefreshInTokenRepo){
             res.sendStatus(401)
             return;}
-        if(verifyRefreshInTokenRepo) {
+       else {
 
            const token = await jwtService.createAccess(verifyRefreshInJwt!)
-           const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)
-           await token_repository.changeTokensList(verifyRefreshInJwt,refreshToken,token.data.token)
+           const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt!)
+           await token_repository.changeTokensList(verifyRefreshInJwt!,refreshToken,token.data.token)
 
            res.cookie('refreshToken', refreshToken,{ httpOnly:true,
                secure:true})
            res.status(200).send({accessToken: token.data.token})
            return;
-       }
-    else{
-        res.sendStatus(401)}
-}
+       }}
 )
