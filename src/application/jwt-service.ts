@@ -3,8 +3,8 @@ import jwt from  'jsonwebtoken';
 import {UserAccountDbType} from "../models/userType";
 
 export const jwtService={
-    async createAccess(user:UserAccountDbType){
-        const token = jwt.sign({userID:user._id}, "JWT_Secret",{expiresIn:'10'})
+    async createAccess(id:ObjectId){
+        const token = jwt.sign({userID:id}, "JWT_Secret",{expiresIn:'10'})
         return {
             resultCode:0,
             data:{
@@ -18,13 +18,10 @@ export const jwtService={
             return new  ObjectId(result.userID)
         }
         catch (error){
-            if(error instanceof jwt.TokenExpiredError) {
-                return null;
-            }
-            throw error      }
+                return null;}
     },
-    async  createRefresh (user: UserAccountDbType){
-        return jwt.sign({userID:user._id}, 'refreshTokenPrivateKey', {expiresIn:'200'});
+    async  createRefresh (id:ObjectId){
+        return jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'200'});
     },
     async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
         try {
@@ -32,10 +29,8 @@ export const jwtService={
             return new  ObjectId(result.userID)
         }
         catch (error){
-            if(error instanceof jwt.TokenExpiredError) {
                 return null;
-            }
-            throw error
+
         }
     }
 }

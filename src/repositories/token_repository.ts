@@ -19,7 +19,7 @@ export const token_repository = {
         if (!ObjectId.isValid(id)) {
             return null
         }
-        const findList = await tokensCollectionDb.findOne({_id: id})
+        const findList:TokenType|null = await tokensCollectionDb.findOne({_id: id})
         if(findList){
                 findList.accessToken=accessToken
                 findList.refreshToken=refreshToken

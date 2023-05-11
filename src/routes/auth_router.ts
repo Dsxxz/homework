@@ -13,6 +13,7 @@ import {inputEmailValidationForResending} from "../MiddleWares/registration-emai
 import {emailManager} from "../managers/email_manager";
 import {userRepository} from "../repositories/user_in_db_repository";
 import {token_repository} from "../repositories/token_repository";
+import {ObjectId} from "mongodb";
 
 
 export const authRouter = Router({});
@@ -122,11 +123,12 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-        const verifyRefreshRepo = await token_repository.verifyTokens(req.body.refreshToken)
-        const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.body.refreshToken)
+        const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
+        const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
         if (verifyRefreshRepo && verifyRefreshJwt){
             await token_repository.destroyTokens(verifyRefreshRepo)
-            res.clearCookie("refreshToken").sendStatus(204)
+            res.clearCookie("refreshToken",{path:"auth/refresh-token"}).sendStatus(204)
+            return;
         }
         else {
             res.sendStatus(401)
@@ -138,23 +140,24 @@ authRouter.post('/refresh-token',
         res.sendStatus(401)
          return;
     }
-        const verifyRefreshInTokenRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
-        const verifyRefreshInJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
-        console.log("req.cookies.refreshToken",req.cookies.refreshToken)
-        console.log("verifyRefreshInTokenRepo",verifyRefreshInTokenRepo)
+        const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(req.cookies.refreshToken)
+        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
 
-        if(verifyRefreshInTokenRepo) {
-           const user = await userRepository.findUserById(verifyRefreshInTokenRepo)
-        if(!verifyRefreshInJwt && !user){
+        if(!verifyRefreshInJwt ){
             res.sendStatus(401)
-        return;}
-           const token = await jwtService.createAccess(user!)
-           const refreshToken = await jwtService.createRefresh(user!)
-           await token_repository.changeTokensList(user!._id,refreshToken,token.data.token)
+            return;}
+        if(verifyRefreshInTokenRepo) {
+
+           const token = await jwtService.createAccess(verifyRefreshInJwt!)
+           const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)
+           await token_repository.changeTokensList(verifyRefreshInJwt,refreshToken,token.data.token)
 
            res.cookie('refreshToken', refreshToken,{ httpOnly:true,
                secure:true})
            res.status(200).send({accessToken: token.data.token})
            return;
-       }}
+       }
+    else{
+        res.sendStatus(401)}
+}
 )
