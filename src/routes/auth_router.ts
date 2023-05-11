@@ -131,7 +131,7 @@ authRouter.post('/logout',
         })
 authRouter.post('/refresh-token',
     async (req,res)=>{
-            const verifyRefreshInTokenRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
+        const verifyRefreshInTokenRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshInJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
 
         if(verifyRefreshInTokenRepo) {
@@ -150,5 +150,4 @@ authRouter.post('/refresh-token',
        }
         res.sendStatus(401)
 }
-
 )

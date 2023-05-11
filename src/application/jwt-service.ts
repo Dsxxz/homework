@@ -12,24 +12,25 @@ export const jwtService={
             }
         }
         },
-    async verifyUserIdByAccessToken(token:string){
+    async verifyUserIdByAccessToken(token:string):Promise<ObjectId|null>{
         try {
             const result:any = jwt.verify(token,"JWT_Secret")
             return new  ObjectId(result.userID)
         }
         catch (error){
-            return null;
-        }
+            console.log('verifyUserIdByAccessToken', error)
+            return null;        }
     },
     async  createRefresh (user: UserAccountDbType){
         return jwt.sign({userID:user._id}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
     },
-    async verifyUserIdByRefreshToken(token:string){
+    async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
         try {
             const result:any = jwt.verify(token,"refreshTokenPrivateKey")
             return new  ObjectId(result.userID)
         }
         catch (error){
+            console.log('verifyUserIdByRefreshToken', error)
             return null;
         }
     }
