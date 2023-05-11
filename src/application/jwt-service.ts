@@ -21,7 +21,7 @@ export const jwtService={
                 return null;}
     },
     async  createRefresh (id:ObjectId){
-        return jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'200'});
+        return jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'20'});
     },
     async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
         try {
