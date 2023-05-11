@@ -21,8 +21,8 @@ authRouter.post('/login',
     async (req:Request<{},{},LoginInputModel>,res:Response)=>{
    const checkResult:UserAccountDbType|null= await authService.checkLoginAndPassword(req.body.loginOrEmail!, req.body.password!)
     if(checkResult){
-        const token = await jwtService.createAccess(checkResult)
-        const refreshToken = await jwtService.createRefresh(checkResult)
+        const token = await jwtService.createAccess(checkResult._id)
+        const refreshToken = await jwtService.createRefresh(checkResult._id)
         await token_repository.createList(checkResult._id,refreshToken,token.data.token)
         res.cookie('refreshToken', refreshToken,{ httpOnly:true,
             secure:true})
