@@ -23,7 +23,7 @@ authRouter.post('/login',
         const token = await jwtService.createAccess(checkResult)
         const refreshToken = await jwtService.createRefresh(checkResult)
         await token_repository.createList(checkResult._id,refreshToken,token.data.token)
-        res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,sameSite: "none",
+        res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,
             secure:true})
         res.status(200).send({accessToken: token.data.token})
     }
@@ -42,9 +42,11 @@ authRouter.get('/me',
             "email": email,
             "login": login,
             "userId": userID})
+        return;
     }
     catch (e) {
         res.status(401).send('not found')
+        return;
     }
 })
 
@@ -122,7 +124,7 @@ authRouter.post('/logout',
     async (req,res)=>{
         const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
-        if (verifyRefreshRepo&&verifyRefreshJwt){
+        if (verifyRefreshRepo && verifyRefreshJwt){
             await token_repository.destroyTokens(verifyRefreshRepo)
             res.sendStatus(204)
         }

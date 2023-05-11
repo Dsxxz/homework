@@ -3,7 +3,7 @@ import {tokensCollectionDb} from "./db";
 import {TokenType} from "../models/tokens-types";
 
 export const token_repository = {
-    async destroyTokens (id:ObjectId){
+    async destroyTokens (id:ObjectId):Promise<boolean>{
         if (!ObjectId.isValid(id)) {
             return false;
         }
