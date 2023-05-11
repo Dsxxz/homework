@@ -140,6 +140,8 @@ authRouter.post('/refresh-token',
     }
         const verifyRefreshInTokenRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshInJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+        console.log("req.cookies.refreshToken",req.cookies.refreshToken)
+        console.log("verifyRefreshInTokenRepo",verifyRefreshInTokenRepo)
 
         if(verifyRefreshInTokenRepo) {
            const user = await userRepository.findUserById(verifyRefreshInTokenRepo)

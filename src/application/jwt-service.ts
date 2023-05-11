@@ -18,11 +18,13 @@ export const jwtService={
             return new  ObjectId(result.userID)
         }
         catch (error){
-            console.log('verifyUserIdByAccessToken', error)
-            return null;        }
+            if(error instanceof jwt.TokenExpiredError) {
+                return null;
+            }
+            throw error      }
     },
     async  createRefresh (user: UserAccountDbType){
-        return jwt.sign({userID:user._id}, 'refreshTokenPrivateKey', {expiresIn:'20'});
+        return jwt.sign({userID:user._id}, 'refreshTokenPrivateKey', {expiresIn:'200'});
     },
     async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
         try {
@@ -30,8 +32,10 @@ export const jwtService={
             return new  ObjectId(result.userID)
         }
         catch (error){
-            console.log('verifyUserIdByRefreshToken', error)
-            return null;
+            if(error instanceof jwt.TokenExpiredError) {
+                return null;
+            }
+            throw error
         }
     }
 }
