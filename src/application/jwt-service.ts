@@ -23,5 +23,14 @@ export const jwtService={
     },
     async  createRefresh (user: UserAccountDbType){
         return jwt.sign({userID:user._id}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
+    },
+    async verifyUserIdByRefreshToken(token:string){
+        try {
+            const result:any = jwt.verify(token,"refreshTokenPrivateKey")
+            return new  ObjectId(result.userID)
+        }
+        catch (error){
+            return null;
+        }
     }
 }
