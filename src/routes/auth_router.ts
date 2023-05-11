@@ -141,7 +141,7 @@ authRouter.post('/refresh-token',
         const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
 
-        if(!verifyRefreshInJwt &&!verifyRefreshInTokenRepo){
+        if(!verifyRefreshInJwt || !verifyRefreshInTokenRepo){
             res.sendStatus(401)
             return;}
        else {
