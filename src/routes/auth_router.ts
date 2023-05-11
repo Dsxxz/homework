@@ -132,9 +132,10 @@ authRouter.post('/logout',
 authRouter.post('/refresh-token',
     async (req,res)=>{
             const verifyRefreshInTokenRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
-       if(verifyRefreshInTokenRepo) {
+        const verifyRefreshInJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+
+        if(verifyRefreshInTokenRepo) {
            const user = await userRepository.findUserById(verifyRefreshInTokenRepo)
-           const verifyRefreshInJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
         if(!user && !verifyRefreshInJwt){
             res.sendStatus(401)
         return;}
@@ -145,6 +146,7 @@ authRouter.post('/refresh-token',
            res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,sameSite: "none",
                secure:true})
            res.status(200).send({accessToken: token.data.token})
+           return;
        }
         res.sendStatus(401)
 }
