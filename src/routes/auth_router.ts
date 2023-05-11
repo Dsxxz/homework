@@ -126,7 +126,7 @@ authRouter.post('/logout',
         const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
         if (verifyRefreshRepo && verifyRefreshJwt){
             await token_repository.destroyTokens(verifyRefreshRepo)
-            res.sendStatus(204)
+            res.clearCookie("refreshToken").sendStatus(204)
         }
         else {
             res.sendStatus(401)
