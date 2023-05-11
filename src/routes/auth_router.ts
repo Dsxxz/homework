@@ -19,11 +19,6 @@ export const authRouter = Router({});
 authRouter.post('/login',
     async (req:Request<{},{},LoginInputModel>,res:Response)=>{
    const checkResult:UserAccountDbType|null= await authService.checkLoginAndPassword(req.body.loginOrEmail!, req.body.password!)
-        console.log('loginOrEmail', req.body.loginOrEmail,
-            'password',req.body.password
-            )
-
-        console.log('checkResult', checkResult)
     if(checkResult){
         const token = await jwtService.createAccess(checkResult)
         const refreshToken = await jwtService.createRefresh(checkResult)
@@ -138,8 +133,11 @@ authRouter.post('/refresh-token',
     async (req,res)=>{
             const verifyRefresh = await token_repository.verifyTokens(req.cookies.refreshToken)
        if(verifyRefresh) {
+           console.log("verifyRefresh",verifyRefresh)
            const user = await userRepository.findUserById(verifyRefresh)
         if(user){
+            console.log("user",user)
+
             const token = await jwtService.createAccess(user)
             const refreshToken = await jwtService.createRefresh(user)
             await token_repository.changeTokensList(user._id,refreshToken,token.data.token)

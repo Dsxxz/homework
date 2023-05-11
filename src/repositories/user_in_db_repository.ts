@@ -9,11 +9,9 @@ export const userRepository= {
         return newUser
     },
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<UserAccountDbType | null> {
-        console.log(["loginOrEmail", loginOrEmail])
 
         const filterEmail = {"accountData.email": {$regex: `${loginOrEmail}`, $options: 'i'}}
         const filterLogin = {"accountData.userName": {$regex: `${loginOrEmail}`, $options: 'i'}}
-        console.log([filterEmail, filterLogin])
         return await usersCollectionDb.findOne({$or: [filterEmail, filterLogin]})
 
     },
@@ -41,8 +39,6 @@ export const userRepository= {
         const code:string =  uuidv4();
         const filter =user._id
         await usersCollectionDb.updateOne({_id:filter}, {$set: { "emailConfirmation.confirmationCode": code}})
-        console.log(5,code)
-        console.log(6,user.emailConfirmation.confirmationCode)
 
         return await usersCollectionDb.findOne({"emailConfirmation.confirmationCode": code})
 }

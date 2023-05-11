@@ -27,10 +27,10 @@ export const token_repository = {
         }
         return null;
     },
-    async verifyTokens(access:string){
-       const token = await tokensCollectionDb.findOne({accessToken:access})
+    async verifyTokens(refresh:string):Promise<ObjectId|null>{
+       const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken:refresh})
         if(token){
-            return token._id
+            return token.id
         }
         return null;
     }
