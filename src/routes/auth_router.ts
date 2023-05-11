@@ -12,6 +12,7 @@ import {
 import {inputEmailValidationForResending} from "../MiddleWares/registration-email-resending";
 import {emailManager} from "../managers/email_manager";
 import {userRepository} from "../repositories/user_in_db_repository";
+import {token_repository} from "../repositories/token_repository";
 
 
 export const authRouter = Router({});
@@ -24,8 +25,9 @@ authRouter.post('/login',
 
         console.log('checkResult', checkResult)
     if(checkResult){
-        const token = await jwtService.createJWT(checkResult)
-        const refreshToken = await jwtService.signToken(checkResult)
+        const token = await jwtService.createAccess(checkResult)
+        const refreshToken = await jwtService.createRefresh(checkResult)
+        await token_repository.createList(checkResult._id,refreshToken,token.data.token)
         res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,sameSite: "none",
             secure:true})
         res.status(200).send({accessToken: token.data.token})
@@ -44,7 +46,7 @@ authRouter.get('/me',
         res.status(200).send({
             "email": email,
             "login": login,
-            "userID": userID})
+            "userId": userID})
     }
     catch (e) {
         res.status(401).send('not found')
@@ -123,18 +125,28 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-
-            res.status(200).send({
-    })})
+        const verifyRefresh = await token_repository.verifyTokens(req.cookies.refreshToken)
+        if (verifyRefresh){
+            await token_repository.destroyTokens(verifyRefresh)
+            res.sendStatus(200)
+        }
+        else {
+            res.sendStatus(401)
+        }
+        })
 authRouter.post('/refresh-token',
     async (req,res)=>{
-            const user = await jwtService.getUserByRefreshToken(req.cookies.refreshToken)
+            const verifyRefresh = await token_repository.verifyTokens(req.cookies.refreshToken)
+       if(verifyRefresh) {
+           const user = await userRepository.findUserById(verifyRefresh)
         if(user){
-            const token = await jwtService.createJWT(user)
-            const refreshToken = await jwtService.signToken(user)
+            const token = await jwtService.createAccess(user)
+            const refreshToken = await jwtService.createRefresh(user)
+            await token_repository.changeTokensList(user._id,refreshToken,token.data.token)
+
             res.cookie('refreshToken', refreshToken,{maxAge: 30*24*60*60*1000, httpOnly:true,sameSite: "none",
                 secure:true})
             res.status(200).send({accessToken: token.data.token})
-        }
+        }}
         else{
             res.sendStatus(401)}})

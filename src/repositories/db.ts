@@ -4,6 +4,7 @@ import {UserAccountDbType} from "../models/userType";
 import {PostDBType} from "../models/posts-types";
 import {BlogDbType} from "../models/blogs-types";
 import {CommentsInDbType} from "../models/comments-types";
+import {TokenType} from "../models/tokens-types";
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL;
@@ -23,7 +24,8 @@ export const usersCollectionDb = dbUsers.collection<UserAccountDbType>("users")
 
 const dbComments = client.db("commentsCollection")
 export const commentsCollectionDb = dbComments.collection<CommentsInDbType>("comments")
-
+const dbTokens = client.db("tokensCollection")
+export const tokensCollectionDb = dbTokens.collection<TokenType>("tokens")
 
 export async function runDb():Promise<void>{
     try{
@@ -32,6 +34,7 @@ export async function runDb():Promise<void>{
         await client.db("blogs").command({ping: 1});
         await client.db("users").command({ping: 1});
         await client.db("comments").command({ping: 1});
+        await client.db("tokens").command({ping: 1});
         console.log("mongodb connected")
         return;
     }
