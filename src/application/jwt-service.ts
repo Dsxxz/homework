@@ -1,6 +1,5 @@
 import {ObjectId} from "mongodb";
 import jwt from  'jsonwebtoken';
-import {UserAccountDbType} from "../models/userType";
 
 export const jwtService={
     async createAccess(id:ObjectId){
