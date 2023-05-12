@@ -141,10 +141,12 @@ authRouter.post('/refresh-token',
                 res.sendStatus(401)
                 return;
                  }
-        const cookie:string = req.cookies['refreshToken']
+        const cookie:string = req.cookies.refreshToken
         const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(cookie)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
-        if(verifyRefreshInTokenRepo!==verifyRefreshInJwt){
+
+
+        if(verifyRefreshInTokenRepo?.equals(verifyRefreshInJwt?)){
             res.sendStatus(401)
             return;
         }
@@ -158,6 +160,5 @@ authRouter.post('/refresh-token',
                 secure:true})
             res.status(200).send({accessToken: token.data.token})
             return;
-
     }
 )
