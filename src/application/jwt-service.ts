@@ -25,6 +25,7 @@ export const jwtService={
     async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
         try {
             const result:any = jwt.verify(token,"refreshTokenPrivateKey")
+            console.log('verifyUserIdByRefreshToken', result)
             return new  ObjectId(result.userID)
         }
         catch (error){

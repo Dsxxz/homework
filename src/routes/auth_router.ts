@@ -30,9 +30,7 @@ authRouter.post('/login',
         return;
     }
 })
-authRouter.get('/me',
-    authMiddleWare,
-    async (req,res)=>{
+authRouter.get('/me', authMiddleWare, async (req,res)=>{
     try{
         const email = req.user?.accountData.email
         const login = req.user?.accountData.userName
@@ -125,7 +123,7 @@ authRouter.post('/logout',
         const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
         if (verifyRefreshRepo && verifyRefreshJwt){
             await token_repository.destroyTokens(verifyRefreshRepo)
-            res.clearCookie("refreshToken",{path:"auth/refresh-token"}).sendStatus(204)
+            res.clearCookie("refreshToken").sendStatus(204)
             return;
         }
         else {

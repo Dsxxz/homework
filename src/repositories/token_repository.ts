@@ -19,16 +19,12 @@ export const token_repository = {
         if (!ObjectId.isValid(id)) {
             return null
         }
-        const findList:TokenType|null = await tokensCollectionDb.findOne({_id: id})
-        if(findList){
-                findList.accessToken=accessToken
-                findList.refreshToken=refreshToken
-            return 1;
-        }
-        return null;
+        const result = await tokensCollectionDb.updateOne({_id:id}, {$set: {refreshToken: refreshToken,accessToken:accessToken }})
+        return result.modifiedCount === 1;
     },
     async verifyTokens(refresh:string):Promise<ObjectId|null>{
        const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken:refresh})
+        console.log('verifyTokens', token )
         if(token){
             return token.id
         }
