@@ -119,10 +119,14 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-        const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
+        if(!req.cookies.refreshToken) {
+            res.sendStatus(401)
+            return;
+        }
+        const verifyRefreshRepo:ObjectId|null  = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
 
-        if (verifyRefreshRepo!==verifyRefreshInJwt){
+        if (verifyRefreshRepo===verifyRefreshInJwt){
             await token_repository.destroyTokens(verifyRefreshRepo!)
             res.sendStatus(204)
             return;

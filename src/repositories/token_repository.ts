@@ -5,13 +5,12 @@ import {TokenType} from "../models/tokens-types";
 export const token_repository = {
     async destroyTokens (id:ObjectId):Promise<boolean>{
         const result = await tokensCollectionDb.deleteOne({id})
-        console.log(result.deletedCount)
         return result.deletedCount === 1
     },
     async createList(id:ObjectId, refreshToken:string,accessToken:string){
-        const newTokens:TokenType = {id:id,refreshToken:refreshToken,accessToken:accessToken}
-        await tokensCollectionDb.insertOne(newTokens)
-        return 1;
+        const newToken:TokenType = {id:id,refreshToken,accessToken}
+        await tokensCollectionDb.insertOne(newToken)
+        return;
     },
     async changeTokensList(id:ObjectId, refreshToken:string,accessToken:string){
         const result = await tokensCollectionDb.updateOne({id}, {$set: {refreshToken:refreshToken,accessToken:accessToken}})
