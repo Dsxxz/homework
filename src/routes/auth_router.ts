@@ -119,13 +119,8 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-        if(!req.cookies.refreshToken) {
-            res.sendStatus(401)
-            return;
-        }
         const verifyRefreshRepo:ObjectId|null  = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
-
         if(verifyRefreshRepo && verifyRefreshInJwt && verifyRefreshRepo.equals(verifyRefreshInJwt)){
             await token_repository.destroyTokens(verifyRefreshRepo)
             res.clearCookie('refreshToken').sendStatus(204)
@@ -137,10 +132,6 @@ authRouter.post('/logout',
         })
 authRouter.post('/refresh-token',
     async (req,res)=> {
-            if(!req.cookies.refreshToken) {
-                res.sendStatus(401)
-                return;
-                 }
         const cookie:string = req.cookies.refreshToken
         const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(cookie)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
@@ -148,7 +139,6 @@ authRouter.post('/refresh-token',
             res.sendStatus(401)
             return;
         }
-
         if(verifyRefreshInTokenRepo && verifyRefreshInJwt && verifyRefreshInTokenRepo.equals(verifyRefreshInJwt)){
             const token = await jwtService.createAccess(verifyRefreshInJwt!)
             const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt!)
