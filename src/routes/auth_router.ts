@@ -148,12 +148,10 @@ authRouter.post('/refresh-token',
             res.sendStatus(401)
             return;
         }
+        console.log((verifyRefreshInTokenRepo?.equals(verifyRefreshInJwt!)))
 
 
         if(verifyRefreshInTokenRepo?.equals(verifyRefreshInJwt!)){
-            res.sendStatus(401)
-            return;
-        }
         console.log('cookie', req.cookies.refreshToken)
 
             const token = await jwtService.createAccess(verifyRefreshInJwt!)
@@ -165,4 +163,8 @@ authRouter.post('/refresh-token',
             res.status(200).send({accessToken: token.data.token})
             return;
     }
+        else{
+            res.sendStatus(401)
+            return;
+        }}
 )
