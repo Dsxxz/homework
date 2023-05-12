@@ -8,7 +8,7 @@ export const token_repository = {
         return result.deletedCount === 1
     },
     async createList(userId:ObjectId, refreshToken:string,accessToken:string){
-        const newTokens:TokenType = {id:userId,refreshToken:refreshToken,accessToken:accessToken}
+        const newTokens:TokenType = {_id:userId,refreshToken:refreshToken,accessToken:accessToken}
         await tokensCollectionDb.insertOne(newTokens)
         return 1;
     },
@@ -20,7 +20,7 @@ export const token_repository = {
     async verifyTokens(refreshToken:string):Promise<ObjectId|null>{
        const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken})
         if(token){
-            return token.id
+            return token._id
         }
         return null;
     }

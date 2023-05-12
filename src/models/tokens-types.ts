@@ -1,7 +1,7 @@
 import {ObjectId} from "mongodb";
 
 export type TokenType = {
-    id: ObjectId,
+    _id: ObjectId,
     refreshToken : string,
     accessToken : string
 }
