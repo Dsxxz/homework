@@ -3,7 +3,7 @@ import jwt from  'jsonwebtoken';
 
 export const jwtService={
     async createAccess(id:ObjectId){
-        const token = jwt.sign({userID:id}, "JWT_Secret",{expiresIn:'10s'})
+        const token = jwt.sign({userID:id}, "JWT_Secret",{expiresIn:'10'})
         return {
             resultCode:0,
             data:{
@@ -20,7 +20,7 @@ export const jwtService={
                 return null;}
     },
     async  createRefresh (id:ObjectId){
-        return jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
+        return jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'20'});
     },
     async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
         try {
