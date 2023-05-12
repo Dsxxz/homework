@@ -16,10 +16,7 @@ export const token_repository = {
         return 1;
     },
     async changeTokensList(id:ObjectId, refreshToken:string,accessToken:string){
-        if (!ObjectId.isValid(id)) {
-            return null
-        }
-        const result = await tokensCollectionDb.updateOne({_id:id}, {$set: {refreshToken: refreshToken,accessToken:accessToken }})
+        const result = await tokensCollectionDb.updateOne({_id:id}, {$set: {refreshToken,accessToken}})
         return result.modifiedCount === 1;
     },
     async verifyTokens(refresh:string):Promise<ObjectId|null>{
