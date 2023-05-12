@@ -119,8 +119,8 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-        const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
-        const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+        const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies['refreshToken'])
+        const verifyRefreshJwt = await jwtService.verifyUserIdByRefreshToken(req.cookies['refreshToken'])
         if (verifyRefreshRepo && verifyRefreshJwt){
             await token_repository.destroyTokens(verifyRefreshRepo)
             res.clearCookie("refreshToken").sendStatus(204)
@@ -131,26 +131,24 @@ authRouter.post('/logout',
         }
         })
 authRouter.post('/refresh-token',
-    async (req,res)=>{
-    if(!req.cookies.refreshToken){
-        res.sendStatus(401)
-         return;
-    }
-        const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(req.cookies.refreshToken)
-        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+    async (req,res)=> {
+        const cookie= req.cookies.refreshToken
+        const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(cookie)
+        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
 
         if(!verifyRefreshInJwt || !verifyRefreshInTokenRepo){
             res.sendStatus(401)
             return;}
-       else {
+        else {
 
-           const token = await jwtService.createAccess(verifyRefreshInJwt!)
-           const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt!)
-           await token_repository.changeTokensList(verifyRefreshInJwt!,refreshToken,token.data.token)
+            const token = await jwtService.createAccess(verifyRefreshInJwt!)
+            const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt!)
+            await token_repository.changeTokensList(verifyRefreshInJwt!,refreshToken,token.data.token)
 
-           res.cookie('refreshToken', refreshToken,{ httpOnly:true,
-               secure:true})
-           res.status(200).send({accessToken: token.data.token})
-           return;
-       }}
+            res.cookie('refreshToken', refreshToken,{ httpOnly:true,
+                secure:true})
+            res.status(200).send({accessToken: token.data.token})
+            return;
+        }
+    }
 )

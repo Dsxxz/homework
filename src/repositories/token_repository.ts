@@ -24,7 +24,6 @@ export const token_repository = {
     },
     async verifyTokens(refresh:string):Promise<ObjectId|null>{
        const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken:refresh})
-        console.log('verifyTokens', token )
         if(token){
             return token.id
         }

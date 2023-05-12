@@ -14,7 +14,7 @@ import {authRouter} from "./routes/auth_router";
 import {commentsRouter} from "./routes/comments_router";
 export  const app = express();
 const port = process.env.PORT || 3000
-const cookieParser = require('cookie-parser')
+import  cookieParser = require('cookie-parser')
 const cors = require('cors')
 
 
