@@ -21,7 +21,7 @@ export const jwtService={
                 return null;}
     },
     async  createRefresh (id:ObjectId){
-        const token=jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'50s'});
+        const token=jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
         console.log('token createRefresh',token)
         return token
 
