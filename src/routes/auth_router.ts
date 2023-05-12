@@ -120,8 +120,10 @@ authRouter.post('/registration-email-resending',
 authRouter.post('/logout',
     async (req,res)=>{
         const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
-        if (verifyRefreshRepo){
-            await token_repository.destroyTokens(verifyRefreshRepo)
+        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+
+        if (verifyRefreshRepo!==verifyRefreshInJwt){
+            await token_repository.destroyTokens(verifyRefreshRepo!)
             res.sendStatus(204)
             return;
         }
@@ -138,7 +140,7 @@ authRouter.post('/refresh-token',
         const cookie:string = req.cookies.refreshToken
         const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(cookie)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
-        if( !verifyRefreshInTokenRepo){
+        if(verifyRefreshInTokenRepo!==verifyRefreshInJwt){
             res.sendStatus(401)
             return;
         }
