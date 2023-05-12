@@ -4,10 +4,7 @@ import {TokenType} from "../models/tokens-types";
 
 export const token_repository = {
     async destroyTokens (id:ObjectId):Promise<boolean>{
-        if (!ObjectId.isValid(id)) {
-            return false;
-        }
-        const result = await tokensCollectionDb.deleteOne({_id: new ObjectId(id)})
+        const result = await tokensCollectionDb.deleteOne({_id:id})
         return result.deletedCount === 1
     },
     async createList(userId:ObjectId, refreshToken:string,accessToken:string){
@@ -20,8 +17,8 @@ export const token_repository = {
         console.log(result.modifiedCount)
         return result.modifiedCount === 1;
     },
-    async verifyTokens(refresh:string):Promise<ObjectId|null>{
-       const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken:refresh})
+    async verifyTokens(refreshToken:string):Promise<ObjectId|null>{
+       const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken})
         if(token){
             return token.id
         }
