@@ -131,7 +131,7 @@ authRouter.post('/logout',
         }
         })
 authRouter.post('/refresh-token',
-    async (req,res)=> {
+    async (req,res)=> {console.log(new Date())
             if(!req.cookies.refreshToken) {
                 res.sendStatus(401)
                 return;
