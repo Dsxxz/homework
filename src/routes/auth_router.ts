@@ -122,7 +122,7 @@ authRouter.post('/logout',
         const verifyRefreshRepo = await token_repository.verifyTokens(req.cookies.refreshToken)
         if (verifyRefreshRepo){
             await token_repository.destroyTokens(verifyRefreshRepo)
-            res.clearCookie("refreshToken").sendStatus(204)
+            res.sendStatus(204)
             return;
         }
         else {
