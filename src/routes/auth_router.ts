@@ -140,16 +140,17 @@ authRouter.post('/refresh-token',
             return;
         }
         if(verifyRefreshInTokenRepo && verifyRefreshInJwt && verifyRefreshInTokenRepo.equals(verifyRefreshInJwt)){
-            const token = await jwtService.createAccess(verifyRefreshInJwt!)
-            const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt!)
-            if(await token_repository.changeTokensList(verifyRefreshInJwt,refreshToken,token.data.token)) {
-                res.cookie('refreshToken', refreshToken, {
+            const token = await jwtService.createAccess(verifyRefreshInJwt)
+            const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)
+            await token_repository.destroyTokens(verifyRefreshInJwt)
+            await token_repository.createList(verifyRefreshInJwt,refreshToken,token.data.token)
+
+            res.cookie('refreshToken', refreshToken, {
                     httpOnly: true,
                     secure: true
                 })
                 res.status(200).send({accessToken: token.data.token})
                 return;
-            }
     }
         else{
             res.sendStatus(401)
