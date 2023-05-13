@@ -126,9 +126,10 @@ authRouter.post('/logout',
         const checkToken:string|null = await jwtService.checkToken(cookie)
 
 
-        if(verifyRefreshRepo && verifyRefreshInJwt && verifyRefreshRepo===cookie && checkToken===verifyRefreshRepo)
+        if(verifyRefreshRepo && verifyRefreshInJwt && checkToken===verifyRefreshRepo)
         {
-            await token_repository.destroyTokens(verifyRefreshInJwt)
+            await token_repository.destroyTokens(verifyRefreshRepo)
+            console.log(await token_repository.destroyTokens(verifyRefreshRepo))
             res.clearCookie('refreshToken').sendStatus(204)
             return;
         }
@@ -139,20 +140,26 @@ authRouter.post('/logout',
 authRouter.post('/refresh-token',
     async (req,res)=> {
         const cookie:string = req.cookies.refreshToken
+
         const verifyRefreshInTokenRepo:string|null = await token_repository.verifyTokens(cookie)
-        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
         const checkToken:string|null = await jwtService.checkToken(cookie)
 
-        if(!verifyRefreshInJwt || !verifyRefreshInTokenRepo) {
+
+        const idFromJwtService:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
+
+        if(!idFromJwtService || !verifyRefreshInTokenRepo) {
             res.sendStatus(401)
             return;
         }
 
-        if(verifyRefreshInTokenRepo===cookie && checkToken===verifyRefreshInTokenRepo){
-            const token = await jwtService.createAccess(verifyRefreshInJwt)
-            const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)
-            await token_repository.destroyTokens(verifyRefreshInJwt)
-            await token_repository.createList(verifyRefreshInJwt,refreshToken,token.data.token)
+        if(verifyRefreshInTokenRepo===checkToken){
+
+            await token_repository.destroyTokens(verifyRefreshInTokenRepo)
+
+            const token = await jwtService.createAccess(idFromJwtService)
+            const refreshToken = await jwtService.createRefresh(idFromJwtService)
+
+            await token_repository.createList(idFromJwtService,refreshToken,token.data.token)
 
             res.cookie('refreshToken', refreshToken, {
                     httpOnly: true,
