@@ -9,8 +9,7 @@ export const token_repository = {
     },
     async createList(id:ObjectId, refreshToken:string,accessToken:string){
         const newToken:TokenType = {id:id,refreshToken,accessToken}
-        await tokensCollectionDb.insertOne(newToken)
-        return;
+        return await tokensCollectionDb.insertOne(newToken)
     },
     async verifyTokens(refreshToken:string):Promise<ObjectId|null>{
        const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken:refreshToken})
