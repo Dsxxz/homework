@@ -119,10 +119,10 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-        const verifyRefreshRepo:ObjectId|null  = await token_repository.verifyTokens(req.cookies.refreshToken)
+        const verifyRefreshRepo:string|null  = await token_repository.verifyTokens(req.cookies.refreshToken)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
-        if(verifyRefreshRepo && verifyRefreshInJwt && verifyRefreshRepo.equals(verifyRefreshInJwt)){
-            await token_repository.destroyTokens(verifyRefreshRepo)
+        if(verifyRefreshRepo && verifyRefreshInJwt && verifyRefreshRepo===req.cookies.refreshToken){
+            await token_repository.destroyTokens(verifyRefreshInJwt)
             res.clearCookie('refreshToken').sendStatus(204)
             return;
         }
@@ -133,18 +133,17 @@ authRouter.post('/logout',
 authRouter.post('/refresh-token',
     async (req,res)=> {
         const cookie:string = req.cookies.refreshToken
-        const verifyRefreshInTokenRepo:ObjectId|null = await token_repository.verifyTokens(cookie)
+        const verifyRefreshInTokenRepo:string|null = await token_repository.verifyTokens(cookie)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
         if(!verifyRefreshInJwt || !verifyRefreshInTokenRepo) {
             res.sendStatus(401)
             return;
         }
-        console.log(verifyRefreshInTokenRepo.equals(verifyRefreshInJwt))
 
-        if(verifyRefreshInTokenRepo.equals(verifyRefreshInJwt)){
+        if(verifyRefreshInTokenRepo===cookie){
             const token = await jwtService.createAccess(verifyRefreshInJwt)
             const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)
-            await token_repository.destroyTokens(verifyRefreshInTokenRepo)
+            await token_repository.destroyTokens(verifyRefreshInJwt)
             await token_repository.createList(verifyRefreshInJwt,refreshToken,token.data.token)
 
             res.cookie('refreshToken', refreshToken, {
