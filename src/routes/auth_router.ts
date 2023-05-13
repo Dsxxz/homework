@@ -142,7 +142,7 @@ authRouter.post('/refresh-token',
         if(verifyRefreshInTokenRepo && verifyRefreshInJwt && verifyRefreshInTokenRepo.equals(verifyRefreshInJwt)){
             const token = await jwtService.createAccess(verifyRefreshInJwt)
             const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)
-            await token_repository.destroyTokens(verifyRefreshInJwt)
+            await token_repository.destroyTokens(verifyRefreshInTokenRepo)
             await token_repository.createList(verifyRefreshInJwt,refreshToken,token.data.token)
 
             res.cookie('refreshToken', refreshToken, {
