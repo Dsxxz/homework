@@ -12,10 +12,6 @@ export const token_repository = {
         await tokensCollectionDb.insertOne(newToken)
         return;
     },
-    async changeTokensList(id:ObjectId, refreshToken:string,accessToken:string){
-        const result = await tokensCollectionDb.updateOne({id}, {$set: {refreshToken:refreshToken,accessToken:accessToken}})
-        return result.matchedCount === 1;
-    },
     async verifyTokens(refreshToken:string):Promise<ObjectId|null>{
        const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken:refreshToken})
         if(token){
