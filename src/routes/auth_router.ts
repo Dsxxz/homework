@@ -139,6 +139,8 @@ authRouter.post('/refresh-token',
             res.sendStatus(401)
             return;
         }
+        console.log(verifyRefreshInTokenRepo.equals(verifyRefreshInJwt))
+
         if(verifyRefreshInTokenRepo.equals(verifyRefreshInJwt)){
             const token = await jwtService.createAccess(verifyRefreshInJwt)
             const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)

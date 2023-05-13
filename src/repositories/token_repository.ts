@@ -12,7 +12,7 @@ export const token_repository = {
         return await tokensCollectionDb.insertOne(newToken)
     },
     async verifyTokens(refreshToken:string):Promise<ObjectId|null>{
-       const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken:refreshToken})
+       const token:TokenType|null = await tokensCollectionDb.findOne({refreshToken})
         if(token){
             return token.id
         }
