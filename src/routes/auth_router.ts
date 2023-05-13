@@ -119,28 +119,36 @@ authRouter.post('/registration-email-resending',
 })
 authRouter.post('/logout',
     async (req,res)=>{
-        const verifyRefreshRepo:string|null  = await token_repository.verifyTokens(req.cookies.refreshToken)
-        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
-        if(verifyRefreshRepo && verifyRefreshInJwt && verifyRefreshRepo===req.cookies.refreshToken){
+        const cookie:string = req.cookies.refreshToken
+
+        const verifyRefreshRepo:string|null  = await token_repository.verifyTokens(cookie)
+        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
+        const checkToken:string|null = await jwtService.checkToken(cookie)
+
+
+        if(verifyRefreshRepo && verifyRefreshInJwt && verifyRefreshRepo===cookie && checkToken===verifyRefreshRepo)
+        {
             await token_repository.destroyTokens(verifyRefreshInJwt)
             res.clearCookie('refreshToken').sendStatus(204)
             return;
         }
         else {
             res.sendStatus(401)
-        }
+         }
         })
 authRouter.post('/refresh-token',
     async (req,res)=> {
         const cookie:string = req.cookies.refreshToken
         const verifyRefreshInTokenRepo:string|null = await token_repository.verifyTokens(cookie)
         const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
+        const checkToken:string|null = await jwtService.checkToken(cookie)
+
         if(!verifyRefreshInJwt || !verifyRefreshInTokenRepo) {
             res.sendStatus(401)
             return;
         }
 
-        if(verifyRefreshInTokenRepo===cookie){
+        if(verifyRefreshInTokenRepo===cookie && checkToken===verifyRefreshInTokenRepo){
             const token = await jwtService.createAccess(verifyRefreshInJwt)
             const refreshToken = await jwtService.createRefresh(verifyRefreshInJwt)
             await token_repository.destroyTokens(verifyRefreshInJwt)

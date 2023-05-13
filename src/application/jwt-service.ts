@@ -20,7 +20,7 @@ export const jwtService={
                 return null;}
     },
     async  createRefresh (id:ObjectId){
-        return  jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
+        return  jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'30s'});
     },
     async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
         try {
@@ -31,5 +31,13 @@ export const jwtService={
             console.log(error)
                 return null;
         }
-    }
-}
+    },
+    async checkToken(token:string):Promise<string|null>{
+        try {
+            const result:any = jwt.verify(token,"JWT_Secret")
+            if(result){return token}
+            return null;
+        }
+        catch (error){
+            return null;}
+    }}
