@@ -12,24 +12,30 @@ import {
 import {inputEmailValidationForResending} from "../MiddleWares/registration-email-resending";
 import {emailManager} from "../managers/email_manager";
 import {userRepository} from "../repositories/user_in_db_repository";
-import {token_repository} from "../repositories/token_repository";
-import {ObjectId} from "mongodb";
+import {DevisesChecker} from "../MiddleWares/devisesChecker";
+import {sessionRepository} from "../repositories/devises_in_repository";
 
 
 export const authRouter = Router({});
-authRouter.post('/login',
+authRouter.post('/login',DevisesChecker,
     async (req:Request<{},{},LoginInputModel>,res:Response)=>{
-   const checkResult:UserAccountDbType|null= await authService.checkLoginAndPassword(req.body.loginOrEmail!, req.body.password!)
+   const checkResult:UserAccountDbType|null= await authService.checkLoginAndPassword(req.body.loginOrEmail, req.body.password)
     if(checkResult){
-        const token = await jwtService.createAccess(checkResult._id)
-        const refreshToken = await jwtService.createRefresh(checkResult._id)
-        await token_repository.createList(checkResult._id,refreshToken,token.data.token)
+        const userId = checkResult._id
+        const ip = req.ip
+        const title = req.headers['user-agent']
+        const deviceId = req.headers['user-agent']
+        const timeNow:Date = new Date(Date.now())
+        const token = await jwtService.createAccess(userId,ip.toString(),title!.toString(),deviceId!.toString(),timeNow)
+        const refreshToken = await jwtService.createRefresh(userId,ip.toString(),title!.toString(),deviceId!.toString(),timeNow)
+        await sessionRepository.createNewSession(userId,ip.toString(),title!.toString(),timeNow,deviceId!.toString())
+
         res.cookie('refreshToken', refreshToken,{ httpOnly:true,
             secure:true})
         res.status(200).send({accessToken: token.data.token})
         return;
-    }
-})
+    }}
+)
 authRouter.get('/me', authMiddleWare, async (req,res)=>{
     try{
         const email = req.user?.accountData.email
@@ -47,7 +53,7 @@ authRouter.get('/me', authMiddleWare, async (req,res)=>{
     }
 })
 
-authRouter.post('/registration',
+authRouter.post('/registration',DevisesChecker,
     authInputEmailValidation,
     authInputPasswordValidation,
     authInputLoginValidation,
@@ -62,7 +68,7 @@ authRouter.post('/registration',
     {res.status(400).send(e);
     return;}
 })
-authRouter.post('/registration-confirmation',
+authRouter.post('/registration-confirmation',DevisesChecker,
     async (req:Request,res:Response)=>{
     const correctCode = await authService.checkExistCode(req.body.code)
         if(!correctCode)
@@ -86,7 +92,7 @@ authRouter.post('/registration-confirmation',
             }
         }
 })
-authRouter.post('/registration-email-resending',
+authRouter.post('/registration-email-resending',DevisesChecker,
     inputEmailValidationForResending,
     existingEmailValidation,
     async (req:Request,res:Response)=>{
@@ -121,55 +127,52 @@ authRouter.post('/logout',
     async (req,res)=>{
         const cookie:string = req.cookies.refreshToken
 
-        const verifyRefreshRepo:string|null  = await token_repository.verifyTokens(cookie)
-        const verifyRefreshInJwt:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const checkToken:string|null = await jwtService.checkToken(cookie)
-
-
-        if(verifyRefreshRepo && verifyRefreshInJwt && checkToken===verifyRefreshRepo)
+        const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
+        const ip=checkToken?.ip
+        const id=checkToken?.id
+        const title=checkToken?.title
+        const deviceId=checkToken?.deviceId
+        const lastTokenCreatedAt=checkToken?.time
+        if(checkToken)
         {
-            await token_repository.destroyTokens(verifyRefreshRepo)
-            console.log(await token_repository.destroyTokens(verifyRefreshRepo))
-            res.clearCookie('refreshToken').sendStatus(204)
-            return;
-        }
-        else {
-            res.sendStatus(401)
-         }
+            const checkSession = await sessionRepository.findSessions(id,ip,title,lastTokenCreatedAt,deviceId)
+            if(!checkSession){
+                res.sendStatus(401);
+                return;
+            }
+            else {
+                await sessionRepository.deleteSession(id,ip, title, lastTokenCreatedAt, deviceId)
+                res.clearCookie('refreshToken').sendStatus(204)
+                return;
+            }}
         })
+
 authRouter.post('/refresh-token',
     async (req,res)=> {
         const cookie:string = req.cookies.refreshToken
+        const timeNow:Date = new Date(Date.now())
 
-        const verifyRefreshInTokenRepo:string|null = await token_repository.verifyTokens(cookie)
-        const checkToken:string|null = await jwtService.checkToken(cookie)
-
-
-        const idFromJwtService:ObjectId|null = await jwtService.verifyUserIdByRefreshToken(cookie)
-
-        if(!idFromJwtService || !verifyRefreshInTokenRepo) {
-            res.sendStatus(401)
-            return;
-        }
-
-        if(verifyRefreshInTokenRepo===checkToken){
-
-            await token_repository.destroyTokens(verifyRefreshInTokenRepo)
-
-            const token = await jwtService.createAccess(idFromJwtService)
-            const refreshToken = await jwtService.createRefresh(idFromJwtService)
-
-            await token_repository.createList(idFromJwtService,refreshToken,token.data.token)
+        const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
+        const id = checkToken?.id
+        const ip=checkToken?.ip
+        const title=checkToken?.title
+        const deviceId=checkToken?.deviceId
+        const lastTokenCreatedAt=checkToken?.time
+        if(checkToken)
+        {
+            const checkSession = await sessionRepository.findSessions(id,ip,title,lastTokenCreatedAt,deviceId)
+            if(!checkSession){
+                res.sendStatus(401);
+                return;
+            }
+            const newToken = await jwtService.createAccess(id,ip.toString(),title.toString(),deviceId.toString(),timeNow)
+            const refreshToken = await jwtService.createRefresh(id,ip.toString(),title.toString(),deviceId.toString(),timeNow)
 
             res.cookie('refreshToken', refreshToken, {
                     httpOnly: true,
                     secure: true
                 })
-                res.status(200).send({accessToken: token.data.token})
+                res.status(200).send({accessToken: newToken.data.token})
                 return;
-    }
-        else{
-            res.sendStatus(401)
-            return;
         }}
 )

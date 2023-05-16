@@ -1,12 +1,12 @@
 import express  from 'express';
 import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
+import {devisesRouter} from "./routes/devises_router";
 import {
     blogsCollectionDb,
-    commentsCollectionDb,
+    commentsCollectionDb, devisesCollectionDb, IPRestrictCollectionDb,
     postsCollectionDb,
     runDb,
-    tokensCollectionDb,
     usersCollectionDb
 } from "./repositories/db";
 import {userRouter} from "./routes/user_router";
@@ -17,11 +17,13 @@ const port = process.env.PORT || 3000
 import  cookieParser = require('cookie-parser')
 const cors = require('cors')
 
+app.set('trust proxy', true)
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 app.use('/blogs', blogsRouter)
+app.use('/security/devices', devisesRouter)
 app.use('/posts', postsRouter)
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
@@ -32,7 +34,8 @@ app.delete('/testing/all-data', async (req, res)=>{
         await postsCollectionDb.deleteMany({})
         await usersCollectionDb.deleteMany({})
         await commentsCollectionDb.deleteMany({})
-        await tokensCollectionDb.deleteMany({})
+        await devisesCollectionDb.deleteMany({})
+        await IPRestrictCollectionDb.deleteMany({})
         res.sendStatus(204)
     }
     catch{

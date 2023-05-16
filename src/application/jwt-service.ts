@@ -2,8 +2,8 @@ import {ObjectId} from "mongodb";
 import jwt from  'jsonwebtoken';
 
 export const jwtService={
-    async createAccess(id:ObjectId){
-        const token = jwt.sign({userID:id}, "JWT_Secret",{expiresIn:'10s'})
+    async createAccess(id:ObjectId,ip:string,title:string,deviceId:string,timeNow:Date){
+        const token = jwt.sign({id,ip,title,deviceId, iss:timeNow}, "JWT_Secret",{expiresIn:'10s'})
         return {
             resultCode:0,
             data:{
@@ -11,32 +11,31 @@ export const jwtService={
             }
         }
         },
-    async verifyUserIdByAccessToken(token:string):Promise<ObjectId|null>{
-        try {
-            const result:any = jwt.verify(token,"JWT_Secret")
-            return new  ObjectId(result.userID)
-        }
-        catch (error){
-                return null;}
+    async  createRefresh (id:ObjectId,ip:string,title:string,deviceId:string,timeNow:Date){
+        return  jwt.sign({id,ip,title,deviceId, iss:timeNow}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
     },
-    async  createRefresh (id:ObjectId){
-        return  jwt.sign({userID:id}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
-    },
-    async verifyUserIdByRefreshToken(token:string):Promise<ObjectId|null>{
+
+    async verifyUserIdByRefreshToken(token:string){
         try {
             const result:any = jwt.verify(token,"refreshTokenPrivateKey")
-            return new  ObjectId(result.userID)
+            const sessionData ={
+                id:result.id,
+                ip:result.ip,
+                title:result.title,
+                deviceId:result.deviceId,
+                time:result.timeNow
+            }
+            return sessionData;
         }
         catch (error){
             console.log(error)
                 return null;
         }
     },
-    async checkToken(token:string):Promise<string|null>{
+    async verifyUserIdByAccessToken(token:string){
         try {
-            const result:any = jwt.verify(token,"refreshTokenPrivateKey")
-            if(result){return token}
-            return null;
+            const result: any = jwt.verify(token, "JWT_Secret")
+            return result.id;
         }
         catch (error){
             return null;}
