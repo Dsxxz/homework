@@ -4,8 +4,8 @@ export type DeviceType = {
     userId:ObjectId,
     IP:	string,  //IP address of device during signing in
     title:	string,   //Device name: for example Chrome 105 (received by parsing http header "user-agent")
-    lastActiveDate:Date,   //Date of the last generating of refresh/access tokens
-    deviceId:string   // ID of connected device session
+    lastActiveDate:string,   //Date of the last generating of refresh/access tokens
+    deviceId:ObjectId   // ID of connected device session
 }
 export type IPCheckerType = {
     IP:string;

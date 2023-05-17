@@ -2,13 +2,14 @@ import {Router} from "express";
 import {sessionRepository} from "../repositories/devises_in_repository";
 import {jwtService} from "../application/jwt-service";
 import {DeviceType} from "../models/devices_types";
+import {ObjectId} from "mongodb";
 export const devisesRouter = Router({});
 
 devisesRouter.get('/', async (req, res)=>{
     try {
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const id = checkToken?.id
+        const id = checkToken?.deviceId
         const sessions:DeviceType[]|undefined = await sessionRepository.getAllCurrentSessions(id)
         if(sessions){
             res.status(200).send( sessions.map(s=>({
@@ -31,7 +32,7 @@ devisesRouter.delete('/', async (req, res)=>{
     try{
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const id = checkToken?.id
+        const id = checkToken?.deviceId
         const sessions:boolean = await sessionRepository.deleteAllSession(id)
         if(sessions){
             res.sendStatus(204);
@@ -51,10 +52,10 @@ devisesRouter.delete('/:id', async (req, res)=>{
     try{
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const id = checkToken?.id
-        const deviceId = checkToken?.deviceId
-        const sessions:number = await sessionRepository.deleteOtherSession(id,deviceId)
-        if(sessions && id === req.params.id){
+        const userId:ObjectId = checkToken?.userId
+        const deviceId:ObjectId = checkToken?.deviceId
+        const sessions:number = await sessionRepository.deleteOtherSession(userId,deviceId)
+        if(sessions){
             res.sendStatus(204);
             return;
         }

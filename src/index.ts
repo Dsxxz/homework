@@ -15,13 +15,14 @@ import {commentsRouter} from "./routes/comments_router";
 export  const app = express();
 const port = process.env.PORT || 3000
 import  cookieParser = require('cookie-parser')
+import jwt from "jsonwebtoken";
 const cors = require('cors')
 
 app.set('trust proxy', true)
 
 app.use(express.json());
-app.use(cookieParser());
 app.use(cors());
+app.use(cookieParser());
 app.use('/blogs', blogsRouter)
 app.use('/security/devices', devisesRouter)
 app.use('/posts', postsRouter)
@@ -47,6 +48,12 @@ app.delete('/testing/all-data', async (req, res)=>{
 const startApp = async ()=>{
     await runDb()
     app.listen(port, () => {
+        const token = jwt.sign({userId: 1, deviceId: 2}, 'refreshTokenPrivateKey', {expiresIn: '20s'})
+        console.log(token)
+        const payload: any = jwt.decode(token)
+        console.log(payload)
+        const lastAD = new Date(payload.iat * 1000)
+        console.log(lastAD)
         console.log(`Example app listening on port ${port}`)})
 }
 

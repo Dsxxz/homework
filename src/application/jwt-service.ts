@@ -1,42 +1,38 @@
 import {ObjectId} from "mongodb";
-import jwt from  'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
-export const jwtService={
-    async createAccess(id:ObjectId,ip:string,title:string,deviceId:string,timeNow:Date){
-        const token = jwt.sign({id,ip,title,deviceId, iss:timeNow}, "JWT_Secret",{expiresIn:'10s'})
-        return {
-            resultCode:0,
-            data:{
-                token:token
-            }
-        }
-        },
-    async  createRefresh (id:ObjectId,ip:string,title:string,deviceId:string,timeNow:Date){
-        return  jwt.sign({id,ip,title,deviceId, iss:timeNow}, 'refreshTokenPrivateKey', {expiresIn:'20s'});
+export const jwtService = {
+    async createAccess(userId: ObjectId) {
+        return jwt.sign({userId}, "JWT_Secret", {expiresIn: '10s'})
     },
 
-    async verifyUserIdByRefreshToken(token:string){
+    async createRefresh(userId: ObjectId, deviceId: ObjectId,) {
+        return jwt.sign({userId, deviceId}, 'refreshTokenPrivateKey', {expiresIn: '20s'});
+    },
+
+    async getLastActiveDateFromRefreshToken(refreshToken: string): Promise<string> {
+        const result: any = jwt.decode(refreshToken)
+        return new Date(result.iat * 1000).toISOString()
+    },
+
+    async verifyUserIdByRefreshToken(token: string) {
         try {
-            const result:any = jwt.verify(token,"refreshTokenPrivateKey")
-            const sessionData ={
-                id:result.id,
-                ip:result.ip,
-                title:result.title,
-                deviceId:result.deviceId,
-                time:result.timeNow
+            const result: any = jwt.verify(token, "refreshTokenPrivateKey")
+            return {deviceId:result.deviceId,
+                userId:result.userId,
             }
-            return sessionData;
-        }
-        catch (error){
+        } catch (error) {
             console.log(error)
-                return null;
+            return null;
         }
     },
-    async verifyUserIdByAccessToken(token:string){
+    async verifyUserIdByAccessToken(token: string) {
         try {
             const result: any = jwt.verify(token, "JWT_Secret")
-            return result.id;
+            return result.deviceId;
+        } catch (error) {
+            return null;
         }
-        catch (error){
-            return null;}
-    }}
+    },
+
+}
