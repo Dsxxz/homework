@@ -64,7 +64,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
         }
         const userId:ObjectId = checkToken?.userId
         const sessions:number = await devisesRepository.deleteOtherSession(userId,checkToken?.deviceId)
-        if(checkToken){
+        if(checkToken.deviceId!==new ObjectId(req.params.id)){
             res.sendStatus(401);
             return;
         }
