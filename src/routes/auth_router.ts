@@ -157,7 +157,7 @@ authRouter.post('/logout',
             const checkTime = await jwtService.getLastActiveDateFromRefreshToken(cookie)
             const deviceId = checkToken?.deviceId
             const userId = checkToken.userId
-            const checkSession = await devicesService.findSessions(userId, checkTime, deviceId)
+            const checkSession = await devicesService.findSessions(userId, deviceId)
             if (!checkSession) {
                 res.sendStatus(401);
                 return;
