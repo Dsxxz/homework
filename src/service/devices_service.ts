@@ -26,10 +26,11 @@ export const devicesService = {
             deviceId:deviceId
         }
         await devisesRepository.createNewSession(newSession)
-        return {IP:newSession.IP,
-            title:newSession.title,
+        return {
+            deviceId:newSession.deviceId,
+            ip:newSession.IP,
             lastActiveDate:newSession.lastActiveDate,
-            deviceId:newSession.deviceId
+            title:newSession.title
         }
     },
     async findSessions(userId:ObjectId, checkTime:string, deviceId:ObjectId){

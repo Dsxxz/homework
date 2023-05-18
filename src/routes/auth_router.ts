@@ -37,8 +37,10 @@ authRouter.post('/login', ConnectionsCountChecker,
             if(x){
                 await devicesService.updateSession(userId,ip,title,timeTokenData,deviceId)
             }
+            else{
+                await devicesService.createNewSession(userId,ip,title,timeTokenData,deviceId)
+            }
 
-             await devicesService.createNewSession(userId,ip,title,timeTokenData,deviceId)
             res.cookie('refreshToken', refreshToken, {
                httpOnly: true,
                  secure: true
@@ -183,8 +185,10 @@ authRouter.post('/refresh-token', async (req, res) => {
             if(x){
                 await devicesService.updateSession(checkRefresh.userId,ip,title,timeTokenData,checkRefresh.deviceId)
             }
+            else {
+                await devicesService.createNewSession(checkRefresh.userId,ip,title,timeTokenData,checkRefresh.deviceId)
 
-            await devicesService.createNewSession(checkRefresh.userId,ip,title,timeTokenData,checkRefresh.deviceId)
+            }
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true
