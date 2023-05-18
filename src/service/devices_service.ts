@@ -7,7 +7,7 @@ export const devicesService = {
     async getAllCurrentSessions(id: ObjectId):Promise<DeviceViewType[]|null> {
         const sessions = await devisesRepository.getAllCurrentSessions(id)
         if (sessions) return sessions.map(s => ({
-                IP: s.IP,
+                IP: s.ip,
                 title: s.title,
                 lastActiveDate: s.lastActiveDate,
                 deviceId: s.deviceId
@@ -20,7 +20,7 @@ export const devicesService = {
     async createNewSession(id:ObjectId,ip:string,title:string,lastActiveDate:string,deviceId:ObjectId){
         const newSession:DeviceType = {
             userId:id,
-            IP:	ip,
+            ip:	ip,
             title:	title,
             lastActiveDate:lastActiveDate,
             deviceId:deviceId
@@ -28,7 +28,7 @@ export const devicesService = {
         await devisesRepository.createNewSession(newSession)
         return {
             deviceId:newSession.deviceId,
-            ip:newSession.IP,
+            ip:newSession.ip,
             lastActiveDate:newSession.lastActiveDate,
             title:newSession.title
         }
