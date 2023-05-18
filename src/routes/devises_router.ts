@@ -45,7 +45,6 @@ devicesRouter.delete('/', async (req, res)=>{
 })
 
 devicesRouter.delete('/:id', async (req, res)=>{
-
     try{
         const checkId = await devicesService.getAllCurrentSessions(new ObjectId(req.params.id))
         if(!checkId){
@@ -60,14 +59,15 @@ devicesRouter.delete('/:id', async (req, res)=>{
             return;
         }
         const session = await devicesService.findSessions(checkToken.userId,checkToken.deviceId)
-        if(!session){
-            res.sendStatus(401);
-            return;
-        }
+        if(session){
         await devicesService.deleteAllSession(checkToken?.deviceId)
         await devicesService.createNewSession(checkToken.userId,session.ip,session.title,time,checkToken.deviceId)
         res.sendStatus(204);
-        return;
+        return;}
+        else {
+            res.sendStatus(401);
+            return;
+        }
     }
 
     catch (e) {
