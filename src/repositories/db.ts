@@ -25,8 +25,8 @@ export const usersCollectionDb = dbUsers.collection<UserAccountDbType>("users")
 const dbComments = client.db("commentsCollection")
 export const commentsCollectionDb = dbComments.collection<CommentsInDbType>("comments")
 
-const dbDevises = client.db("devisesCollection")
-export const devisesCollectionDb = dbDevises.collection<DeviceType>("devises")
+const dbDevices = client.db("devisesCollection")
+export const deviceTypeCollection = dbDevices.collection<DeviceType>("devices")
 
 const dbIPRestrict = client.db("IPRestrictCollection")
 export const IPRestrictCollectionDb = dbIPRestrict.collection<IPCheckerType>("IPRestrict")
@@ -35,7 +35,7 @@ export async function runDb():Promise<void>{
     try{
         await client.connect();
         await client.db("posts").command({ping: 1});
-        await client.db("devises").command({ping: 1});
+        await client.db("devices").command({ping: 1});
         await client.db("blogs").command({ping: 1});
         await client.db("users").command({ping: 1});
         await client.db("comments").command({ping: 1});

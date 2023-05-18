@@ -1,10 +1,10 @@
 import express  from 'express';
 import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
-import {devisesRouter} from "./routes/devises_router";
+import {devicesRouter} from "./routes/devises_router";
 import {
     blogsCollectionDb,
-    commentsCollectionDb, devisesCollectionDb, IPRestrictCollectionDb,
+    commentsCollectionDb, deviceTypeCollection, IPRestrictCollectionDb,
     postsCollectionDb,
     runDb,
     usersCollectionDb
@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 app.use('/blogs', blogsRouter)
-app.use('/security/devices', devisesRouter)
+app.use('/security/devices', devicesRouter)
 app.use('/posts', postsRouter)
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
@@ -34,7 +34,7 @@ app.delete('/testing/all-data', async (req, res)=>{
         await postsCollectionDb.deleteMany({})
         await usersCollectionDb.deleteMany({})
         await commentsCollectionDb.deleteMany({})
-        await devisesCollectionDb.deleteMany({})
+        await deviceTypeCollection.deleteMany({})
         await IPRestrictCollectionDb.deleteMany({})
         res.sendStatus(204)
     }

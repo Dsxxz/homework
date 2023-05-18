@@ -33,6 +33,11 @@ authRouter.post('/login', ConnectionsCountChecker,
             const refreshToken = await jwtService.createRefresh(userId, deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
 
+            const x = await devicesService.checkSessions(ip,userId,title)
+            if(x){
+                await devicesService.updateSession(userId,ip,title,timeTokenData,deviceId)
+            }
+
              await devicesService.createNewSession(userId,ip,title,timeTokenData,deviceId)
             res.cookie('refreshToken', refreshToken, {
                httpOnly: true,
