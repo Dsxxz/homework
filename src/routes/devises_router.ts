@@ -1,5 +1,4 @@
 import {Router} from "express";
-import {devisesRepository} from "../repositories/devises_in_repository";
 import {jwtService} from "../application/jwt-service";
 import {DeviceViewType} from "../models/devices_types";
 import {ObjectId} from "mongodb";
@@ -70,6 +69,8 @@ devicesRouter.delete('/:id', async (req, res)=>{
         }
         await devicesService.deleteAllSession(checkToken?.deviceId)
         await devicesService.createNewSession(checkToken.userId,session.ip,session.title,time,checkToken.deviceId)
+        res.sendStatus(204);
+        return;
     }
 
     catch (e) {

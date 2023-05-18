@@ -154,7 +154,6 @@ authRouter.post('/logout',
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
 
         if (checkToken) {
-            const checkTime = await jwtService.getLastActiveDateFromRefreshToken(cookie)
             const deviceId = checkToken?.deviceId
             const userId = checkToken.userId
             const checkSession = await devicesService.findSessions(userId, deviceId)
