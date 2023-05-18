@@ -7,7 +7,7 @@ export const devicesService = {
     async getAllCurrentSessions(id: ObjectId):Promise<DeviceViewType[]|null> {
         const sessions = await devisesRepository.getAllCurrentSessions(id)
         if (sessions) return sessions.map(s => ({
-                IP: s.ip,
+                ip: s.ip,
                 title: s.title,
                 lastActiveDate: s.lastActiveDate,
                 deviceId: s.deviceId
