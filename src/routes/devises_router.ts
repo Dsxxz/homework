@@ -51,7 +51,11 @@ devicesRouter.delete('/:id', async (req, res)=>{
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
         const userId:ObjectId = checkToken?.userId
         const deviceId:ObjectId = checkToken?.deviceId
-        const sessions:number = await devisesRepository.deleteOtherSession(userId,deviceId)
+        const sessions:number = await devisesRepository.deleteOtherSession(userId,checkToken?.deviceId)
+        if(req.params.id!==deviceId.toString()){
+            res.sendStatus(404);
+            return;
+        }
         if(sessions){
             res.sendStatus(204);
             return;

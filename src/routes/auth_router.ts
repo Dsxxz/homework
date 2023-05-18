@@ -179,7 +179,12 @@ authRouter.post('/refresh-token', async (req, res) => {
             const refreshToken = await jwtService.createRefresh(checkRefresh.userId, checkRefresh.deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
 
-            await devicesService.createNewSession(checkRefresh.userId, ip, title, timeTokenData, checkRefresh.deviceId)
+            const x = await devicesService.checkSessions(ip,checkRefresh.userId,title)
+            if(x){
+                await devicesService.updateSession(checkRefresh.userId,ip,title,timeTokenData,checkRefresh.deviceId)
+            }
+
+            await devicesService.createNewSession(checkRefresh.userId,ip,title,timeTokenData,checkRefresh.deviceId)
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true
