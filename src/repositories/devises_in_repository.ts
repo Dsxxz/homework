@@ -28,8 +28,8 @@ export const devisesRepository= {
         const result = await deviceTypeCollection.deleteMany({userId:userId,deviceId:{$not : {deviceId} }})
         return result.deletedCount
     },
-    async updateSession(userId: ObjectId, ip: string, title: string, timeTokenData: string, deviceId: ObjectId):Promise<boolean> {
-        const result = await deviceTypeCollection.updateOne({userId:new ObjectId(userId),ip,title},{timeTokenData, deviceId:new ObjectId(deviceId)})
+    async updateSession( timeTokenData: string, deviceId: ObjectId):Promise<boolean> {
+        const result = await deviceTypeCollection.updateOne({deviceId:new ObjectId(deviceId)},{timeTokenData})
         return result.modifiedCount===1;
     },
     async checkSessions(ip:string,userId:ObjectId,title: string) {

@@ -33,9 +33,9 @@ authRouter.post('/login', ConnectionsCountChecker,
             const refreshToken = await jwtService.createRefresh(userId, deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
 
-            const x = await devicesService.checkSessions(ip,userId,title)
-            if(x){
-                await devicesService.updateSession(userId,ip,title,timeTokenData,deviceId)
+            const checkSessions = await devicesService.checkSessions(ip,userId,title)
+            if(checkSessions){
+                await devicesService.updateSession(timeTokenData,deviceId)
             }
             else{
                 await devicesService.createNewSession(userId,ip,title,timeTokenData,deviceId)
@@ -181,14 +181,10 @@ authRouter.post('/refresh-token', async (req, res) => {
             const refreshToken = await jwtService.createRefresh(checkRefresh.userId, checkRefresh.deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
 
-            const x = await devicesService.checkSessions(ip,checkRefresh.userId,title)
-            if(x){
-                await devicesService.updateSession(checkRefresh.userId,ip,title,timeTokenData,checkRefresh.deviceId)
-            }
-            else {
-                await devicesService.createNewSession(checkRefresh.userId,ip,title,timeTokenData,checkRefresh.deviceId)
+            await devicesService.checkSessions(ip,checkRefresh.userId,title)
+            await devicesService.updateSession(timeTokenData,checkRefresh.deviceId)
 
-            }
+
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true

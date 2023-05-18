@@ -45,7 +45,7 @@ export const devicesService = {
     async checkSessions(ip:string,userId:ObjectId,title: string) {
         return await devisesRepository.checkSessions(ip,userId,title)
     },
-    async updateSession(userId: ObjectId, ip: string, title: string, timeTokenData: string, deviceId: ObjectId) {
-        return await devisesRepository.updateSession(userId, ip, title, timeTokenData, deviceId);
+    async updateSession( timeTokenData: string, deviceId: ObjectId) {
+        return await devisesRepository.updateSession(timeTokenData, deviceId);
     }
 }
