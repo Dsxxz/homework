@@ -21,8 +21,8 @@ export const devisesRepository= {
     },
 
     async deleteAllSession(userId:ObjectId):Promise<boolean>{
-        const result = await deviceTypeCollection.deleteMany({userId:new ObjectId(userId)})
-        return result.deletedCount===1;
+        const result = await deviceTypeCollection.deleteMany({$not:{userId:new ObjectId(userId)}})
+        return !!result.deletedCount;
     },
     async updateSession( timeTokenData: string, deviceId: ObjectId):Promise<boolean> {
         const result = await deviceTypeCollection.updateOne({deviceId:new ObjectId(deviceId)},{$set:{timeTokenData}})
