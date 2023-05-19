@@ -69,8 +69,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
             return;
         }
     }
-
     catch (e) {
-
+        return;
     }
 })

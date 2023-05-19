@@ -161,7 +161,7 @@ authRouter.post('/logout',
                 res.sendStatus(401);
                 return;
             } else {
-                await devicesService.deleteCurrentSession(deviceId)
+                await devicesService.deleteOneSessionById(deviceId)
                 res.clearCookie('refreshToken').sendStatus(204)
                 return;
             }
