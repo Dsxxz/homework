@@ -47,7 +47,7 @@ devicesRouter.delete('/', async (req, res)=>{
 devicesRouter.delete('/:id', async (req, res)=>{
     try{
         const checkId = await devicesService.getAllCurrentSessions(new ObjectId(req.params.id))
-        if(!checkId){
+        if(!req.params.id &&!checkId){
             res.sendStatus(404);
             return;
         }
