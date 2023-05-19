@@ -46,13 +46,15 @@ devicesRouter.delete('/', async (req, res)=>{
 
 devicesRouter.delete('/:id', async (req, res)=>{
     try{
-        if(!req.params.id){
-            res.sendStatus(404);
-            return;
-        }
+
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
         const time = await jwtService.getLastActiveDateFromRefreshToken(cookie)
+        const checkId = await devicesService.findSessions(checkToken?.userId,new ObjectId(req.params.id))
+        if(!checkId){
+            res.sendStatus(404);
+            return;
+        }
         if(!req.params.id!==checkToken?.deviceId){
             res.sendStatus(403);
             return;
