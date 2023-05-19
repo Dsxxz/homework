@@ -30,7 +30,7 @@ devicesRouter.delete('/', async (req, res)=>{
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
         const id:ObjectId = checkToken?.deviceId
         const sessions:boolean = await devicesService.deleteAllSession(id)
-        if(sessions){
+        if(sessions && checkToken){
             res.sendStatus(204);
             return;
         }
