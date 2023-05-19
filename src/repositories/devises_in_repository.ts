@@ -25,10 +25,10 @@ export const devisesRepository= {
         return result.deletedCount===1;
     },
     async updateSession( timeTokenData: string, deviceId: ObjectId):Promise<boolean> {
-        const result = await deviceTypeCollection.updateOne({deviceId:new ObjectId(deviceId)},{timeTokenData})
+        const result = await deviceTypeCollection.updateOne({deviceId:new ObjectId(deviceId)},{$set:{timeTokenData:timeTokenData}})
         return result.modifiedCount===1;
     },
-    async checkSessions(ip:string,userId:ObjectId,title: string) {
-        return await deviceTypeCollection.findOne({ip,title,userId:new ObjectId(userId)})
+    async checkSessions(userId:ObjectId,ip: string) {
+        return await deviceTypeCollection.findOne({userId:new ObjectId(userId),ip:ip})
     }
 }
