@@ -55,7 +55,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
             res.sendStatus(404);
             return;
         }
-        if(!req.params.id!==checkToken?.deviceId){
+        if(req.params.id!==checkToken?.deviceId){
             res.sendStatus(403);
             return;
         }
