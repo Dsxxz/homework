@@ -172,7 +172,6 @@ authRouter.post('/refresh-token', async (req, res) => {
     const cookie= req.cookies.refreshToken;
 
         const ip = req.ip
-        const title = req.headers['user-agent'] || 'custom UA'
 
     const checkRefresh = await jwtService.verifyUserIdByRefreshToken(cookie)
         if(checkRefresh) {
@@ -180,7 +179,7 @@ authRouter.post('/refresh-token', async (req, res) => {
             const refreshToken = await jwtService.createRefresh(checkRefresh.userId, checkRefresh.deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
 
-            await devicesService.checkSessions(ip,checkRefresh.userId,title)
+            await devicesService.checkSessions(checkRefresh.userId,ip)
             await devicesService.updateSession(timeTokenData,checkRefresh.deviceId)
 
 
