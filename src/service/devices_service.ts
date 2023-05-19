@@ -42,8 +42,8 @@ export const devicesService = {
     async deleteAllSession(id:ObjectId){
         return  await devisesRepository.deleteAllSession(id);
     },
-    async checkSessions(userId:ObjectId,ip:string) {
-        return await devisesRepository.checkSessions(userId,ip)
+    async checkSessions(userId:ObjectId,ip:string,title:string) {
+        return await devisesRepository.checkSessions(userId,ip, title)
     },
     async updateSession( timeTokenData: string, deviceId: ObjectId) {
         return await devisesRepository.updateSession(timeTokenData, deviceId);

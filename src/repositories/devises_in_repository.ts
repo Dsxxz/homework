@@ -28,7 +28,7 @@ export const devisesRepository= {
         const result = await deviceTypeCollection.updateOne({deviceId:new ObjectId(deviceId)},{$set:{timeTokenData:timeTokenData}})
         return result.modifiedCount===1;
     },
-    async checkSessions(userId:ObjectId,ip: string) {
-        return await deviceTypeCollection.findOne({userId:new ObjectId(userId),ip:ip})
+    async checkSessions(userId:ObjectId,ip: string, title:string) {
+        return await deviceTypeCollection.findOne({userId:new ObjectId(userId),ip, title})
     }
 }
