@@ -55,12 +55,12 @@ devicesRouter.delete('/:id', async (req, res)=>{
             res.sendStatus(401);
             return;
         }
-        const checkId = await devicesService.findOneSessions( new ObjectId(req.params.id))
+        const checkId = await devicesService.findOneSessions(new ObjectId(req.params.id))
         if (!checkId) {
             res.sendStatus(404);
             return;
         }
-        if(checkId.deviceId.toString()!==req.params.id){
+        if(checkToken.deviceId!==new ObjectId(req.params.id)){
             res.sendStatus(403);
             return;
         }
