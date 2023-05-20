@@ -28,14 +28,17 @@ devicesRouter.delete('/', async (req, res)=>{
     try{
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const id:ObjectId = checkToken?.deviceId
-        const sessions:boolean = await devicesService.deleteAllSession(id)
-        if(sessions && checkToken){
-            res.sendStatus(204);
+        if(!checkToken){
+            res.sendStatus(401);
             return;
         }
         else{
-            res.sendStatus(401);
+            const sessions:boolean = await devicesService.deleteAllSession(checkToken.userId,checkToken.deviceId)
+            console.log('sessions',sessions)
+            if(sessions){
+                res.sendStatus(204);
+                return;
+            }
             return;
         }
     }
@@ -46,7 +49,6 @@ devicesRouter.delete('/', async (req, res)=>{
 
 devicesRouter.delete('/:id', async (req, res)=>{
     try{
-
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
         if(!checkToken){
@@ -58,7 +60,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
             res.sendStatus(404);
             return;
         }
-        if(req.params.id!==checkToken?.deviceId){
+        if(checkId.userId!==checkToken?.userId){
             res.sendStatus(403);
             return;
         }
