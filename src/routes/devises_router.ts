@@ -60,7 +60,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
             res.sendStatus(404);
             return;
         }
-        if(checkToken.deviceId!==new ObjectId(req.params.id)){
+        if(checkToken.userId!==checkId.userId){
             res.sendStatus(403);
             return;
         }
