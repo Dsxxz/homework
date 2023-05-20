@@ -27,6 +27,7 @@ authRouter.post('/login', ConnectionsCountChecker,
             const userId: ObjectId = checkResult._id
             const ip = req.ip
             const title = req.headers['user-agent'] || 'custom UA'
+            console.log(title)
             const newDeviceId = new ObjectId()
 
             const accessToken = await jwtService.createAccess(userId)
