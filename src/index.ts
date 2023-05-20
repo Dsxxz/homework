@@ -17,11 +17,12 @@ const port = process.env.PORT || 3000
 import  cookieParser = require('cookie-parser')
 const cors = require('cors')
 
-app.set('trust proxy', true)
 
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
+app.set('trust proxy', true)
+
 app.use('/blogs', blogsRouter)
 app.use('/security/devices', devicesRouter)
 app.use('/posts', postsRouter)

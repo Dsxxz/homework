@@ -48,29 +48,26 @@ devicesRouter.delete('/', async (req, res)=>{
 })
 
 devicesRouter.delete('/:id', async (req, res)=>{
-    try{
-        const cookie: string = req.cookies.refreshToken
-        const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const checkId = await devicesService.findSessions(checkToken?.userId,new ObjectId(req.params.id))
-        const session = await devicesService.findSessions(checkToken?.userId,checkToken?.deviceId)
-        if(session){
-        await devicesService.deleteOneSessionById(checkToken?.deviceId)
-        res.sendStatus(204);
-        return;
-        }
-        if(!checkId){
+    try {
+        if (!req.params.id) {
             res.sendStatus(404);
             return;
         }
-        if(!checkId?.userId && checkId?.userId!==checkToken?.userId){
-            res.sendStatus(403);
-            return;
-        }
-        if(!checkToken){
+        const cookie: string = req.cookies.refreshToken
+        const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
+        if (!checkToken) {
             res.sendStatus(401);
             return;
         }
-        return;
+        const checkId = await devicesService.findSessions(checkToken?.userId, new ObjectId(req.params.id))
+        if (!checkId) {
+            res.sendStatus(403);
+            return;
+        } else {
+            await devicesService.deleteOneSessionById(checkToken.deviceId)
+            res.sendStatus(204);
+            return;
+        }
     }
     catch (e) {
         return;
