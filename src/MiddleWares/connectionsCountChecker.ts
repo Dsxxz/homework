@@ -7,7 +7,7 @@ export const ConnectionsCountChecker = async (req: Request, res: Response, next:
         const counter = await controlRequests.checkRequestForIP(IP)
         const deleteRequest = async () => {
             await controlRequests.deleteRequestForIP(IP);
-            next();
+            return;
         }
         setTimeout(deleteRequest, 10000)
         if (counter >= 5) {
