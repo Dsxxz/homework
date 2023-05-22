@@ -13,6 +13,7 @@ export const ConnectionsCountChecker = async (req: Request, res: Response, next:
         setTimeout(deleteRequest, 10000)
         if (counter >= 5) {
             res.status(429);
+            next();
         }
     } catch (e) {
         res.send(e)
