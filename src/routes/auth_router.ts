@@ -27,7 +27,6 @@ authRouter.post('/login', ConnectionsCountChecker,
             const userId: ObjectId = checkResult._id
             const ip = req.ip
             const title = req.headers['user-agent'] || 'custom UA'
-            console.log(title)
             const newDeviceId = new ObjectId()
 
             const accessToken = await jwtService.createAccess(userId)
@@ -176,6 +175,7 @@ authRouter.post('/refresh-token', async (req, res) => {
             const accessToken = await jwtService.createAccess(checkRefresh.userId)
             const refreshToken = await jwtService.createRefresh(checkRefresh.userId, checkRefresh.deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
+            console.log(timeTokenData,checkRefresh.deviceId)
 
             await devicesService.updateSession(timeTokenData,checkRefresh.deviceId)
 
