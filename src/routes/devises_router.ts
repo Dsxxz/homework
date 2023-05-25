@@ -11,12 +11,17 @@ devicesRouter.get('/', async (req, res)=>{
         const sessions:Array<DeviceViewType>|null = await devicesService.getAllCurrentSessions(checkToken?.userId)
         const time = await jwtService.getLastActiveDateFromRefreshToken(cookie)
         const session = await devicesService.findLastActiveDate(time)
-        if(!checkToken || !session){
+        if(!checkToken || !session || !cookie){
             res.sendStatus(401);
             return;
         }
-        else {
+        if(sessions){
             res.status(200).send(sessions)
+            return;
+        }
+        else {
+            res.sendStatus(401);
+            return;
         }
     }
     catch (e) {

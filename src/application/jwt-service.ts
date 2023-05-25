@@ -1,6 +1,7 @@
 import {ObjectId} from "mongodb";
 import jwt from 'jsonwebtoken';
 
+
 export const jwtService = {
     async createAccess(userId: ObjectId) {
         return jwt.sign({userId}, "JWT_Secret", {expiresIn: '200s'})
@@ -26,13 +27,13 @@ export const jwtService = {
             return null;
         }
     },
-    async verifyUserIdByAccessToken(token: string) {
+    async verifyUserIdByAccessToken(token: string){
         try {
             const result: any = jwt.verify(token, "JWT_Secret")
             return result.deviceId;
         } catch (error) {
             return null;
-        }
+}
     },
 
 }

@@ -56,13 +56,13 @@ authRouter.post('/login', ConnectionsCountChecker,
 authRouter.get('/me', authMiddleWare, async (req, res) => {
     try {
         const token = req.headers.authorization!.split(' ')[1]
-        const userID = await jwtService.verifyUserIdByAccessToken(token)
-        const user = await authService.findUsersById(userID)
+        const userId = await jwtService.verifyUserIdByAccessToken(token)
+        const user = await authService.findUsersById(userId)
         if(user){
             res.status(200).send({
                 "email": user.accountData.email,
                 "login": user.accountData.userName,
-                "userId": userID
+                "userId": userId
             })
             return;
         }
