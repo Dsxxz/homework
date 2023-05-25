@@ -10,7 +10,7 @@ export const devisesRepository= {
     async deleteOneSessionById(deviceId:ObjectId){
         return await deviceTypeCollection.deleteOne({deviceId:new ObjectId(deviceId)});
     },
-    async findOneSessions(deviceId:ObjectId):Promise<DeviceType|null>{
+    async findOneSessions(deviceId:string):Promise<DeviceType|null>{
         return  await deviceTypeCollection.findOne({deviceId:new ObjectId(deviceId)});
     },
 

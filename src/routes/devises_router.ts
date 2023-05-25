@@ -1,7 +1,6 @@
 import {Router} from "express";
 import {jwtService} from "../application/jwt-service";
 import {DeviceViewType} from "../models/devices_types";
-import {ObjectId} from "mongodb";
 import {devicesService} from "../service/devices_service";
 export const devicesRouter = Router({});
 
@@ -53,15 +52,16 @@ devicesRouter.delete('/:id', async (req, res)=>{
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
         const time = await jwtService.getLastActiveDateFromRefreshToken(cookie)
         const session = await devicesService.findLastActiveDate(time)
+        const checkId = await devicesService.findOneSessions(req.params.id)
         if (!checkToken) {
             res.sendStatus(401);
             return;
         }
-        if (!session) {
+        if (!checkId) {
             res.sendStatus(404);
             return;
         }
-        if(!new ObjectId(req.params.id).equals(session!.userId)){
+        if(req.params.id!==checkToken!.userId){
             res.sendStatus(403);
             return;
         }

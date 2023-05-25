@@ -157,7 +157,7 @@ authRouter.post('/logout',
             const checkTimeFromRefresh = await devicesService.findLastActiveDate(dateRefresh)
 
         if (refresh && checkTimeFromRefresh) {
-            await devicesService.deleteOneSessionById(checkTimeFromRefresh!.deviceId)
+            await devicesService.deleteOneSessionById(checkTimeFromRefresh.deviceId)
             res.clearCookie('refreshToken').sendStatus(204)
             return;
         }

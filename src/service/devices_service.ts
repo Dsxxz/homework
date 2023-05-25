@@ -33,7 +33,7 @@ export const devicesService = {
             title:newSession.title
         }
     },
-    async findOneSessions(deviceId:ObjectId){
+    async findOneSessions(deviceId:string){
     return await devisesRepository.findOneSessions(deviceId)
 },
     async deleteOneSessionById(deviceId:ObjectId){
