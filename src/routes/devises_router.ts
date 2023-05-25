@@ -33,7 +33,6 @@ devicesRouter.delete('/', async (req, res)=>{
         }
         else{
             const sessions:boolean = await devicesService.deleteAllSession(checkToken.userId,checkToken.deviceId)
-            console.log('sessions',sessions)
             if(sessions){
                 res.sendStatus(204);
                 return;

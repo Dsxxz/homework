@@ -19,7 +19,7 @@ export const devisesRepository= {
         return session.length ? session : null;
     },
 
-    async deleteAllSession(userId:ObjectId,deviceId:ObjectId):Promise<boolean>{
+    async deleteAllSession(userId:string,deviceId:string):Promise<boolean>{
         const result = await deviceTypeCollection.deleteMany({userId:new ObjectId(userId),deviceId:{$ne:new ObjectId(deviceId)}})
         return !!result.deletedCount;
     },
