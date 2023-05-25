@@ -7,9 +7,6 @@ export const devisesRepository= {
         await deviceTypeCollection.insertOne(session);
         return;
 },
-    async findSessions(userId:ObjectId,deviceId:ObjectId):Promise<DeviceType|null>{
-       return  await deviceTypeCollection.findOne({userId:new ObjectId(userId),deviceId:new ObjectId(deviceId)});
-     },
     async deleteOneSessionById(deviceId:ObjectId){
         return await deviceTypeCollection.deleteOne({deviceId:new ObjectId(deviceId)});
     },
@@ -19,7 +16,6 @@ export const devisesRepository= {
 
     async getAllCurrentSessions(userId:ObjectId):Promise<Array<DeviceType>|null>{
         const session:Array<DeviceType> = await deviceTypeCollection.find({userId:new ObjectId(userId)}).toArray()
-        console.log('devisesRepository',userId, session, await deviceTypeCollection.find({userId}).toArray())
         return session.length ? session : null;
     },
 
@@ -27,11 +23,13 @@ export const devisesRepository= {
         const result = await deviceTypeCollection.deleteMany({userId:new ObjectId(userId),deviceId:{$ne:new ObjectId(deviceId)}})
         return !!result.deletedCount;
     },
-    async updateSession( timeTokenData: string, deviceId: ObjectId):Promise<boolean> {
-        const result = await deviceTypeCollection.updateOne({deviceId:new ObjectId(deviceId)},{$set:{timeTokenData}})
-        return result.matchedCount===1;
+    async updateSession( lastActiveDate: string, deviceId: ObjectId){
+        return await deviceTypeCollection.updateOne({deviceId},{$set:{lastActiveDate}})
     },
     async checkSessions(userId:ObjectId,ip: string, title:string) {
         return await deviceTypeCollection.findOne({userId:new ObjectId(userId),ip, title})
+    },
+    async checkDate(lastActiveDate: string) {
+        return await deviceTypeCollection.findOne({lastActiveDate});
     }
 }

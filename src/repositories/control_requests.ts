@@ -1,20 +1,10 @@
 import {IPRestrictCollectionDb} from "./db"
-import {IPCheckerType} from "../models/devices_types";
 
 export const controlRequests={
-    async checkRequestForIP(IP:string):Promise<number>{
-        const list:IPCheckerType|null = await IPRestrictCollectionDb.findOne({IP})
-        if(list){
-            await IPRestrictCollectionDb.updateOne({IP},{$inc : { requestCounter : 1}})
-            return list.requestCounter;
-        }
-        else{
-            await IPRestrictCollectionDb.insertOne({IP,requestCounter:1})
-            return 1;
-        }
+    async addRequest(ip:string, url:string, date:Date){
+        await IPRestrictCollectionDb.insertOne({ip,url,date})
     },
-    async deleteRequestForIP(IP:string):Promise<number>{
-        const result = await IPRestrictCollectionDb.deleteOne({IP})
-        return result.deletedCount;
+    async checkRequest(ip:string, url:string, date:Date){
+        return await IPRestrictCollectionDb.count({ip,url,date:{$gte:date}})
     }
 }

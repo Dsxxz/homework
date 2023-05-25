@@ -15,6 +15,7 @@ export type DeviceViewType = {
 }
 
 export type IPCheckerType = {
-    IP:string;
-    requestCounter:number
+    ip:string,
+    url:string,
+    date:Date
 }

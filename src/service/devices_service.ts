@@ -33,9 +33,6 @@ export const devicesService = {
             title:newSession.title
         }
     },
-    async findSessions(userId:ObjectId, deviceId:ObjectId){
-        return await devisesRepository.findSessions(userId, deviceId)
-    },
     async findOneSessions(deviceId:ObjectId){
     return await devisesRepository.findOneSessions(deviceId)
 },
@@ -50,5 +47,8 @@ export const devicesService = {
     },
     async updateSession( timeTokenData: string, deviceId: ObjectId) {
         return await devisesRepository.updateSession(timeTokenData, deviceId);
+    },
+    async checkDate(date:string){
+        return await devisesRepository.checkDate(date);
     }
 }

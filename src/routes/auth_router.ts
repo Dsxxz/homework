@@ -35,7 +35,7 @@ authRouter.post('/login', ConnectionsCountChecker,
 
             const checkSessions = await devicesService.checkSessions(userId,ip,title)
             if(checkSessions){
-                await devicesService.updateSession(timeTokenData,newDeviceId)
+                await devicesService.updateSession(timeTokenData,checkSessions.deviceId )
             }
             else{
                 await devicesService.createNewSession(userId,ip,title,timeTokenData,newDeviceId)
@@ -150,43 +150,41 @@ authRouter.post('/registration-email-resending', ConnectionsCountChecker,
 
 authRouter.post('/logout',
     async (req, res) => {
-        const cookie: string = req.cookies.refreshToken
-        const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
+        try{
+            const cookie: string = req.cookies.refreshToken
+            const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
+            const tokenDataFromCookie = await jwtService.getLastActiveDateFromRefreshToken(cookie)
+            const tokenDataFromDS = await devicesService.checkDate(tokenDataFromCookie)
 
-        if (checkToken) {
-            const deviceId = checkToken?.deviceId
-            const userId = checkToken.userId
-            const checkSession = await devicesService.findSessions(userId, deviceId)
-            if (!checkSession) {
+        if (tokenDataFromDS) {
+            await devicesService.deleteOneSessionById(checkToken!.deviceId)
+            res.clearCookie('refreshToken').sendStatus(204)
+            return;
+        }
+        else {
                 res.sendStatus(401);
                 return;
-            } else {
-                await devicesService.deleteOneSessionById(deviceId)
-                res.clearCookie('refreshToken').sendStatus(204)
-                return;
             }
+        }
+        catch (e) {
+            res.send(e)
         }
     })
 
 authRouter.post('/refresh-token', async (req, res) => {
     const cookie= req.cookies.refreshToken;
     const checkRefresh = await jwtService.verifyUserIdByRefreshToken(cookie)
-        if(checkRefresh) {
+    const tokenDataFromCookie = await jwtService.getLastActiveDateFromRefreshToken(cookie)
+    const tokenDataFromDS = await devicesService.checkDate(tokenDataFromCookie)
+    if(checkRefresh && tokenDataFromDS) {
             const accessToken = await jwtService.createAccess(checkRefresh.userId)
-            const refreshToken = await jwtService.createRefresh(checkRefresh.userId, checkRefresh.deviceId)
+            const refreshToken = await jwtService.createRefresh(new ObjectId(checkRefresh.userId), checkRefresh.deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
-            console.log(timeTokenData,checkRefresh.deviceId)
-
-            await devicesService.updateSession(timeTokenData,checkRefresh.deviceId)
-
-
-            res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: true
-            })
+        await devicesService.updateSession(timeTokenData,checkRefresh.deviceId)
+            res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
             res.status(200).send({accessToken})
             return;
-        }
+                                      }
     else {
         res.sendStatus(401);
         return;
