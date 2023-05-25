@@ -151,13 +151,13 @@ authRouter.post('/registration-email-resending', ConnectionsCountChecker,
 authRouter.post('/logout',
     async (req, res) => {
         try{
-            const cookie: string = req.cookies.refreshToken
-            const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-            const tokenDataFromCookie = await jwtService.getLastActiveDateFromRefreshToken(cookie)
-            const tokenDataFromDS = await devicesService.findLastActiveDate(tokenDataFromCookie)
+            const cookie= req.cookies.refreshToken;
+            const refresh = await jwtService.verifyUserIdByRefreshToken(cookie)
+            const dateRefresh = await jwtService.getLastActiveDateFromRefreshToken(cookie)
+            const checkTimeFromRefresh = await devicesService.findLastActiveDate(dateRefresh)
 
-        if (tokenDataFromDS) {
-            await devicesService.deleteOneSessionById(checkToken!.deviceId)
+        if (refresh && checkTimeFromRefresh) {
+            await devicesService.deleteOneSessionById(checkTimeFromRefresh!.deviceId)
             res.clearCookie('refreshToken').sendStatus(204)
             return;
         }

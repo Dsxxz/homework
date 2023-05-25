@@ -39,7 +39,7 @@ export const devicesService = {
     async deleteOneSessionById(deviceId:ObjectId){
         return await devisesRepository.deleteOneSessionById(deviceId);
     },
-    async deleteAllSession(userId:string,deviceId:string){
+    async deleteAllSession(userId:ObjectId,deviceId:ObjectId){
         return  await devisesRepository.deleteAllSession(userId,deviceId);
     },
     async checkSessions(userId:ObjectId,ip:string,title:string) {
