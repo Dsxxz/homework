@@ -154,7 +154,7 @@ authRouter.post('/logout',
             const cookie: string = req.cookies.refreshToken
             const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
             const tokenDataFromCookie = await jwtService.getLastActiveDateFromRefreshToken(cookie)
-            const tokenDataFromDS = await devicesService.checkDate(tokenDataFromCookie)
+            const tokenDataFromDS = await devicesService.findLastActiveDate(tokenDataFromCookie)
 
         if (tokenDataFromDS) {
             await devicesService.deleteOneSessionById(checkToken!.deviceId)
@@ -173,15 +173,18 @@ authRouter.post('/logout',
 
 authRouter.post('/refresh-token', async (req, res) => {
     const cookie= req.cookies.refreshToken;
-    const checkRefresh = await jwtService.verifyUserIdByRefreshToken(cookie)
-    const tokenDataFromCookie = await jwtService.getLastActiveDateFromRefreshToken(cookie)
-    const tokenDataFromDS = await devicesService.checkDate(tokenDataFromCookie)
-    if(checkRefresh && tokenDataFromDS) {
-            const accessToken = await jwtService.createAccess(checkRefresh.userId)
-            const refreshToken = await jwtService.createRefresh(new ObjectId(checkRefresh.userId), checkRefresh.deviceId)
+    const refresh = await jwtService.verifyUserIdByRefreshToken(cookie)
+    const dateRefresh = await jwtService.getLastActiveDateFromRefreshToken(cookie)
+
+    const checkTimeFromRefresh = await devicesService.findLastActiveDate(dateRefresh)
+
+    if(refresh && checkTimeFromRefresh) {
+            const accessToken = await jwtService.createAccess(refresh.userId)
+            const refreshToken = await jwtService.createRefresh(refresh.userId,refresh.deviceId)
             const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
-        await devicesService.updateSession(timeTokenData,checkRefresh.deviceId)
-            res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
+            await devicesService.updateSession(timeTokenData,checkTimeFromRefresh.deviceId)
+
+        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
             res.status(200).send({accessToken})
             return;
                                       }

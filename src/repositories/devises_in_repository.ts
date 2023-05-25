@@ -29,7 +29,7 @@ export const devisesRepository= {
     async checkSessions(userId:ObjectId,ip: string, title:string) {
         return await deviceTypeCollection.findOne({userId:new ObjectId(userId),ip, title})
     },
-    async checkDate(lastActiveDate: string) {
+    async findLastActiveDate(lastActiveDate: string) {
         return await deviceTypeCollection.findOne({lastActiveDate});
     }
 }

@@ -17,7 +17,7 @@ export const jwtService = {
 
     async verifyUserIdByRefreshToken(token: string) {
         try {
-            const result:any = jwt.verify(token, "refreshTokenPrivateKey")
+            const result: any = jwt.verify(token, "refreshTokenPrivateKey")
             return {deviceId:result.deviceId,
                 userId:result.userId,
             }

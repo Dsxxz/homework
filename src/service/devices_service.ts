@@ -48,7 +48,7 @@ export const devicesService = {
     async updateSession( timeTokenData: string, deviceId: ObjectId) {
         return await devisesRepository.updateSession(timeTokenData, deviceId);
     },
-    async checkDate(date:string){
-        return await devisesRepository.checkDate(date);
+    async findLastActiveDate(date:string){
+        return await devisesRepository.findLastActiveDate(date);
     }
 }

@@ -10,7 +10,6 @@ devicesRouter.get('/', async (req, res)=>{
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
         const sessions:Array<DeviceViewType>|null = await devicesService.getAllCurrentSessions(checkToken?.userId)
-        console.log('devisesRouter',sessions)
         if(checkToken && sessions ){
             res.status(200).send(sessions)
         }
