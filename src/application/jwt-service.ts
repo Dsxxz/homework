@@ -30,7 +30,7 @@ export const jwtService = {
     async verifyUserIdByAccessToken(token: string){
         try {
             const result: any = jwt.verify(token, "JWT_Secret")
-            return result.deviceId;
+            return result.userId;
         } catch (error) {
             return null;
 }
