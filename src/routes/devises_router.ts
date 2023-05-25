@@ -9,7 +9,6 @@ devicesRouter.get('/', async (req, res)=>{
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
         const sessions:Array<DeviceViewType>|null = await devicesService.getAllCurrentSessions(checkToken?.userId)
-        console.log(sessions)
         if(checkToken && sessions ){
             res.status(200).send(sessions)
         }
@@ -59,7 +58,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
             res.sendStatus(404);
             return;
         }
-        if(req.params.id!==checkToken.userId){
+        if(req.params.id!==checkId.deviceId.toString()){
             res.sendStatus(403);
             return;
         }

@@ -3,11 +3,11 @@ import jwt from 'jsonwebtoken';
 
 export const jwtService = {
     async createAccess(userId: ObjectId) {
-        return jwt.sign({userId}, "JWT_Secret", {expiresIn: '20s'})
+        return jwt.sign({userId}, "JWT_Secret", {expiresIn: '200s'})
     },
 
     async createRefresh(userId: ObjectId, deviceId: ObjectId,) {
-        return jwt.sign({userId, deviceId}, 'refreshTokenPrivateKey', {expiresIn: '30s'});
+        return jwt.sign({userId, deviceId}, 'refreshTokenPrivateKey', {expiresIn: '300s'});
     },
 
     async getLastActiveDateFromRefreshToken(refreshToken: string): Promise<string> {
