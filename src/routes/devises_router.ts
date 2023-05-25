@@ -34,12 +34,9 @@ devicesRouter.delete('/', async (req, res)=>{
             return;
         }
         else{
-            const sessions:boolean = await devicesService.deleteAllSession(session.userId,session.deviceId)
-            if(sessions){
+             await devicesService.deleteAllSession(session.userId,session.deviceId)
                 res.sendStatus(204);
                 return;
-            }
-            return;
         }
     }
     catch (e) {
