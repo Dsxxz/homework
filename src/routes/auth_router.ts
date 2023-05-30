@@ -104,13 +104,9 @@ authRouter.post('/registration-confirmation', ConnectionsCountChecker,
             res.status(400).send({errorsMessages: [{message: "Confirmation Code already confirm", field: "code"}]})
             return;
         } else {
-            try {
                 await authService.updateConfirmEmail(req.body.code);
                 res.sendStatus(204);
                 return;
-            } catch (e) {
-                return e;
-            }
         }
     })
 
@@ -119,7 +115,6 @@ authRouter.post('/registration-email-resending', ConnectionsCountChecker,
     existingEmailValidation,
     async (req: Request, res: Response) => {
         const user = await userRepository.findUserByLoginOrEmail(req.body.email)
-        try {
             if (user) {
                 if (user.emailConfirmation.isConfirmed) {
                     res.status(400).send({
@@ -142,9 +137,6 @@ authRouter.post('/registration-email-resending', ConnectionsCountChecker,
                 res.sendStatus(400);
                 return;
             }
-        } catch (e) {
-            return e;
-        }
     })
 
 authRouter.post('/logout',
