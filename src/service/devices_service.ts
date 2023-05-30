@@ -36,7 +36,7 @@ export const devicesService = {
     async findOneSessions(deviceId:ObjectId|string){
     return await devisesRepository.findOneSessions(deviceId)
 },
-    async deleteOneSessionById(deviceId:ObjectId){
+    async deleteOneSessionById(deviceId:string){
         return await devisesRepository.deleteOneSessionById(deviceId);
     },
     async deleteAllSession(userId:ObjectId,deviceId:ObjectId){
