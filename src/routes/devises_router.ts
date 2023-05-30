@@ -25,7 +25,7 @@ devicesRouter.get('/', async (req, res)=>{
         }
     }
     catch (e) {
-        console.log('devicesRouter.get',e);
+        console.log(e);
         return;
     }
 })
@@ -47,7 +47,7 @@ devicesRouter.delete('/', async (req, res)=>{
         }
     }
     catch (e) {
-        console.log('devicesRouter.delete(\'/\'',e);
+        console.log(e);
     }
 })
 
@@ -78,7 +78,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
         }
     }
     catch (e) {
-        console.log('devicesRouter.delete(\'/:id',e)
+        console.log(e)
         return;
     }
 })

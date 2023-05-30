@@ -120,7 +120,6 @@ authRouter.post('/registration-email-resending', ConnectionsCountChecker,
         const user = await userRepository.findUserByLoginOrEmail(req.body.email)
         try {
             if (user) {
-                console.log(1, user.emailConfirmation.confirmationCode)
                 if (user.emailConfirmation.isConfirmed) {
                     res.status(400).send({
                         errorsMessages: [{
@@ -131,7 +130,6 @@ authRouter.post('/registration-email-resending', ConnectionsCountChecker,
                     return;
                 }
                 const updateUser: UserAccountDbType | null = await authService.updateUserConfirmCode(user);
-                console.log(2, updateUser?.emailConfirmation.confirmationCode)
                 if (!updateUser) {
                     res.sendStatus(404)
                 } else {
