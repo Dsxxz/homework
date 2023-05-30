@@ -6,11 +6,14 @@ export const devicesRouter = Router({});
 
 devicesRouter.get('/', async (req, res)=>{
     try {
-        const cookie: string = req.cookies.refreshToken
-        const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const time = await jwtService.getLastActiveDateFromRefreshToken(cookie)
-        const session = await devicesService.findLastActiveDate(time)
-        const sessions:Array<DeviceViewType>|null = await devicesService.getAllCurrentSessions(checkToken?.userId)
+        const refresh = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+        if(!refresh){
+            res.sendStatus(401);
+            return;
+        }
+        const lastActiveDate = await jwtService.getLastActiveDateFromRefreshToken(req.cookies.refreshToken)
+        const session = await devicesService.findLastActiveDate(lastActiveDate)
+        const sessions:Array<DeviceViewType>|null = await devicesService.getAllCurrentSessions(refresh?.userId)
         if(sessions && session){
             res.status(200).send(sessions)
             return;
@@ -28,17 +31,18 @@ devicesRouter.get('/', async (req, res)=>{
 
 devicesRouter.delete('/', async (req, res)=>{
     try{
-        const cookie: string = req.cookies.refreshToken
-        const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        const time = await jwtService.getLastActiveDateFromRefreshToken(cookie)
+        const checkToken = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+        const time = await jwtService.getLastActiveDateFromRefreshToken(req.cookies.refreshToken)
         const session = await devicesService.findLastActiveDate(time)
-        if(!session || !checkToken){
-            res.sendStatus(401);
+        if(session && checkToken){
+            const num =await devicesService.deleteAllSession(session.userId,session.deviceId)
+            console.log(num)
+            res.sendStatus(204);
             return;
+
         }
         else{
-            await devicesService.deleteAllSession(session.userId,session.deviceId)
-            res.sendStatus(204);
+            res.sendStatus(401);
             return;
         }
     }

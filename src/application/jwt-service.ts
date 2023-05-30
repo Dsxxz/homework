@@ -18,12 +18,13 @@ export const jwtService = {
 
     async verifyUserIdByRefreshToken(token: string) {
         try {
+
             const result: any = jwt.verify(token, "refreshTokenPrivateKey")
-            return {deviceId:result.deviceId,
-                userId:result.userId,
-            }
-        } catch (error) {
-            console.log('async verifyUserIdByRefreshToken',error)
+            return {
+                deviceId: result.deviceId,
+                userId: result.userId,
+                 }}
+        catch (e) {
             return null;
         }
     },
@@ -33,9 +34,7 @@ export const jwtService = {
             return result.userId;
         } catch (error) {
             console.log('async verifyUserIdByAccessToken',error)
-
             return null;
-}
-    },
 
-}
+    }
+}}
