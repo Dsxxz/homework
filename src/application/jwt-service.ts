@@ -23,7 +23,7 @@ export const jwtService = {
                 userId:result.userId,
             }
         } catch (error) {
-            console.log(error)
+            console.log('async verifyUserIdByRefreshToken',error)
             return null;
         }
     },
@@ -32,6 +32,8 @@ export const jwtService = {
             const result: any = jwt.verify(token, "JWT_Secret")
             return result.userId;
         } catch (error) {
+            console.log('async verifyUserIdByAccessToken',error)
+
             return null;
 }
     },

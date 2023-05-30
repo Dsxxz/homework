@@ -25,7 +25,7 @@ devicesRouter.get('/', async (req, res)=>{
         }
     }
     catch (e) {
-        console.log(e);
+        console.log('devicesRouter.get',e);
         return;
     }
 })
@@ -34,24 +34,20 @@ devicesRouter.delete('/', async (req, res)=>{
     try{
         const cookie: string = req.cookies.refreshToken
         const checkToken = await jwtService.verifyUserIdByRefreshToken(cookie)
-        if(!checkToken){
-            res.sendStatus(401);
-            return;
-        }
         const time = await jwtService.getLastActiveDateFromRefreshToken(cookie)
         const session = await devicesService.findLastActiveDate(time)
-        if(!session){
-            res.sendStatus(401);
+        if(checkToken && session){
+            await devicesService.deleteAllSession(session.userId,session.deviceId)
+            res.sendStatus(204);
             return;
         }
         else{
-             await devicesService.deleteAllSession(session.userId,session.deviceId)
-                res.sendStatus(204);
-                return;
+            res.sendStatus(401);
+            return;
         }
     }
     catch (e) {
-        console.log(e);
+        console.log('devicesRouter.delete(\'/\'',e);
     }
 })
 
@@ -62,12 +58,12 @@ devicesRouter.delete('/:id', async (req, res)=>{
         const time = await jwtService.getLastActiveDateFromRefreshToken(cookie)
         const session = await devicesService.findLastActiveDate(time)
         const checkId = await devicesService.findOneSessions(req.params.id)
-        if (!session) {
-            res.sendStatus(401);
-            return;
-        }
         if (!checkId) {
             res.sendStatus(404);
+            return;
+        }
+        if (!session) {
+            res.sendStatus(401);
             return;
         }
         if(req.params.id!==checkToken!.deviceId){
@@ -81,6 +77,7 @@ devicesRouter.delete('/:id', async (req, res)=>{
         }
     }
     catch (e) {
+        console.log('devicesRouter.delete(\'/:id',e)
         return;
     }
 })
