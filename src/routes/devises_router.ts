@@ -47,8 +47,7 @@ devicesRouter.delete('/', async (req, res)=>{
         }
         const session = await devicesService.findLastActiveDate(time)
         if(session && checkToken){
-            const num =await devicesService.deleteAllSession(session.userId,session.deviceId)
-            console.log(num)
+            await devicesService.deleteAllSession(session.userId,session.deviceId)
             res.sendStatus(204);
             return;
 
@@ -92,7 +91,6 @@ devicesRouter.delete('/:id', async (req, res)=>{
         }
         else {
             await devicesService.deleteOneSessionById(req.params.id)
-            console.log(await devicesService.findOneSessions(req.params.id))
             res.sendStatus(204);
             return;
         }
