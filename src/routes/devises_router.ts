@@ -32,6 +32,10 @@ devicesRouter.get('/', async (req, res)=>{
 devicesRouter.delete('/', async (req, res)=>{
     try{
         const checkToken = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
+        if(   checkToken     ){
+            res.sendStatus(401);
+            return;
+        }
         const time = await jwtService.getLastActiveDateFromRefreshToken(req.cookies.refreshToken)
         const session = await devicesService.findLastActiveDate(time)
         if(session && checkToken){
