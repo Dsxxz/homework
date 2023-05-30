@@ -6,6 +6,6 @@ export const controlRequests={
     },
     async checkRequest(ip:string, url:string, date:Date){
         //await IPRestrictCollectionDb.deleteMany({date:{$lt:date}})
-        return await IPRestrictCollectionDb.countDocuments({ip,url,date:{$gt:date}})
+        return await IPRestrictCollectionDb.countDocuments({ip,url,date:{$gte:date}})
     }
 }
