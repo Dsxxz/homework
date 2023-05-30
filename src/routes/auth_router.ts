@@ -106,7 +106,8 @@ authRouter.post('/registration-confirmation', ConnectionsCountChecker,
         } else {
             try {
                 await authService.updateConfirmEmail(req.body.code);
-                res.sendStatus(204)
+                res.sendStatus(204);
+                return;
             } catch (e) {
                 return e;
             }
