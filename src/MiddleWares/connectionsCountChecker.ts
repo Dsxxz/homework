@@ -4,7 +4,7 @@ import {subSeconds} from "date-fns";
 
 export const ConnectionsCountChecker = async (req: Request, res: Response, next: NextFunction) => {
     const ip:string = req.ip
-    const url:string = req.baseUrl
+    const url:string = req.originalUrl
     console.log(url)
     const date = new Date(Date.now())
     await controlRequests.addRequest(ip,url,date)
