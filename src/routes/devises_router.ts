@@ -12,6 +12,10 @@ devicesRouter.get('/', async (req, res)=>{
             return;
         }
         const lastActiveDate = await jwtService.getLastActiveDateFromRefreshToken(req.cookies.refreshToken)
+        if(!lastActiveDate){
+            res.sendStatus(401);
+            return;
+        }
         const session = await devicesService.findLastActiveDate(lastActiveDate)
         const sessions:Array<DeviceViewType>|null = await devicesService.getAllCurrentSessions(refresh?.userId)
         if(sessions && session){
@@ -37,6 +41,10 @@ devicesRouter.delete('/', async (req, res)=>{
             return;
         }
         const time = await jwtService.getLastActiveDateFromRefreshToken(req.cookies.refreshToken)
+        if(!time){
+            res.sendStatus(401);
+            return;
+        }
         const session = await devicesService.findLastActiveDate(time)
         if(session && checkToken){
             const num =await devicesService.deleteAllSession(session.userId,session.deviceId)
