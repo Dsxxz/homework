@@ -7,7 +7,7 @@ export const ConnectionsCountChecker = async (req: Request, res: Response, next:
     const url:string = req.originalUrl
     const date = new Date(Date.now())
     const tenSecAgo = subSeconds(date, 10)
-    const count = await controlRequests.checkRequest(ip,url,tenSecAgo)>5
+    const count = await controlRequests.checkRequest(ip,url,tenSecAgo)>4
     if(count){
         return res.sendStatus(429);
     }
