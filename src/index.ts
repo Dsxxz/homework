@@ -17,11 +17,11 @@ const port = process.env.PORT || 3000
 import  cookieParser = require('cookie-parser')
 const cors = require('cors')
 
+app.set('trust proxy', true)
 
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
-app.set('trust proxy', true)
 
 app.use('/blogs', blogsRouter)
 app.use('/security/devices', devicesRouter)
@@ -37,7 +37,7 @@ app.delete('/testing/all-data', async (req, res)=>{
         await commentsCollectionDb.deleteMany({})
         await deviceTypeCollection.deleteMany({})
         await IPRestrictCollectionDb.deleteMany({})
-        res.sendStatus(204)
+        return res.sendStatus(204)
     }
     catch{
         throw new Error("Failed to deleting")
@@ -49,6 +49,7 @@ const startApp = async ()=>{
         await runDb()
         app.listen(port, () => {
         console.log(`Example app listening on port ${port}`)})
+    return;
 }
 
  startApp();
