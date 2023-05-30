@@ -23,7 +23,7 @@ export const authService = {
                     confirmationCode: uuidv4(),
                     expirationDate:add(new Date(),
                         {
-                            minutes:1,
+                            minutes:5,
                         }),
                     isConfirmed:false
         }}

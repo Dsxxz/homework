@@ -7,6 +7,6 @@ export const emailManager = {
             `<p>${user.emailConfirmation.confirmationCode} To finish registration please follow the link below:\n` +
             `<a href="https://somesite.com/confirm-email?code=${user.emailConfirmation.confirmationCode}">complete registration</a>\n` +
             '</p>')
-
+        return;
     }
 }
