@@ -32,7 +32,7 @@ devicesRouter.get('/', async (req, res)=>{
 devicesRouter.delete('/', async (req, res)=>{
     try{
         const checkToken = await jwtService.verifyUserIdByRefreshToken(req.cookies.refreshToken)
-        if(   checkToken     ){
+        if(!checkToken){
             res.sendStatus(401);
             return;
         }
