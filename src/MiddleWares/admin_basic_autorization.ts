@@ -6,9 +6,9 @@ export const basicAuth = async (req:any,res:any, next:any)=>{
     const username: string = 'admin'
     const password: string = 'qwerty'
     if(user && user.name.toLowerCase() === username.toLowerCase() && user.pass === password){
-        next()
+        next();
     }
     else{
-        res.sendStatus(401)
+        return res.sendStatus(401);
     }
 }

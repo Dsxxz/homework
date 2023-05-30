@@ -33,7 +33,7 @@ export const jwtService = {
             const result: any = jwt.verify(token, "JWT_Secret")
             return result.userId;
         } catch (error) {
-            console.log('async verifyUserIdByAccessToken',error)
+            console.log(error)
             return null;
 
     }
