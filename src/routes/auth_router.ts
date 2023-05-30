@@ -15,7 +15,6 @@ import {userRepository} from "../repositories/user_in_db_repository";
 import {ConnectionsCountChecker} from "../MiddleWares/connectionsCountChecker";
 import {ObjectId} from "mongodb";
 import {devicesService} from "../service/devices_service";
-import {auth_restriction} from "../MiddleWares/auth_restriction";
 
 
 export const authRouter = Router({});
@@ -77,7 +76,7 @@ authRouter.get('/me', authMiddleWare, async (req, res) => {
     }
 })
 
-authRouter.post('/registration', auth_restriction,
+authRouter.post('/registration', ConnectionsCountChecker,
     authInputEmailValidation,
     authInputPasswordValidation,
     authInputLoginValidation,
@@ -111,7 +110,7 @@ authRouter.post('/registration-confirmation', ConnectionsCountChecker,
         }
     })
 
-authRouter.post('/registration-email-resending', auth_restriction,
+authRouter.post('/registration-email-resending', ConnectionsCountChecker,
     inputEmailValidationForResending,
     existingEmailValidation,
     async (req: Request, res: Response) => {
