@@ -10,7 +10,7 @@ export const emailAdapter = {
                 pass :process.env.email_password
             }
         });
-        return await transporter.sendMail({
+        return transporter.sendMail({
             from: 'dsxxz92@gmail.com',
             to:email,
             subject:subject,

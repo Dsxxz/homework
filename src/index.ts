@@ -37,7 +37,7 @@ app.delete('/testing/all-data', async (req, res)=>{
         await commentsCollectionDb.deleteMany({})
         await deviceTypeCollection.deleteMany({})
         await IPRestrictCollectionDb.deleteMany({})
-        return res.sendStatus(204)
+        return res.sendStatus(204);
     }
     catch{
         throw new Error("Failed to deleting")
