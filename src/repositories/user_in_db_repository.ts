@@ -60,6 +60,6 @@ export const userRepository= {
         return  UserModelClass.findOne({_id:filter}).lean()
     },
     async findUserByOldPassword(password: string) {
-        return  UserModelClass.findOne({password})
+        return  UserModelClass.findOne({"accountData.userPasswordHash":password})
     }
 }
