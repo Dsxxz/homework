@@ -210,7 +210,7 @@ authRouter.post('/new-password', ConnectionsCountChecker,
     inputNewPasswordValidation,
      async (req: Request, res: Response) => {
     try {
-        const user = await authService.checkExistCode(req.body.code)
+        const user = await authService.checkExistCode(req.body.recoveryCode)
         if(user){
             const checkNewPassword = await authService.findUserByOldPassword(user,req.body.newPassword)
             if(checkNewPassword){
