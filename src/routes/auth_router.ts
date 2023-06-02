@@ -3,10 +3,14 @@ import {authService} from "../service/auth-service";
 import {LoginInputModel, UserAccountDbType} from "../models/userType";
 import {jwtService} from "../application/jwt-service";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
-import {existingEmailValidation, inputAuthValidation} from "../MiddleWares/validation-middleware";
+import {
+    existingEmailValidation,
+    inputAuthValidation,
+    inputNewPasswordValidation
+} from "../MiddleWares/validation-middleware";
 import {
     authInputEmailValidation,
-    authInputLoginValidation,
+    authInputLoginValidation, authInputNewPasswordValidation,
     authInputPasswordValidation
 } from "../MiddleWares/auth-registration";
 import {inputEmailValidationForResending} from "../MiddleWares/registration-email-resending";
@@ -202,8 +206,8 @@ authRouter.post('/password-recovery', ConnectionsCountChecker,
         }
     })
 authRouter.post('/new-password', ConnectionsCountChecker,
-    authInputPasswordValidation,
-    inputAuthValidation,
+    authInputNewPasswordValidation,
+    inputNewPasswordValidation,
      async (req: Request, res: Response) => {
     try {
         const user = await authService.checkExistCode(req.body.code)

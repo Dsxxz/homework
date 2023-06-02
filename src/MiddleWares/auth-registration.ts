@@ -33,3 +33,5 @@ export const authInputEmailValidation = body('email').trim()
 export const authInputPasswordValidation = body('password').trim()
     .isLength({min:6, max:20}).withMessage('Password should be from 6 to 20 symbols')
 
+export const authInputNewPasswordValidation = body('newPassword').trim()
+    .isLength({min:6, max:20}).withMessage('Password should be from 6 to 20 symbols')
