@@ -216,15 +216,13 @@ authRouter.post('/new-password', ConnectionsCountChecker,
     try {
         const user = await authService.checkExistCode(req.body.recoveryCode)
         if(!user){
-            res.sendStatus(400).send({ errorsMessages: [{ message: "Recovery code is not correct", field: "recoveryCode" }] })
+            res.status(400).send({ errorsMessages: [{ message: "Recovery code is not correct", field: "recoveryCode" }] })
             return;
         }
         else {
             const checkNewPassword = await authService.findUserByOldPassword(user!,req.body.newPassword)
-            console.log("checkNewPassword",checkNewPassword)
             if(checkNewPassword){
                 res.sendStatus(401);
-                console.log("checkNewPassword, authRouter.post('/new-password')")
                 return;
             }
                 await authService.updateAccountData(user!, req.body.newPassword)
