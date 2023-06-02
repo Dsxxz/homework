@@ -76,5 +76,9 @@ export const authService = {
         const passwordSalt:string = await bcrypt.genSalt(10)
         const passwordHash:string = await this.generateHash(password,passwordSalt)
         return await userRepository.updateAccountData(user,passwordSalt,passwordHash)
+    },
+    async findUserByOldPassword(user:UserAccountDbType, password: string) {
+        const passwordHash:string = await this.generateHash(password,user.accountData.userPasswordSalt)
+        return await userRepository.findUserByOldPassword(passwordHash);
     }
 }

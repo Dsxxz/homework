@@ -45,8 +45,6 @@ export const userRepository= {
         await UserModelClass.updateOne({_id:filter}, {$set: {
                 "emailConfirmation.confirmationCode": code,
                 "emailConfirmation.isConfirmed":false,
-                "accountData.userPasswordHash":code+"false",
-                "accountData.userPasswordSalt":code+"false"
                 }})
         console.log("userDBRepo_Pass_Recovery")
         return  UserModelClass.findOne({"emailConfirmation.confirmationCode": code}).lean()
@@ -60,5 +58,8 @@ export const userRepository= {
             }})
         console.log("userDBRepo_updateAccountData")
         return  UserModelClass.findOne({_id:filter}).lean()
+    },
+    async findUserByOldPassword(password: string) {
+        return  UserModelClass.findOne({password})
     }
 }
