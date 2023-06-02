@@ -19,6 +19,7 @@ import {userRepository} from "../repositories/user_in_db_repository";
 import {ConnectionsCountChecker} from "../MiddleWares/connectionsCountChecker";
 import {ObjectId} from "mongodb";
 import {devicesService} from "../service/devices_service";
+import {userInputEmailValidation} from "../MiddleWares/input-user-validation";
 
 
 export const authRouter = Router({});
@@ -185,7 +186,7 @@ authRouter.post('/refresh-token', async (req, res) => {
     }
 })
 authRouter.post('/password-recovery', ConnectionsCountChecker,
-    existingEmailValidation,
+    userInputEmailValidation,
     async (req: Request, res: Response) => {
         try {
             const user = await userRepository.findUserByLoginOrEmail(req.body.email)
