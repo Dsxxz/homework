@@ -187,6 +187,7 @@ authRouter.post('/refresh-token', async (req, res) => {
 })
 authRouter.post('/password-recovery', ConnectionsCountChecker,
     userInputEmailValidation,
+    inputNewPasswordValidation,
     async (req: Request, res: Response) => {
         try {
             const user = await userRepository.findUserByLoginOrEmail(req.body.email)
@@ -214,23 +215,21 @@ authRouter.post('/new-password', ConnectionsCountChecker,
      async (req: Request, res: Response) => {
     try {
         const user = await authService.checkExistCode(req.body.recoveryCode)
-        console.log('/new-password', user)
-        if(user){
-            const checkNewPassword = await authService.findUserByOldPassword(user,req.body.newPassword)
+        if(!user){
+            res.sendStatus(400).send({ errorsMessages: [{ message: "Recovery code is not correct", field: "recoveryCode" }] })
+            return;
+        }
+        else {
+            const checkNewPassword = await authService.findUserByOldPassword(user!,req.body.newPassword)
             console.log("checkNewPassword",checkNewPassword)
             if(checkNewPassword){
                 res.sendStatus(401);
                 console.log("checkNewPassword, authRouter.post('/new-password')")
                 return;
             }
-            await authService.updateAccountData(user, req.body.newPassword)
-            res.sendStatus(204);
-            return;
-        }
-        else{
-            res.sendStatus(400);
-            console.log("authRouter.post('/new-password')")
-            return;
+                await authService.updateAccountData(user!, req.body.newPassword)
+                res.sendStatus(204);
+                return;
         }
     }
     catch (e) {
