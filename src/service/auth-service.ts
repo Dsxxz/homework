@@ -75,9 +75,9 @@ export const authService = {
     async updateAccountData(user:UserAccountDbType,password:string) {
         const passwordSalt:string = await bcrypt.genSalt(10)
         const passwordHash:string = await this.generateHash(password,passwordSalt)
-        return await userRepository.updateAccountData(user,passwordSalt,passwordHash)
+         return await userRepository.updateAccountData(user,passwordSalt,passwordHash)
     },
-    async findUserByOldPassword(user:UserAccountDbType, password: string) {
+    async findUserByOldPassword(user:UserAccountDbType, password: string) :Promise<UserAccountDbType|null>{
         const passwordHash:string = await this.generateHash(password,user.accountData.userPasswordSalt)
         return await userRepository.findUserByOldPassword(passwordHash);
     }

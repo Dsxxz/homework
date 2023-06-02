@@ -15,7 +15,9 @@ export const userRepository= {
         return  UserModelClass.findOne({$or: [filterEmail, filterLogin]}).lean()
     },
     async findUserByConfirmationCode(emailConfirmationCode: string): Promise<UserAccountDbType | null> {
-        return  UserModelClass.findOne({"emailConfirmation.confirmationCode": emailConfirmationCode}).lean()
+        const user:UserAccountDbType | null = await UserModelClass.findOne({"emailConfirmation.confirmationCode": emailConfirmationCode}).lean()
+        console.log("findUserByConfirmationCode, userRepository" ,user )
+        return user
     },
     async findUserById(id: ObjectId|string): Promise<UserAccountDbType | null> {
         return  UserModelClass.findOne({_id: new ObjectId((id))}).lean()
@@ -41,15 +43,16 @@ export const userRepository= {
 },
     async passwordRecoveryUser(user: UserAccountDbType): Promise<UserAccountDbType|null> {
         const code:string =  uuidv4();
+        console.log("const code:string =  uuidv4();", code)
         const filter =user._id
         await UserModelClass.updateOne({_id:filter}, {$set: {
                 "emailConfirmation.confirmationCode": code,
-                "emailConfirmation.isConfirmed":false,
+                "emailConfirmation.isConfirmed":false
                 }})
-        console.log("userDBRepo_Pass_Recovery")
+        console.log("userDBRepo_Pass_Recovery",user.emailConfirmation.confirmationCode, await UserModelClass.findOne({"emailConfirmation.confirmationCode": code}).lean())
         return  UserModelClass.findOne({"emailConfirmation.confirmationCode": code}).lean()
     },
-    async updateAccountData(user: UserAccountDbType,passwordSalt:string,passwordHash:string){
+    async updateAccountData(user: UserAccountDbType,passwordSalt:string,passwordHash:string):Promise<UserAccountDbType|null>{
         const filter =user._id
         await UserModelClass.updateOne({_id:filter}, {$set: {
                 "emailConfirmation.isConfirmed":true,
@@ -59,7 +62,7 @@ export const userRepository= {
         console.log("userDBRepo_updateAccountData")
         return  UserModelClass.findOne({_id:filter}).lean()
     },
-    async findUserByOldPassword(password: string) {
-        return  UserModelClass.findOne({"accountData.userPasswordHash":password})
+    async findUserByOldPassword(password: string):Promise<UserAccountDbType|null> {
+        return  UserModelClass.findOne({"accountData.userPasswordHash":password}).lean()
     }
 }

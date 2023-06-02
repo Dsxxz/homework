@@ -10,9 +10,9 @@ export const emailManager = {
         return;
     },
     sendRecoveryCode(user:UserAccountDbType) {
-        emailAdapter.sendRecoveryCode(user.accountData.email, 'password recovery',
+        emailAdapter.sendConfirmCode(user.accountData.email, 'password recovery',
             `<h1>Password recovery</h1>` +
-        `<p>To finish password recovery please follow the link below:\n` +
+        `<p>${user.emailConfirmation.confirmationCode} To finish password recovery please follow the link below:\n` +
            `<a href='https://somesite.com/password-recovery?recoveryCode=${user.emailConfirmation.confirmationCode}'>recovery password</a>\n` +
         `</p>`)
 }}

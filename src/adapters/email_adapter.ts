@@ -16,7 +16,7 @@ export const emailAdapter = {
             subject:subject,
             html:message
         });
-    },
+    }/*,
     sendRecoveryCode(email:string, subject:string, message:string) {
         let transporter = nodemailer.createTransport({
             host:"smtp.gmail.com",
@@ -33,5 +33,5 @@ export const emailAdapter = {
             subject:subject,
             html:message
         });
-    }
+    }*/
 }
