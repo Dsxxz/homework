@@ -195,10 +195,12 @@ authRouter.post('/password-recovery', ConnectionsCountChecker,
                 return;
             }
             else {
-                await authService.passwordRecoveryUser(user);
-                emailManager.sendRecoveryCode(user);
-                res.sendStatus(204);
-                return;
+                const updateUser = await authService.passwordRecoveryUser(user);
+                if(updateUser) {
+                    emailManager.sendRecoveryCode(updateUser);
+                    res.sendStatus(204);
+                    return;
+                }
             }
         }
         catch (e) {
