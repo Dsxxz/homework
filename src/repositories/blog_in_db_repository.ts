@@ -1,18 +1,18 @@
-import { blogsCollectionDb} from "./db"
+import {BlogModel} from "./db"
 import {ObjectId} from "mongodb";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 
 export const blogsRepository={
     async createNewBlog(newBlog:BlogDbType):Promise<BlogType>{
-        await blogsCollectionDb.insertOne(newBlog)
-
+        const blogInstance = new BlogModel(newBlog)
+        blogInstance.save()
         return {
-            createdAt: newBlog.createdAt,
-            name: newBlog.name,
-            websiteUrl: newBlog.websiteUrl,
-            id: newBlog._id.toString(),
-            description: newBlog.description,
-            isMembership:newBlog.isMembership
+            createdAt: blogInstance.createdAt,
+            name: blogInstance.name,
+            websiteUrl: blogInstance.websiteUrl,
+            id: blogInstance._id.toString(),
+            description: blogInstance.description,
+            isMembership:blogInstance.isMembership
         }
     },
     async findBlogById(id: string):Promise<BlogType | null>{
@@ -20,7 +20,7 @@ export const blogsRepository={
             return null
         }
 
-        const blog = await blogsCollectionDb.findOne({_id: new ObjectId(id)})
+        const blog = await BlogModel.findOne({_id: new ObjectId(id)})
         if (blog) {
             return {
                 name: blog.name,
@@ -39,15 +39,21 @@ export const blogsRepository={
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const resultBlog= await blogsCollectionDb.updateOne({_id: new ObjectId(id)},{$set:{name,websiteUrl,description}})
-        return resultBlog.matchedCount===1 ;
+        const blogInstance = await BlogModel.findOne({_id: new ObjectId(id)});
+        if (!blogInstance)return false;
+        blogInstance.name=name;
+        blogInstance.websiteUrl=websiteUrl;
+        blogInstance.description=description;
+        return true;
     },
 
     async deleteBlog(id:string): Promise<boolean>{
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const result = await blogsCollectionDb.deleteOne({_id: new ObjectId(id)})
-        return result.deletedCount===1
+        const blogInstance = await BlogModel.findOne({_id: new ObjectId(id)});
+        if (!blogInstance)return false;
+        blogInstance.deleteOne();
+        return true;
     }
 }

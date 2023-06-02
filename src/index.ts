@@ -3,11 +3,10 @@ import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
 import {devicesRouter} from "./routes/devises_router";
 import {
-    blogsCollectionDb,
-    commentsCollectionDb, deviceTypeCollection, IPRestrictCollectionDb,
-    postsCollectionDb,
-    runDb,
-    usersCollectionDb
+    BlogModel,
+    CommentModel, DeviceModel, RestrictModel,
+    PostModel,
+    runDb, UserModelClass
 } from "./repositories/db";
 import {userRouter} from "./routes/user_router";
 import {authRouter} from "./routes/auth_router";
@@ -31,12 +30,12 @@ app.use('/auth', authRouter)
 app.use('/comments', commentsRouter)
 app.delete('/testing/all-data', async (req, res)=>{
     try {
-        await blogsCollectionDb.deleteMany({})
-        await postsCollectionDb.deleteMany({})
-        await usersCollectionDb.deleteMany({})
-        await commentsCollectionDb.deleteMany({})
-        await deviceTypeCollection.deleteMany({})
-        await IPRestrictCollectionDb.deleteMany({})
+        await BlogModel.deleteMany({})
+        await PostModel.deleteMany({})
+        await UserModelClass.deleteMany({})
+        await CommentModel.deleteMany({})
+        await DeviceModel.deleteMany({})
+        await RestrictModel.deleteMany({})
         return res.sendStatus(204);
     }
     catch{

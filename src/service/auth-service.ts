@@ -51,9 +51,8 @@ export const authService = {
     async deleteUser(id:string){
         return await userRepository.deleteUser(id);
     },
-    async checkExistCode(code:string):Promise<boolean>{
-        const user= await userRepository.findUserByConfirmationCode(code);
-        return !!user;
+    async checkExistCode(code:string):Promise<UserAccountDbType|null>{
+        return await userRepository.findUserByConfirmationCode(code);
     },
     async checkIsConfirmCode(code:string):Promise<boolean>{
         const user =await userRepository.findUserByConfirmationCode(code);
@@ -69,5 +68,13 @@ export const authService = {
 },
     async updateUserConfirmCode(user:UserAccountDbType):Promise<UserAccountDbType|null>{
         return await userRepository.updateConfirmationCode(user)
+    },
+    async passwordRecoveryUser(user: UserAccountDbType) {
+        return await userRepository.passwordRecoveryUser(user);
+    },
+    async updateAccountData(user:UserAccountDbType,password:string) {
+        const passwordSalt:string = await bcrypt.genSalt(10)
+        const passwordHash:string = await this.generateHash(password,passwordSalt)
+        return await userRepository.updateAccountData(user,passwordSalt,passwordHash)
     }
 }

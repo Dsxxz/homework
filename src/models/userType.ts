@@ -27,10 +27,7 @@ export type UserAccountDbType = {
     accountData: AccountDataType,
     emailConfirmation: {
         confirmationCode: string,
-        expirationDate:any,
+        expirationDate:Date,
         isConfirmed:boolean
     }
-}
-export type RegistrationDataType = {
-    ip:string
 }

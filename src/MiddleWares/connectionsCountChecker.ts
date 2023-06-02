@@ -5,8 +5,6 @@ import {subSeconds} from "date-fns";
 export const ConnectionsCountChecker = async (req: Request, res: Response, next: NextFunction) => {
     const ip:string = req.ip
     const url:string = req.originalUrl
-    console.log( req.originalUrl)
-    console.log( req.baseUrl)
     const date = new Date(Date.now())
     const tenSecAgo = subSeconds(date, 10)
     await controlRequests.addRequest(ip,url,date)

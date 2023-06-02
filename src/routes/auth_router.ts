@@ -19,6 +19,28 @@ import {devicesService} from "../service/devices_service";
 
 export const authRouter = Router({});
 
+authRouter.get('/me', authMiddleWare, async (req, res) => {
+    try {
+        const token = req.headers.authorization!.split(' ')[1]
+        const userId = await jwtService.verifyUserIdByAccessToken(token)
+        const user = await authService.findUsersById(userId)
+        if(user){
+            res.status(200).send({
+                "email": user.accountData.email,
+                "login": user.accountData.userName,
+                "userId": userId
+            })
+            return;
+        }
+        else{
+            res.status(401).send('not found')
+            return;
+        }
+    } catch (e) {
+        res.status(401).send('not found')
+        return;
+    }
+})
 authRouter.post('/login', ConnectionsCountChecker,
     async (req: Request<{}, {}, LoginInputModel, {}>, res: Response) => {
         const checkResult: UserAccountDbType | null = await authService.checkLoginAndPassword(req.body.loginOrEmail, req.body.password)
@@ -51,31 +73,7 @@ authRouter.post('/login', ConnectionsCountChecker,
         else {
             res.sendStatus(401);
             return;
-        }}
-)
-authRouter.get('/me', authMiddleWare, async (req, res) => {
-    try {
-        const token = req.headers.authorization!.split(' ')[1]
-        const userId = await jwtService.verifyUserIdByAccessToken(token)
-        const user = await authService.findUsersById(userId)
-        if(user){
-            res.status(200).send({
-                "email": user.accountData.email,
-                "login": user.accountData.userName,
-                "userId": userId
-            })
-            return;
-        }
-        else{
-            res.status(401).send('not found')
-            return;
-        }
-    } catch (e) {
-        res.status(401).send('not found')
-        return;
-    }
-})
-
+        }})
 authRouter.post('/registration', ConnectionsCountChecker,
     authInputEmailValidation,
     authInputPasswordValidation,
@@ -126,6 +124,7 @@ authRouter.post('/registration-email-resending', ConnectionsCountChecker,
         }
         const updateUser: UserAccountDbType | null = await authService.updateUserConfirmCode(user!);
         if (updateUser) {
+
             await emailManager.sendEmailConfirmationCode(updateUser)
             res.sendStatus(204);
             return;
@@ -181,3 +180,46 @@ authRouter.post('/refresh-token', async (req, res) => {
         return;
     }
 })
+authRouter.post('/password-recovery', ConnectionsCountChecker,
+    existingEmailValidation,
+    async (req: Request, res: Response) => {
+        try {
+            const user = await userRepository.findUserByLoginOrEmail(req.body.email)
+            if(!user){
+                res.sendStatus(204);
+                return;
+            }
+            else {
+                await authService.passwordRecoveryUser(user);
+                emailManager.sendRecoveryCode(user);
+                res.sendStatus(204);
+                return;
+            }
+        }
+        catch (e) {
+            res.status(500).send(e);
+            return;
+        }
+    })
+authRouter.post('/new-password', ConnectionsCountChecker,
+    authInputPasswordValidation,
+    inputAuthValidation,
+     async (req: Request, res: Response) => {
+    try {
+        const user = await authService.checkExistCode(req.body.code)
+        if(user){
+            await authService.updateAccountData(user, req.body.password)
+            res.sendStatus(204);
+            return;
+        }
+        else{
+            res.sendStatus(400);
+            console.log("authRouter.post('/new-password')")
+            return;
+        }
+    }
+    catch (e) {
+        res.status(500).send(e);
+        return;
+    }
+     })

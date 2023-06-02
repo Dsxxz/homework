@@ -1,4 +1,4 @@
-import {blogsCollectionDb, commentsCollectionDb, postsCollectionDb, usersCollectionDb} from "../repositories/db";
+import {BlogModel, CommentModel, PostModel, UserModelClass} from "../repositories/db";
 import {UserAccountDbType, UserViewModel} from "../models/userType";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 import {PostDBType, PostType} from "../models/posts-types";
@@ -8,7 +8,7 @@ import {paginationType} from "../models/query_input_models";
 export const blogQueryService={
     async paginationPage(searchNameTerm?:string,pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}}:{}
-        const   totalCount = await blogsCollectionDb.countDocuments(filter)
+        const   totalCount = await BlogModel.countDocuments(filter)
         const   pagesCount = Math.ceil(totalCount / pageSize)
 
         return {totalCount,pagesCount};
@@ -20,11 +20,11 @@ export const blogQueryService={
 
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}} : {}
         const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
-        const blogs: BlogDbType[] = await blogsCollectionDb.find(filter)
+        const blogs: BlogDbType[] = await BlogModel.find(filter)
             .sort({[sortBy]: sortDirectionNumber})
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
-            .toArray();
+            .lean();
         return blogs.map((blog: BlogDbType) => ({
             createdAt: blog.createdAt,
             name: blog.name,
@@ -36,7 +36,7 @@ export const blogQueryService={
 export const postQueryService={
     async paginationPage(pageNumber:number=1,pageSize:number=10,blogId?:string):Promise<paginationType>{
         const filter = blogId ? {blogId:blogId} :{}
-        const   totalCount = await postsCollectionDb.countDocuments(filter)
+        const   totalCount = await PostModel.countDocuments(filter)
         const   pagesCount = Math.ceil(totalCount / pageSize)
 
         return {totalCount,pagesCount};
@@ -48,11 +48,11 @@ export const postQueryService={
         {
             const sortDirectionNumber:-1|1 = sortDirection==='desc'? -1 : 1
             const filter = blogId ? {blogId:blogId} :{}
-                const posts: PostDBType[] = await postsCollectionDb.find(filter)
+                const posts: PostDBType[] = await PostModel.find(filter)
                     .sort({[sortBy]: sortDirectionNumber})
                     .skip((pageNumber-1)*pageSize)
                     .limit(pageSize)
-                    .toArray();
+                    .lean();
                 return posts.map((post:PostDBType) => ({
                     blogId: post.blogId,
                     blogName: post.blogName,
@@ -69,7 +69,7 @@ export const userQueryService= {
                          pageNumber: number, pageSize: number): Promise<paginationType> {
         const filterEmail = searchEmailTerm ? {email: {$regex: searchEmailTerm, $options: 'i'}} : {}
         const filterLogin = searchLoginTerm ? {login: {$regex: searchLoginTerm, $options: 'i'}} : {}
-        const totalCount = await usersCollectionDb.countDocuments({$or: [filterEmail, filterLogin]})
+        const totalCount = await UserModelClass.countDocuments({$or: [filterEmail, filterLogin]})
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {totalCount, pagesCount};
     }
@@ -80,11 +80,11 @@ export const userQueryService= {
         const filterEmail = searchEmailTerm ? {email: {$regex: searchEmailTerm, $options: 'i'}} : {}
         const filterLogin = searchLoginTerm ? {login: {$regex: searchLoginTerm, $options: 'i'}} : {}
         const sortDirectionNumber:-1|1 = sortDirection==='desc'? -1 : 1
-        const users:UserAccountDbType [] = await usersCollectionDb.find({$or: [filterEmail, filterLogin]})
+        const users:UserAccountDbType [] = await UserModelClass.find({$or: [filterEmail, filterLogin]})
             .sort({[sortBy]: sortDirectionNumber})
             .skip((pageNumber - 1) * pageSize)
             .limit(pageSize)
-            .toArray();
+            .lean();
         return users.map((user: UserAccountDbType) => ({
             id: user._id.toString(),
             login: user.accountData.userName,
@@ -95,18 +95,18 @@ export const userQueryService= {
     export const commentsQueryService = {
         async paginationPage(pageNumber: number = 1, pageSize: number = 10, postId: string): Promise<paginationType> {
 
-            const totalCount = await commentsCollectionDb.countDocuments({postId: postId})
+            const totalCount = await CommentModel.countDocuments({postId: postId})
             const pagesCount = Math.ceil(totalCount / pageSize)
             return {totalCount, pagesCount};
         },
         async getCommentsForPost(sortBy: string = 'createdAt', sortDirection: string = 'desc', postId: string,
                                  pageNumber: number = 1, pageSize: number = 10): Promise<Array<CommentsViewType>> {
             const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
-            const comments: Array<CommentsInDbType> = await commentsCollectionDb.find({postId: postId})
+            const comments: Array<CommentsInDbType> = await CommentModel.find({postId: postId})
                 .sort({[sortBy]: sortDirectionNumber})
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
-                .toArray();
+                .lean();
             return comments.map((comment: CommentsInDbType) => ({
                 commentatorInfo: comment.commentatorInfo,
                 content: comment.content,

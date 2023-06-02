@@ -1,5 +1,5 @@
 import {blogsRepository} from "./blog_in_db_repository";
-import {postsCollectionDb} from "./db";
+import {PostModel} from "./db";
 import {ObjectId} from "mongodb";
 import {PostDBType, PostType} from "../models/posts-types";
 
@@ -18,7 +18,7 @@ export const postsInDbRepository={
             shortDescription: creatingPost.shortDescription,
             title: creatingPost.title
         }
-        await postsCollectionDb.insertOne(newPost)
+        await PostModel.create(newPost)
         return {
             blogId: newPost.blogId,
             blogName: existingBlog.name,
@@ -33,7 +33,7 @@ export const postsInDbRepository={
         if(!ObjectId.isValid(id)){
             return null;
         }
-        const post = await postsCollectionDb.findOne({_id: new ObjectId(id)})
+        const post = await PostModel.findOne({_id: new ObjectId(id)})
         if(post){
             return {
                 blogId: post.blogId,
@@ -52,7 +52,7 @@ export const postsInDbRepository={
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const resultPost = await postsCollectionDb.updateOne({_id: new ObjectId(id)},{$set:{title,shortDescription,content,blogId}})
+        const resultPost = await PostModel.updateOne({_id: new ObjectId(id)},{$set:{title,shortDescription,content,blogId}})
         return resultPost.matchedCount===1;
 
     },
@@ -61,7 +61,7 @@ export const postsInDbRepository={
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const result = await postsCollectionDb.deleteOne({_id: new ObjectId(id)})
+        const result = await PostModel.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     }
 }
