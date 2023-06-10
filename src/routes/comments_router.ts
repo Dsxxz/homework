@@ -23,6 +23,11 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
         commentatorInfo:findComment.commentatorInfo,
         content:findComment.content,
         createdAt:findComment.createdAt,
+        likesInfo: {
+            likesCount: findComment.likesInfo.likesCount.length,
+            dislikesCount: findComment.likesInfo.dislikesCount.length,
+            myStatus: "None"
+        }
     });
     return;
 })
