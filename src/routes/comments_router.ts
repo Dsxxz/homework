@@ -73,21 +73,20 @@ commentsRouter.put('/:id/like-status',
         try{
             const token = req.headers.authorization!.split(' ')[1]
             const userId:ObjectId = await jwtService.verifyUserIdByAccessToken(token)
-            const findStatus:any= await commentsRepository.getLikeStatus(findComment._id,userId)
-            if( Object.values(findStatus.userLiked.likesInfo.myStatus.includes(req.body.likeStatus) ||
-                Object.values(findStatus.userDisliked.likesInfo.myStatus).includes(req.body.likeStatus))){
-                res.sendStatus(204)
-                return;
+            const findStatus= await commentsRepository.getLikeStatus(findComment._id,userId)
+            if(findStatus.userDisliked && findStatus.userDisliked.likesInfo.myStatus===req.body.likeStatus){
+                return res.sendStatus(204)
             }
-            if(findStatus.userLiked){
-                await commentsRepository.setDislike(findComment._id, req.body.likeStatus, userId);
-                res.sendStatus(204)
-                return;
+            if(findStatus.userLiked && findStatus.userLiked.likesInfo.myStatus===req.body.likeStatus){
+                return res.sendStatus(204)
             }
-            if(findStatus.userDisliked){
-                await commentsRepository.setLike(findComment._id, req.body.likeStatus, userId);
-                res.sendStatus(204)
-                return;
+            if(req.body.likeStatus==="Like"){
+                await commentsRepository.setDislike(findComment._id,req.body.likeStatus,userId)
+                return res.sendStatus(204)
+            }
+            if(req.body.likeStatus==="Dislike"){
+                await commentsRepository.getLikeStatus(findComment._id,userId)
+                return res.sendStatus(204)
             }
         }
         catch (e) {
