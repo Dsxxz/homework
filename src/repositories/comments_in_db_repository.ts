@@ -46,18 +46,19 @@ export const commentsRepository={
         const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     },
-    async setLike(id:ObjectId, status:string, userId:ObjectId){
-         await CommentModel.updateOne({_id: new ObjectId(id)},{$set: {myStatus:status}})
-         await CommentModel.updateOne({_id: new ObjectId(id)},{$pull: {"likesInfo.likesCount":userId,
-                 "likesInfo.dislikesCount":userId}})
-        if(status===likeEnum.Like){
-            return CommentModel.updateOne({_id: new ObjectId(id)},{$push:{"likesInfo.likesCount":userId}})
-        }
-        if(status===likeEnum.Dislike){
-            return CommentModel.updateOne({_id: new ObjectId(id)},{$push:{"likesInfo.dislikesCount":userId}})
-        }
-        if(status===likeEnum.None){
-            return CommentModel.updateOne({_id: new ObjectId(id)},{$push:{"likesInfo.likesCount":userId}})
-        }
+    async getLikeStatus(commentId:ObjectId,userId:ObjectId) {
+        const userLiked = await CommentModel.findOne({_id: commentId,"likesInfo.likesCount":{ "$in" : userId } })
+        const userDisliked = await CommentModel.findOne({_id: commentId,"likesInfo.dislikesCount":{ "$in" : userId } })
+        return{userLiked,userDisliked}
+    },
+    async setLike(commentId:ObjectId, status:string, userId:ObjectId){
+        await  CommentModel.updateOne({_id: commentId},{$push:{"likesInfo.likesCount":userId}});
+        await CommentModel.updateOne({_id: commentId},{$pull: {"likesInfo.dislikesCount":userId}});
+        return;
+    },
+    async setDislike(commentId: ObjectId, likeStatus: string, userId: ObjectId) {
+        await  CommentModel.updateOne({_id: commentId},{$push:{"likesInfo.dislikesCount":userId}});
+        await CommentModel.updateOne({_id: commentId},{$pull: {"likesInfo.likesCount":userId}});
+        return;
     }
 }

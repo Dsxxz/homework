@@ -7,6 +7,7 @@ import {inputCommentsValidation, inputLikesValidation} from "../MiddleWares/vali
 
 import {likeStatusValidation} from "../MiddleWares/likeStatus_check";
 import {jwtService} from "../application/jwt-service";
+import {ObjectId} from "mongodb";
 
 export const commentsRouter = Router({});
 
@@ -71,10 +72,23 @@ commentsRouter.put('/:id/like-status',
         }
         try{
             const token = req.headers.authorization!.split(' ')[1]
-            const userId = await jwtService.verifyUserIdByAccessToken(token)
-            await commentsRepository.setLike(findComment._id,req.body.likeStatus,userId)
-            res.sendStatus(204);
-            return;
+            const userId:ObjectId = await jwtService.verifyUserIdByAccessToken(token)
+            const findStatus:any= await commentsRepository.getLikeStatus(findComment._id,userId)
+            if( Object.values(findStatus.userLiked.likesInfo.myStatus.includes(req.body.likeStatus) ||
+                Object.values(findStatus.userDisliked.likesInfo.myStatus).includes(req.body.likeStatus))){
+                res.sendStatus(204)
+                return;
+            }
+            if(findStatus.userLiked){
+                await commentsRepository.setDislike(findComment._id, req.body.likeStatus, userId);
+                res.sendStatus(204)
+                return;
+            }
+            if(findStatus.userDisliked){
+                await commentsRepository.setLike(findComment._id, req.body.likeStatus, userId);
+                res.sendStatus(204)
+                return;
+            }
         }
         catch (e) {
             console.log("commRouter/put/comments/id/likeStatus", e)
