@@ -22,7 +22,8 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
     res.status(200).send({id:findComment._id.toString(),
         commentatorInfo:findComment.commentatorInfo,
         content:findComment.content,
-        createdAt:findComment.createdAt});
+        createdAt:findComment.createdAt,
+    });
     return;
 })
 commentsRouter.delete('/:id',
@@ -72,6 +73,7 @@ commentsRouter.put('/:id/like-status',
         }
         catch (e) {
             console.log("commRouter/put/comments/id/likeStatus", e)
-            res.status(500).send(e)
+            res.status(500).send(e);
+            return;
         }
 })

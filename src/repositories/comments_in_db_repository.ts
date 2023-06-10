@@ -29,7 +29,7 @@ export const commentsRepository={
             likesInfo: {
                 likesCount:newComment.likesInfo.likesCount.length,
                 dislikesCount:newComment.likesInfo.dislikesCount.length,
-                myStatus:likeEnum.None,
+                myStatus:newComment.likesInfo.myStatus,
             }
         }
     },

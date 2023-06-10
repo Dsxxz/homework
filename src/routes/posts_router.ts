@@ -63,6 +63,7 @@ postsRouter.post('/:id/comments',
     authMiddleWare,
     inputCommentsValidation,
     async (req:Request<{id: string}, {}, {content: string}>, res:Response)=>{
+      try{
     let foundPostById = await postsService.findPostById(req.params.id)
     if(!foundPostById){
         res.sendStatus(404);
@@ -72,7 +73,12 @@ postsRouter.post('/:id/comments',
         (req.body.content, req.user!._id, foundPostById.id)
 
         res.status(201).send(newComment);
+            return;}
+        catch (e) {
+            console.log("postsRouter.post('/:id/comments'", e)
+            res.status(500).send(e)
             return;
+        }
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
