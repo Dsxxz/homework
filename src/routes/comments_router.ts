@@ -88,6 +88,7 @@ commentsRouter.put('/:id/like-status',
                 await commentsRepository.setDislike(findComment._id,req.body.likeStatus,userId)
                 return res.sendStatus(204)
             }else{
+                await commentsRepository.setDislike(findComment._id,req.body.likeStatus,userId)
                 return res.sendStatus(204)
             }
         }

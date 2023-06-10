@@ -62,5 +62,11 @@ export const commentsRepository={
         await CommentModel.updateOne({_id: commentId},{$pull: {"likesInfo.likesCount":userId}});
         await CommentModel.updateOne({_id: commentId},{$set: {"likesInfo.myStatus":likeStatus}});
         return;
+    },
+    async setNonLike(commentId: ObjectId, likeStatus: string, userId: ObjectId) {
+        await  CommentModel.updateOne({_id: commentId},{$pull:{"likesInfo.dislikesCount":userId}});
+        await CommentModel.updateOne({_id: commentId},{$pull: {"likesInfo.likesCount":userId}});
+        await CommentModel.updateOne({_id: commentId},{$set: {"likesInfo.myStatus":likeStatus}});
+        return;
     }
 }
