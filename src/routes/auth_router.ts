@@ -48,7 +48,7 @@ authRouter.get('/me', authMiddleWare, async (req, res) => {
 })
 authRouter.post('/login', ConnectionsCountChecker,
     async (req: Request<{}, {}, LoginInputModel, {}>, res: Response) => {
-        const checkResult: UserAccountDbType | null = await authService.checkLoginAndPassword(req.body.loginOrEmail, req.body.password)
+       try{ const checkResult: UserAccountDbType | null = await authService.checkLoginAndPassword(req.body.loginOrEmail, req.body.password)
 
         if (checkResult) {
             const userId: ObjectId = checkResult._id
@@ -78,7 +78,12 @@ authRouter.post('/login', ConnectionsCountChecker,
         else {
             res.sendStatus(401);
             return;
-        }})
+        }}
+        catch (e) {
+            console.log("authRouter.post('/login'", e)
+            res.status(500).send(e)
+        }
+})
 authRouter.post('/registration', ConnectionsCountChecker,
     authInputEmailValidation,
     authInputPasswordValidation,

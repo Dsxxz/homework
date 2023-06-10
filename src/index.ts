@@ -28,6 +28,7 @@ app.use('/posts', postsRouter)
 app.use('/users', userRouter)
 app.use('/auth', authRouter)
 app.use('/comments', commentsRouter)
+
 app.delete('/testing/all-data', async (req, res)=>{
     try {
         await BlogModel.deleteMany({})

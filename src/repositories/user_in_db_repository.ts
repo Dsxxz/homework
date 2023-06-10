@@ -43,13 +43,11 @@ export const userRepository= {
 },
     async passwordRecoveryUser(user: UserAccountDbType): Promise<UserAccountDbType|null> {
         const code:string =  uuidv4();
-        console.log("const code:string =  uuidv4();", code)
         const filter =user._id
         await UserModelClass.updateOne({_id:filter}, {$set: {
                 "emailConfirmation.confirmationCode": code,
                 "emailConfirmation.isConfirmed":false
                 }})
-        console.log("userDBRepo_Pass_Recovery",user.emailConfirmation.confirmationCode, await UserModelClass.findOne({"emailConfirmation.confirmationCode": code}).lean())
         return  UserModelClass.findOne({"emailConfirmation.confirmationCode": code}).lean()
     },
     async updateAccountData(user: UserAccountDbType,passwordSalt:string,passwordHash:string):Promise<UserAccountDbType|null>{
@@ -59,7 +57,6 @@ export const userRepository= {
                 "accountData.userPasswordHash":passwordHash,
                 "accountData.userPasswordSalt":passwordSalt
             }})
-        console.log("userDBRepo_updateAccountData")
         return  UserModelClass.findOne({_id:filter}).lean()
     },
     async findUserByOldPassword(password: string):Promise<UserAccountDbType|null> {

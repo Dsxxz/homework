@@ -46,10 +46,17 @@ const postSchema = new mongoose.Schema<PostDBType>({
 const commentSchema = new mongoose.Schema<CommentsInDbType>({
     _id: {type:ObjectId, required:true},
     content: {type:String, required:true},
-    commentatorInfo:{userId: {type:String, required:true},
-        userLogin: {type:String, required:true}},
+    commentatorInfo:{
+        userId: {type:String, required:true},
+        userLogin: {type:String, required:true}
+    },
     createdAt: {type:String, required:true},
-    postId: {type:String, required:true}
+    postId: {type:String, required:true},
+    likesInfo:{
+        likesCount: {type:[ObjectId],default:[]},
+        dislikesCount:{type:[ObjectId],default:[]},
+        myStatus: {type:String, required:true}
+    }
 })
 const devicesSchema = new mongoose.Schema<DeviceType>({
     ip:	 {type:String, required:true},  //IP address of device during signing in
@@ -63,6 +70,7 @@ const restrictsSchema = new mongoose.Schema<IPCheckerType>({
     url: {type:String, required:true},
     date: {type:Date, required:true}
 })
+
 
 export const UserModelClass =  mongoose.model('users', userSchema);
 export const BlogModel =  mongoose.model('blogs', blogSchema);

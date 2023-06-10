@@ -3,9 +3,14 @@ import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
 import {checkOwnerOfComments} from "../MiddleWares/checkOwnerOfComments";
 import {CommentInputContentValidation} from "../MiddleWares/input-comment-validation";
-import {inputCommentsValidation} from "../MiddleWares/validation-middleware";
+import {inputCommentsValidation, inputLikesValidation} from "../MiddleWares/validation-middleware";
+
+import {likeStatusValidation} from "../MiddleWares/likeStatus_check";
+import {jwtService} from "../application/jwt-service";
 
 export const commentsRouter = Router({});
+
+
 
 commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
     const findComment = await commentsRepository.getCommentById(req.params.id)
@@ -47,4 +52,26 @@ commentsRouter.put('/:id',
 
     res.status(204).send(await commentsRepository.getCommentById(req.params.id));
     return;
+})
+commentsRouter.put('/:id/like-status',
+    authMiddleWare,
+    likeStatusValidation,
+    inputLikesValidation,
+    async (req:Request<{ id: string },{},{likeStatus:string}>,res:Response)=>{
+        const findComment = await commentsRepository.getCommentById(req.params.id)
+        if(!findComment){
+            res.sendStatus(404);
+            return;
+        }
+        try{
+            const token = req.headers.authorization!.split(' ')[1]
+            const userId = await jwtService.verifyUserIdByAccessToken(token)
+            await commentsRepository.setLike(findComment._id,req.body.likeStatus,userId)
+            res.sendStatus(204);
+            return;
+        }
+        catch (e) {
+            console.log("commRouter/put/comments/id/likeStatus", e)
+            res.status(500).send(e)
+        }
 })

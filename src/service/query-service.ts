@@ -4,6 +4,7 @@ import {BlogDbType, BlogType} from "../models/blogs-types";
 import {PostDBType, PostType} from "../models/posts-types";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
+import {likeEnum} from "../models/LikesInfoType";
 
 export const blogQueryService={
     async paginationPage(searchNameTerm?:string,pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
@@ -111,5 +112,10 @@ export const userQueryService= {
                 commentatorInfo: comment.commentatorInfo,
                 content: comment.content,
                 createdAt: comment.createdAt,
-                id: comment._id.toString()
+                id: comment._id.toString(),
+                likesInfo: {
+                    likesCount:comment.likesInfo.likesCount.length,
+                    dislikesCount:comment.likesInfo.dislikesCount.length,
+                    myStatus:likeEnum.None,
+                }
             }))}}

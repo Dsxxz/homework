@@ -47,7 +47,13 @@ export const existingEmailValidation = ((req:Request, res:Response, next: NextFu
 export const inputNewPasswordValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
-        console.log("inputNewPasswordValidation")
+        return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
+    }
+    else next();
+})
+export const inputLikesValidation = ((req:Request, res:Response, next: NextFunction)=> {
+    const errorsMessages = myValidationResult(req)
+    if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
     else next();
