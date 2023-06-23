@@ -55,27 +55,34 @@ export const commentsRepository={
         else return likeEnum.None;
 
     },
-    async setLike(commentId:string, status:string,userId:ObjectId) {
+    async setLike(commentId:string,userId:ObjectId) {
         const findComment = await this.getCommentById(commentId)
         if(findComment) {
-            const index = findComment.likesInfo.dislikesCount.indexOf(userId)
-            if (index > -1) {
-                findComment.likesInfo.dislikesCount.splice(index, 1);
+            const indexDislike = findComment.likesInfo.dislikesCount.indexOf(userId)
+            const indexLike = findComment.likesInfo.likesCount.indexOf(userId)
+            if (indexDislike > -1) {
+                findComment.likesInfo.dislikesCount.splice(indexDislike, 1);
+            }
+            if (indexLike > -1) {
+                findComment.likesInfo.likesCount.splice(indexLike, 1);
             }
             findComment.likesInfo.likesCount.push(userId)
-            return;
+
         }
         return;
     },
-    async setDislike(commentId:string, status:string,userId:ObjectId) {
+    async setDislike(commentId:string,userId:ObjectId) {
         const findComment = await this.getCommentById(commentId)
         if(findComment) {
-            const index = findComment.likesInfo.likesCount.indexOf(userId)
-            if (index > -1) {
-                findComment.likesInfo.likesCount.splice(index, 1);
+            const indexDislike = findComment.likesInfo.dislikesCount.indexOf(userId)
+            const indexLike = findComment.likesInfo.likesCount.indexOf(userId)
+            if (indexDislike > -1) {
+                findComment.likesInfo.dislikesCount.splice(indexDislike, 1);
             }
-            findComment.likesInfo.dislikesCount.push(userId);
-            return;
+            if (indexLike > -1) {
+                findComment.likesInfo.likesCount.splice(indexLike, 1);
+            }
+            findComment.likesInfo.dislikesCount.push(userId)
         }
         return;
     }
