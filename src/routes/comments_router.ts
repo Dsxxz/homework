@@ -19,8 +19,12 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
         res.sendStatus(404);
         return;
     }
-    const token = req.headers.authorization!.split(' ')[1]
-    const userId:ObjectId|null = await jwtService.verifyUserIdByAccessToken(token)
+    const token = req.headers.authorization?.split(' ')[1]
+    let userId: ObjectId | null
+    if (token) {
+         userId = await jwtService.verifyUserIdByAccessToken(token)
+    }
+    else{  userId = null}
     res.status(200).send({id:findComment._id.toString(),
         commentatorInfo:findComment.commentatorInfo,
         content:findComment.content,
@@ -74,7 +78,6 @@ commentsRouter.put('/:id/like-status',
         try{
             const token = req.headers.authorization!.split(' ')[1]
             const userId:ObjectId = await jwtService.verifyUserIdByAccessToken(token)
-         //   const findStatus= await commentsRepository.getLikeStatus(findComment._id,userId)
             const newStatus = req.body.likeStatus
             if(newStatus==="Like"){
                 await commentsRepository.setLike(req.params.id,newStatus,userId);
