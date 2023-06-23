@@ -46,27 +46,33 @@ export const commentsRepository={
         const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     },
-    async getLikeStatus(commentId:ObjectId,userId:ObjectId) {
-        const userLiked = await CommentModel.findOne({_id: commentId,"likesInfo.likesCount":{ "$in" : userId } })
-        const userDisliked  = await CommentModel.findOne({_id: commentId,"likesInfo.dislikesCount":{ "$in" : userId } })
-        return {userLiked,userDisliked}
-    },
-    async setLike(commentId:ObjectId, status:string, userId:ObjectId){
-         await  CommentModel.updateOne({_id: commentId},{$push:{"likesInfo.likesCount":userId}});
-        await CommentModel.updateOne({_id: commentId},{$pull: {"likesInfo.dislikesCount":userId}});
-        await CommentModel.updateOne({_id: commentId},{$set: {"likesInfo.myStatus":status}});
+    // async getLikeStatus(commentId:ObjectId,userId:ObjectId) {
+    //     const userLiked = await CommentModel.findOne({_id: commentId,"likesInfo.likesCount":{ "$in" : userId } })
+    //     const userDisliked  = await CommentModel.findOne({_id: commentId,"likesInfo.dislikesCount":{ "$in" : userId } })
+    //     return {userLiked,userDisliked}
+    // },
+    async setLike(commentId:string, status:string,userId:ObjectId) {
+        const findComment = await this.getCommentById(commentId)
+        if(findComment) {
+            const index = findComment.likesInfo.dislikesCount.indexOf(userId)
+            if (index > -1) {
+                findComment.likesInfo.dislikesCount.splice(index, 1);
+            }
+            findComment.likesInfo.likesCount.push(userId)
+            return;
+        }
         return;
     },
-    async setDislike(commentId: ObjectId, likeStatus: string, userId: ObjectId) {
-        await  CommentModel.updateOne({_id: commentId},{$push:{"likesInfo.dislikesCount":userId}});
-        await CommentModel.updateOne({_id: commentId},{$pull: {"likesInfo.likesCount":userId}});
-        await CommentModel.updateOne({_id: commentId},{$set: {"likesInfo.myStatus":likeStatus}});
-        return;
-    },
-    async setNonLike(commentId: ObjectId, likeStatus: string, userId: ObjectId) {
-        await  CommentModel.updateOne({_id: commentId},{$pull:{"likesInfo.dislikesCount":userId}});
-        await CommentModel.updateOne({_id: commentId},{$pull: {"likesInfo.likesCount":userId}});
-        await CommentModel.updateOne({_id: commentId},{$set: {"likesInfo.myStatus":likeStatus}});
+    async setDislike(commentId:string, status:string,userId:ObjectId) {
+        const findComment = await this.getCommentById(commentId)
+        if(findComment) {
+            const index = findComment.likesInfo.likesCount.indexOf(userId)
+            if (index > -1) {
+                findComment.likesInfo.likesCount.splice(index, 1);
+            }
+            findComment.likesInfo.dislikesCount.push(userId);
+            return;
+        }
         return;
     }
 }

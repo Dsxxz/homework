@@ -18,8 +18,8 @@ export type CommentsInDbType={
     createdAt:string
     postId:string,
     likesInfo: {
-        "likesCount": [],
-        "dislikesCount": [],
+        "likesCount": ObjectId[],
+        "dislikesCount": ObjectId[],
         "myStatus": string
     }
 }
