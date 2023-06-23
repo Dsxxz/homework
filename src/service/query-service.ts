@@ -110,7 +110,7 @@ export const userQueryService= {
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
                 .lean();
-            return comments.map((comment: CommentsInDbType) => ({
+            return comments.map(async (comment: CommentsInDbType) => ({
                 commentatorInfo: comment.commentatorInfo,
                 content: comment.content,
                 createdAt: comment.createdAt,
@@ -118,7 +118,7 @@ export const userQueryService= {
                 likesInfo: {
                     likesCount: comment.likesInfo.likesCount.length,
                     dislikesCount: comment.likesInfo.dislikesCount.length,
-                    myStatus: commentsRepository.getLikeStatus(comment._id.toString(), userId)
+                    myStatus: await commentsRepository.getLikeStatus(comment._id.toString(), userId)
                 }
             }
         ))}
