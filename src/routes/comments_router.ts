@@ -19,7 +19,8 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
         res.sendStatus(404);
         return;
     }
-    console.log(findComment)
+    const token = req.headers.authorization!.split(' ')[1]
+    const userId:ObjectId|null = await jwtService.verifyUserIdByAccessToken(token)
     res.status(200).send({id:findComment._id.toString(),
         commentatorInfo:findComment.commentatorInfo,
         content:findComment.content,
@@ -27,7 +28,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
         likesInfo: {
             likesCount: findComment.likesInfo.likesCount.length,
             dislikesCount: findComment.likesInfo.dislikesCount.length,
-            myStatus: "None"
+            myStatus: await commentsRepository.getLikeStatus(new ObjectId(req.params.id), userId)
         }
     });
     return;

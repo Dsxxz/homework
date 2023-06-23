@@ -46,11 +46,14 @@ export const commentsRepository={
         const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     },
-    // async getLikeStatus(commentId:ObjectId,userId:ObjectId) {
-    //     const userLiked = await CommentModel.findOne({_id: commentId,"likesInfo.likesCount":{ "$in" : userId } })
-    //     const userDisliked  = await CommentModel.findOne({_id: commentId,"likesInfo.dislikesCount":{ "$in" : userId } })
-    //     return {userLiked,userDisliked}
-    // },
+    async getLikeStatus(commentId:ObjectId,userId:ObjectId|null):Promise<likeEnum>{
+        const userLiked = await CommentModel.findOne({_id: commentId,"likesInfo.likesCount":{ "$in" : userId } })
+        if (userLiked) return likeEnum.Like;
+        const userDisliked  = await CommentModel.findOne({_id: commentId,"likesInfo.dislikesCount":{ "$in" : userId } })
+        if (userDisliked) return likeEnum.Dislike;
+        else return likeEnum.None;
+
+    },
     async setLike(commentId:string, status:string,userId:ObjectId) {
         const findComment = await this.getCommentById(commentId)
         if(findComment) {
