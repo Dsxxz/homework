@@ -81,12 +81,15 @@ commentsRouter.put('/:id/like-status',
             const token = req.headers.authorization!.split(' ')[1]
             const userId:ObjectId = await jwtService.verifyUserIdByAccessToken(token)
             const newStatus = req.body.likeStatus
-            if(newStatus==="Like"){
+            if(newStatus==="Like" ){
                 await commentsRepository.setLike(req.params.id,userId);
                 return res.sendStatus(204);
             }
             if(newStatus==="Dislike"){
                 await commentsRepository.setDislike(req.params.id,userId)
+                return res.sendStatus(204);
+            }
+            if(newStatus==="None"){
                 return res.sendStatus(204);
             }
             else{
