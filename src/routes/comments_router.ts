@@ -14,17 +14,23 @@ export const commentsRouter = Router({});
 
 
 commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
+    console.log(0)
     const findComment = await commentsRepository.getCommentById(req.params.id)
+    console.log(findComment)
     if(!findComment){
         res.sendStatus(404);
         return;
     }
+    console.log(1)
     const token = req.headers.authorization?.split(' ')[1]
     let userId: ObjectId | null
     if (token) {
          userId = await jwtService.verifyUserIdByAccessToken(token)
     }
     else{  userId = null}
+    console.log(2)
+    const status = await commentsRepository.getLikeStatus(req.params.id, userId)
+    console.log(3)
     res.status(200).send({id:findComment._id.toString(),
         commentatorInfo:findComment.commentatorInfo,
         content:findComment.content,
@@ -32,9 +38,10 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
         likesInfo: {
             likesCount: findComment.likesInfo.likesCount.length,
             dislikesCount: findComment.likesInfo.dislikesCount.length,
-            myStatus: await commentsRepository.getLikeStatus(new ObjectId(req.params.id), userId)
+            myStatus: status
         }
     });
+    console.log(4)
     return;
 })
 commentsRouter.delete('/:id',

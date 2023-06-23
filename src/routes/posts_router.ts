@@ -90,10 +90,7 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
         const comments:Array<CommentsViewType> = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),
             sortDirection?.toString(), req.params.id, +pageNumber, +pageSize)
-
         const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize, req.params.id)
-
-
         res.status(200).send({
             "pagesCount": paginator.pagesCount,
             "page": +pageNumber,

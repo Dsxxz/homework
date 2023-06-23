@@ -5,6 +5,7 @@ import {PostDBType, PostType} from "../models/posts-types";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 
+
 export const blogQueryService={
     async paginationPage(searchNameTerm?:string,pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}}:{}

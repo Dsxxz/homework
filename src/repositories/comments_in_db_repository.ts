@@ -2,7 +2,6 @@ import {CommentModel} from "./db"
 import {ObjectId} from "mongodb";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {authService} from "../service/auth-service";
-import {likeEnum} from "../models/LikesInfoType";
 
 export const commentsRepository={
     async createComment(content:string,userId:ObjectId, postId:string):Promise<CommentsViewType|null>{
@@ -17,7 +16,7 @@ export const commentsRepository={
             likesInfo: {
                 likesCount: [],
                 dislikesCount: [],
-                myStatus: likeEnum.None
+                myStatus: "None"
             }
         }
         await CommentModel.create(newComment)
@@ -34,9 +33,23 @@ export const commentsRepository={
         }
     },
     async getCommentById(id:string):Promise<CommentsInDbType|null>{
-        const findComment:CommentsInDbType|null = await CommentModel.findOne({_id: new ObjectId(id) })
+        if(!ObjectId.isValid(id)) {
+            return null
+        }
+        const findComment = await CommentModel.findOne({_id: new ObjectId(id) }).lean()
         if(!findComment){return null;}
-        return findComment
+        return {
+            _id:findComment._id,
+            commentatorInfo:findComment.commentatorInfo,
+            content:findComment.content,
+            createdAt:findComment.createdAt,
+            postId:findComment.postId,
+            likesInfo: {
+                likesCount:findComment.likesInfo.likesCount,
+                dislikesCount:findComment.likesInfo.dislikesCount,
+                myStatus:findComment.likesInfo.myStatus,
+            }
+        };
     },
     async updateComment(id:string,content:string):Promise<boolean>{
         const resultBlog= await CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
@@ -46,13 +59,13 @@ export const commentsRepository={
         const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     },
-    async getLikeStatus(commentId:ObjectId,userId:ObjectId|null):Promise<likeEnum>{
-        if(!userId) return likeEnum.None;
-        const userLiked = await CommentModel.findOne({_id: commentId,"likesInfo.likesCount":{ "$in" : userId } })
-        if (userLiked) return likeEnum.Like;
-        const userDisliked  = await CommentModel.findOne({_id: commentId,"likesInfo.dislikesCount":{ "$in" : userId } })
-        if (userDisliked) return likeEnum.Dislike;
-        else return likeEnum.None;
+    async getLikeStatus(commentId:string,userId:ObjectId|null):Promise<string>{
+        if(!userId) return "None";
+        const userLiked = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.likesCount":{ "$in" : userId } })
+        if (userLiked) return "Like";
+        const userDisliked  = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.dislikesCount":{ "$in" : userId } })
+        if (userDisliked) return "Dislike";
+        else return "None";
 
     },
     async setLike(commentId:string,userId:ObjectId) {
