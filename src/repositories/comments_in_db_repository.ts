@@ -2,6 +2,7 @@ import {CommentModel} from "./db"
 import {ObjectId} from "mongodb";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {authService} from "../service/auth-service";
+import {likeEnum} from "../models/LikesInfoType";
 
 export const commentsRepository={
     async createComment(content:string,userId:ObjectId, postId:string):Promise<CommentsViewType|null>{
@@ -16,7 +17,7 @@ export const commentsRepository={
             likesInfo: {
                 likesCount: [],
                 dislikesCount: [],
-                myStatus: "None"
+                myStatus: likeEnum.None
             }
         }
         await CommentModel.create(newComment)
@@ -60,16 +61,23 @@ export const commentsRepository={
         return result.deletedCount===1
     },
     async getLikeStatus(commentId:string,userId:ObjectId|null):Promise<string>{
-        if(!userId) return "None";
+        if(!userId) {
+            return "None";
+        }
         const userLiked = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.likesCount":{ "$in" : userId } })
-        if (userLiked) return "Like";
+        if (userLiked) {
+            return "Like";
+        }
         const userDisliked  = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.dislikesCount":{ "$in" : userId } })
-        if (userDisliked) return "Dislike";
-        else return "None";
-
+        if (userDisliked) {
+            return "Dislike";
+        }
+        else {
+            return "None";
+        }
     },
     async setLike(commentId:string,userId:ObjectId) {
-        const findComment = await this.getCommentById(commentId)
+        const findComment = await CommentModel.findOne({_id: new ObjectId(commentId)})
         if(findComment) {
             const indexDislike = findComment.likesInfo.dislikesCount.indexOf(userId)
             const indexLike = findComment.likesInfo.likesCount.indexOf(userId)
@@ -80,12 +88,12 @@ export const commentsRepository={
                 findComment.likesInfo.likesCount.splice(indexLike, 1);
             }
             findComment.likesInfo.likesCount.push(userId)
-
+            await findComment.save()
         }
         return;
     },
     async setDislike(commentId:string,userId:ObjectId) {
-        const findComment = await this.getCommentById(commentId)
+        const findComment = await CommentModel.findOne({_id: new ObjectId(commentId)})
         if(findComment) {
             const indexDislike = findComment.likesInfo.dislikesCount.indexOf(userId)
             const indexLike = findComment.likesInfo.likesCount.indexOf(userId)
@@ -96,6 +104,7 @@ export const commentsRepository={
                 findComment.likesInfo.likesCount.splice(indexLike, 1);
             }
             findComment.likesInfo.dislikesCount.push(userId)
+            await findComment.save()
         }
         return;
     }

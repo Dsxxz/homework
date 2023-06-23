@@ -1,4 +1,5 @@
 import {ObjectId} from "mongodb";
+import {likeEnum} from "./LikesInfoType";
 
 export type CommentsViewType ={
     id:string,
@@ -8,7 +9,7 @@ export type CommentsViewType ={
     likesInfo: {
         "likesCount": number,
         "dislikesCount": number,
-        "myStatus": string
+        "myStatus": likeEnum
     }
 }
 export type CommentsInDbType={
@@ -20,7 +21,7 @@ export type CommentsInDbType={
     likesInfo: {
         "likesCount": ObjectId[],
         "dislikesCount": ObjectId[],
-        "myStatus": string
+        "myStatus": likeEnum
     }
 }
 export  type  CommentatorInfo={
