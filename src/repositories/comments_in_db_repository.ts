@@ -60,7 +60,7 @@ export const commentsRepository={
         const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     },
-    async getLikeStatus(commentId:string,userId:ObjectId|null):Promise<string>{
+    async getLikeStatus(commentId:string,userId?:ObjectId|null):Promise<string>{
         if(!userId) {
             return "None";
         }

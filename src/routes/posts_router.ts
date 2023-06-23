@@ -15,6 +15,8 @@ import {paginationType, QueryInputBlogAndPostType, QueryInputCommentsType} from 
 import {CommentsViewType} from "../models/comments-types";
 import {CommentInputContentValidation} from "../MiddleWares/input-comment-validation";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
+import {ObjectId} from "mongodb";
+import {jwtService} from "../application/jwt-service";
 export const postsRouter=Router({});
 
 
@@ -87,9 +89,15 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
         return;
     }
     try{
+        const token = req.headers.authorization?.split(' ')[1]
+        let userId: ObjectId | null
+        if (token) {
+            userId = await jwtService.verifyUserIdByAccessToken(token)
+        }
+        else{  userId = null}
         const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
-        const comments:Array<CommentsViewType> = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),
-            sortDirection?.toString(), req.params.id, +pageNumber, +pageSize)
+        const comments = await  commentsQueryService.getCommentsForPost( sortBy?.toString(),
+            sortDirection?.toString(), req.params.id, +pageNumber, +pageSize, userId)
         const paginator:paginationType = await commentsQueryService.paginationPage(+pageNumber,+pageSize, req.params.id)
         res.status(200).send({
             "pagesCount": paginator.pagesCount,

@@ -2,8 +2,10 @@ import {BlogModel, CommentModel, PostModel, UserModelClass} from "../repositorie
 import {UserAccountDbType, UserViewModel} from "../models/userType";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 import {PostDBType, PostType} from "../models/posts-types";
-import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
+import {CommentsInDbType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
+import {ObjectId} from "mongodb";
+import {commentsRepository} from "../repositories/comments_in_db_repository";
 
 
 export const blogQueryService={
@@ -101,7 +103,7 @@ export const userQueryService= {
             return {totalCount, pagesCount};
         },
         async getCommentsForPost(sortBy: string = 'createdAt', sortDirection: string = 'desc', postId: string,
-                                 pageNumber: number = 1, pageSize: number = 10): Promise<Array<CommentsViewType>> {
+                                 pageNumber: number = 1, pageSize: number = 10,userId:ObjectId|null) {
             const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
             const comments: Array<CommentsInDbType> = await CommentModel.find({postId: postId})
                 .sort({[sortBy]: sortDirectionNumber})
@@ -114,8 +116,10 @@ export const userQueryService= {
                 createdAt: comment.createdAt,
                 id: comment._id.toString(),
                 likesInfo: {
-                    likesCount:comment.likesInfo.likesCount.length,
-                    dislikesCount:comment.likesInfo.dislikesCount.length,
-                    myStatus:comment.likesInfo.myStatus,
+                    likesCount: comment.likesInfo.likesCount.length,
+                    dislikesCount: comment.likesInfo.dislikesCount.length,
+                    myStatus: commentsRepository.getLikeStatus(comment._id.toString(), userId)
                 }
-            }))}}
+            }
+        ))}
+}
