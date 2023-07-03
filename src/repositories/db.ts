@@ -55,7 +55,7 @@ const commentSchema = new mongoose.Schema<CommentsInDbType>({
     likesInfo:{
         likesCount: {type:[ObjectId],default:[]},
         dislikesCount:{type:[ObjectId],default:[]},
-        myStatus: {type:String, required:true}
+        myStatus: {type:String, default:"None"}
     }
 })
 const devicesSchema = new mongoose.Schema<DeviceType>({

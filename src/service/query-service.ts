@@ -2,7 +2,7 @@ import {BlogModel, CommentModel, PostModel, UserModelClass} from "../repositorie
 import {UserAccountDbType, UserViewModel} from "../models/userType";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 import {PostDBType, PostType} from "../models/posts-types";
-import {CommentsInDbType} from "../models/comments-types";
+import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 import {ObjectId} from "mongodb";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
@@ -103,23 +103,35 @@ export const userQueryService= {
             return {totalCount, pagesCount};
         },
         async getCommentsForPost(sortBy: string = 'createdAt', sortDirection: string = 'desc', postId: string,
-                                 pageNumber: number = 1, pageSize: number = 10,userId:ObjectId|null) {
+                                 pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null):Promise<Array<CommentsViewType>> {
             const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
             const comments: Array<CommentsInDbType> = await CommentModel.find({postId: postId})
                 .sort({[sortBy]: sortDirectionNumber})
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
                 .lean();
-            return comments.map(async (comment: CommentsInDbType) => ({
-                commentatorInfo: comment.commentatorInfo,
-                content: comment.content,
-                createdAt: comment.createdAt,
-                id: comment._id.toString(),
-                likesInfo: {
-                    likesCount: comment.likesInfo.likesCount.length,
-                    dislikesCount: comment.likesInfo.dislikesCount.length,
-                    myStatus: await commentsRepository.getLikeStatus(comment._id.toString(), userId)
+            const res:any = comments.map(async (comment: CommentsInDbType) => (
+                    {
+                        id: comment._id.toString(),
+                        content: comment.content,
+                        commentatorInfo: comment.commentatorInfo,
+                        createdAt: comment.createdAt,
+                        likesInfo: {
+                            likesCount: comment.likesInfo.likesCount.length,
+                            dislikesCount: comment.likesInfo.dislikesCount.length,
+                            myStatus: userId ? await commentsRepository.getLikeStatus(comment._id.toString(), userId) : "None"
                 }
-            }
-        ))}
+            }))
+            return res.map((comment: CommentsInDbType) => (
+                {
+                    id: comment._id.toString(),
+                    content: comment.content,
+                    commentatorInfo: comment.commentatorInfo,
+                    createdAt: comment.createdAt,
+                    likesInfo: {
+                        likesCount: comment.likesInfo.likesCount.length,
+                        dislikesCount: comment.likesInfo.dislikesCount.length,
+                        myStatus: comment.likesInfo.myStatus
+                    }
+        }))}
 }

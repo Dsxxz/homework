@@ -61,7 +61,7 @@ export const commentsRepository={
         return result.deletedCount===1
     },
     async getLikeStatus(commentId:string,userId?:ObjectId|null):Promise<string>{
-        if(!userId) {
+        if(!userId){
             return "None";
         }
         const userLiked = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.likesCount":{ "$in" : userId } })
@@ -106,6 +106,6 @@ export const commentsRepository={
             findComment.likesInfo.dislikesCount.push(userId)
             await findComment.save()
         }
-        return;
+        return ;
     }
 }

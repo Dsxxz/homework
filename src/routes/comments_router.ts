@@ -25,8 +25,8 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
     if (token) {
          userId = await jwtService.verifyUserIdByAccessToken(token)
     }
-    else{  userId = null}
-    const status = await commentsRepository.getLikeStatus(req.params.id, userId)
+    else{  userId = null }
+    const status =userId ? await commentsRepository.getLikeStatus(req.params.id, userId) : "None"
     res.status(200).send({id:findComment._id.toString(),
         commentatorInfo:findComment.commentatorInfo,
         content:findComment.content,
