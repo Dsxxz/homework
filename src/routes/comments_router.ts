@@ -15,32 +15,35 @@ export const commentsRouter = Router({});
 
 
 
-commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
-    const findComment = await commentsRepository.getCommentById(req.params.id)
-    console.log(findComment)
-    if(!findComment){
-        res.sendStatus(404);
-        return;
-    }
-    const token = req.headers.authorization?.split(' ')[1]
-    let userId: ObjectId | null
-    if (token) {
-         userId = await jwtService.verifyUserIdByAccessToken(token)
-        console.log('commentsRouter.get(/:id),userId',userId)
-    }
-    else{  userId = null }
-    res.status(200).send({id:findComment._id.toString(),
-        commentatorInfo:findComment.commentatorInfo,
-        content:findComment.content,
-        createdAt:findComment.createdAt,
-        likesInfo: {
-            likesCount: findComment.likesInfo.likesCount.length,
-            dislikesCount: findComment.likesInfo.dislikesCount.length,
-            myStatus: userId ? await userRepository.getLikesInfo(req.params.id, userId) : "None"
+commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
+        const findComment = await commentsRepository.getCommentById(req.params.id)
+        console.log(findComment)
+        if (!findComment) {
+            res.sendStatus(404);
+            return;
         }
-    });
-    return;
-})
+        const token = req.headers.authorization?.split(' ')[1]
+        let userId: ObjectId | null
+        if (token) {
+            userId = await jwtService.verifyUserIdByAccessToken(token)
+            console.log('commentsRouter.get(/:id),userId', userId)
+        } else {
+            userId = null
+        }
+        res.status(200).send({
+            id: findComment._id.toString(),
+            commentatorInfo: findComment.commentatorInfo,
+            content: findComment.content,
+            createdAt: findComment.createdAt,
+            likesInfo: {
+                likesCount: findComment.likesInfo.likesCount.length,
+                dislikesCount: findComment.likesInfo.dislikesCount.length,
+                myStatus: userId ? await userRepository.getLikesInfo(req.params.id, userId) : "None"
+            }
+        })
+        console.log('commentsRouter.get(/:id),myStatus', findComment.likesInfo.myStatus);
+        return;
+    })
 commentsRouter.delete('/:id',
     authMiddleWare,
     checkOwnerOfComments,
