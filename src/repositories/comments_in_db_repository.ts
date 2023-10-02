@@ -78,12 +78,12 @@ export const commentsRepository={
             return "None";
         }
     },
-    async updateLikeStatusInfoForComment(userId:ObjectId,commentId:string) {
-        CommentModel.updateOne((userId), {$push:{likedComments:commentId}});
-        CommentModel.updateOne((userId), {$pull:{disLikedComments:commentId}});
+    async updateLikeStatusInfoForComment(userId:ObjectId) {
+        CommentModel.updateOne((userId), {$push:{likedComments:userId}});
+        CommentModel.updateOne((userId), {$pull:{disLikedComments:userId}});
 },
-    async updateDisLikeStatusInfoForComment(userId: ObjectId, commentId: string) {
-        CommentModel.updateOne((userId), {$push:{likedComments:commentId}});
-        CommentModel.updateOne((userId), {$pull:{disLikedComments:commentId}});
+    async updateDisLikeStatusInfoForComment(userId: ObjectId) {
+        CommentModel.updateOne((userId), {$push:{disLikedComments:userId}});
+        CommentModel.updateOne((userId), {$pull:{likedComments:userId}});
     }
 }

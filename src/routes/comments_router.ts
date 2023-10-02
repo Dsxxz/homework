@@ -27,7 +27,6 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
          userId = await jwtService.verifyUserIdByAccessToken(token)
     }
     else{  userId = null }
-    const status =userId ? await commentsRepository.getLikeStatus(req.params.id, userId) : "None"
     res.status(200).send({id:findComment._id.toString(),
         commentatorInfo:findComment.commentatorInfo,
         content:findComment.content,
@@ -35,7 +34,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
         likesInfo: {
             likesCount: findComment.likesInfo.likesCount.length,
             dislikesCount: findComment.likesInfo.dislikesCount.length,
-            myStatus: status
+            myStatus: userId ? await commentsRepository.getLikeStatus(req.params.id, userId) : "None"
         }
     });
     return;
@@ -84,12 +83,12 @@ commentsRouter.put('/:id/like-status',
             const newStatus = req.body.likeStatus
             if(newStatus==="Like" ){
                 await authService.setLikeForComment(userId,new ObjectId(req.params.id));
-                await commentsRepository.updateLikeStatusInfoForComment(userId,req.params.id)
+                await commentsRepository.updateLikeStatusInfoForComment(userId)
                 return res.sendStatus(204);
             }
             if(newStatus==="Dislike"){
                 await authService.setDisLikeForComment(userId,new ObjectId(req.params.id));
-                await commentsRepository.updateDisLikeStatusInfoForComment(userId,req.params.id)
+                await commentsRepository.updateDisLikeStatusInfoForComment(userId)
                 return res.sendStatus(204);
             }
             if(newStatus==="None"){
