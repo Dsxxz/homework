@@ -60,24 +60,6 @@ export const commentsRepository={
         const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
         return result.deletedCount===1
     },
-    async getLikeStatus(commentId:string,userId?:ObjectId|null):Promise<string>{
-        if(!userId){
-            return "None";
-        }
-        const userLiked:CommentsInDbType|null = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.likesCount":{ "$in" : userId } })
-        console.log('commentsInDbRepo', 'getLikeStatus', 'userLiked', userLiked)
-        if (userLiked) {
-            return "Like";
-        }
-        const userDisliked  = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.dislikesCount":{ "$in" : userId } })
-        console.log('commentsInDbRepo', 'getLikeStatus', 'userDisliked', userDisliked)
-        if (userDisliked) {
-            return "Dislike";
-        }
-        else {
-            return "None";
-        }
-    },
     async updateLikeStatusInfoForComment(userId:ObjectId) {
         CommentModel.updateOne((userId), {$push:{likesCount:userId}});
         CommentModel.updateOne((userId), {$pull:{dislikesCount:userId}});

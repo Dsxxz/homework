@@ -66,11 +66,10 @@ export const userRepository= {
          UserModelClass.updateOne((userID), {$push:{likedComments:commentID}});
          UserModelClass.updateOne((userID), {$pull:{disLikedComments:commentID}});
              return;
-
     },
     async updateDislikesInfo(userID: ObjectId, commentID:ObjectId) {
-        UserModelClass.updateOne((userID), {$push:{likedComments:commentID}});
-        UserModelClass.updateOne((userID), {$pull:{disLikedComments:commentID}});
+        UserModelClass.updateOne((userID), {$push:{disLikedComments:commentID}});
+        UserModelClass.updateOne((userID), {$pull:{likedComments:commentID}});
         return;
     },
     async getLikesInfo(commentId:string,userId:ObjectId):Promise<string>{
