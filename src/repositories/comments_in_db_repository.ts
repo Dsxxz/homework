@@ -75,37 +75,5 @@ export const commentsRepository={
         else {
             return "None";
         }
-    },
-    async setLike(commentId:string,userId:ObjectId) {
-        const findComment = await CommentModel.findOne({_id: new ObjectId(commentId)})
-        if(findComment) {
-            const indexDislike = findComment.likesInfo.dislikesCount.indexOf(userId)
-            const indexLike = findComment.likesInfo.likesCount.indexOf(userId)
-            if (indexDislike > -1) {
-                findComment.likesInfo.dislikesCount.splice(indexDislike, 1);
-            }
-            if (indexLike > -1) {
-                findComment.likesInfo.likesCount.splice(indexLike, 1);
-            }
-            findComment.likesInfo.likesCount.push(userId)
-            await findComment.save()
-        }
-        return;
-    },
-    async setDislike(commentId:string,userId:ObjectId) {
-        const findComment = await CommentModel.findOne({_id: new ObjectId(commentId)})
-        if(findComment) {
-            const indexDislike = findComment.likesInfo.dislikesCount.indexOf(userId)
-            const indexLike = findComment.likesInfo.likesCount.indexOf(userId)
-            if (indexDislike > -1) {
-                findComment.likesInfo.dislikesCount.splice(indexDislike, 1);
-            }
-            if (indexLike > -1) {
-                findComment.likesInfo.likesCount.splice(indexLike, 1);
-            }
-            findComment.likesInfo.dislikesCount.push(userId)
-            await findComment.save()
-        }
-        return ;
     }
 }

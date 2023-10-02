@@ -5,6 +5,7 @@ import {PostDBType, PostType} from "../models/posts-types";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 import {ObjectId} from "mongodb";
+import {userRepository} from "../repositories/user_in_db_repository";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
 
 
@@ -122,16 +123,19 @@ export const userQueryService= {
                             myStatus: userId ? await commentsRepository.getLikeStatus(comment._id.toString(), userId) : "None"
                 }
             }))
+            let user: UserAccountDbType | null | undefined;
+            if(userId) {
+                 user = await userRepository.findUserById(userId)
+            }
             return res.map((comment: CommentsInDbType) => (
                 {
-                    id: comment._id.toString(),
+                   id: comment._id.toString(),
                     content: comment.content,
                     commentatorInfo: comment.commentatorInfo,
-                    createdAt: comment.createdAt,
-                    likesInfo: {
-                        likesCount: comment.likesInfo.likesCount.length,
-                        dislikesCount: comment.likesInfo.dislikesCount.length,
-                        myStatus: comment.likesInfo.myStatus
-                    }
-        }))}
-}
+                 createdAt: comment.createdAt,
+                   likesInfo: {
+                      likesCount: comment.likesInfo.likesCount.length,
+                      dislikesCount: comment.likesInfo.dislikesCount.length,
+                  }
+        }))
+}}

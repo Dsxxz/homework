@@ -29,5 +29,7 @@ export type UserAccountDbType = {
         confirmationCode: string,
         expirationDate:Date,
         isConfirmed:boolean
-    }
+    },
+    likedComments:[],
+    disLikedComments:[]
 }

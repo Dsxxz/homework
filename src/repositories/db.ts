@@ -25,7 +25,9 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         confirmationCode:  {type:String, required:true},
         expirationDate: {type:Date, required:true},
         isConfirmed: {type:Boolean, required:true}
-    }
+    },
+    likedComments: {type:[ObjectId],default:[]},
+    disLikedComments: {type:[ObjectId],default:[]}
 });
 const blogSchema = new mongoose.Schema<BlogDbType>({
     createdAt:  {type:String, required:true},

@@ -61,5 +61,16 @@ export const userRepository= {
     },
     async findUserByOldPassword(password: string):Promise<UserAccountDbType|null> {
         return  UserModelClass.findOne({"accountData.userPasswordHash":password}).lean()
+    },
+    async updateLikesInfo(userID: ObjectId, commentID:ObjectId){
+         UserModelClass.updateOne((userID), {$push:{likedComments:commentID}});
+         UserModelClass.updateOne((userID), {$pull:{disLikedComments:commentID}});
+             return;
+
+    },
+    async updateDislikesInfo(userID: ObjectId, commentID:ObjectId) {
+        UserModelClass.updateOne((userID), {$push:{likedComments:commentID}});
+        UserModelClass.updateOne((userID), {$pull:{disLikedComments:commentID}});
+        return;
     }
 }

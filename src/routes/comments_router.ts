@@ -8,6 +8,7 @@ import {inputCommentsValidation, inputLikesValidation} from "../MiddleWares/vali
 import {likeStatusValidation} from "../MiddleWares/likeStatus_check";
 import {jwtService} from "../application/jwt-service";
 import {ObjectId} from "mongodb";
+import {authService} from "../service/auth-service";
 
 export const commentsRouter = Router({});
 
@@ -82,11 +83,11 @@ commentsRouter.put('/:id/like-status',
             const userId:ObjectId = await jwtService.verifyUserIdByAccessToken(token)
             const newStatus = req.body.likeStatus
             if(newStatus==="Like" ){
-                await commentsRepository.setLike(req.params.id,userId);
+                await authService.setLikeForComment(userId,new ObjectId(req.params.id));
                 return res.sendStatus(204);
             }
             if(newStatus==="Dislike"){
-                await commentsRepository.setDislike(req.params.id,userId)
+                await authService.setDisLikeForComment(userId,new ObjectId(req.params.id));
                 return res.sendStatus(204);
             }
             if(newStatus==="None"){

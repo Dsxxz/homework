@@ -26,7 +26,9 @@ export const authService = {
                             minutes:5,
                         }),
                     isConfirmed:false
-        }}
+        },
+            likedComments: [],
+            disLikedComments:[]}
         const createResult:UserAccountDbType = await userRepository.createNewUser(newUser)
         try {
             await emailManager.sendEmailConfirmationCode(newUser)
@@ -80,5 +82,12 @@ export const authService = {
     async findUserByOldPassword(user:UserAccountDbType, password: string) :Promise<UserAccountDbType|null>{
         const passwordHash:string = await this.generateHash(password,user.accountData.userPasswordSalt)
         return await userRepository.findUserByOldPassword(passwordHash);
+    },
+    async setLikeForComment(user: ObjectId, status:ObjectId){
+    return await userRepository.updateLikesInfo(user,status)
+    }
+,
+    async setDisLikeForComment(user: ObjectId,status:ObjectId){
+        return await userRepository.updateDislikesInfo(user,status)
     }
 }
