@@ -64,7 +64,7 @@ export const commentsRepository={
         if(!userId){
             return "None";
         }
-        const userLiked = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.likesCount":{ "$in" : userId } })
+        const userLiked:CommentsInDbType|null = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.likesCount":{ "$in" : userId } })
         console.log('commentsInDbRepo', 'getLikeStatus', 'userLiked', userLiked)
         if (userLiked) {
             return "Like";
