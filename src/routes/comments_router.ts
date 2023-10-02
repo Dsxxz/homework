@@ -84,10 +84,12 @@ commentsRouter.put('/:id/like-status',
             const newStatus = req.body.likeStatus
             if(newStatus==="Like" ){
                 await authService.setLikeForComment(userId,new ObjectId(req.params.id));
+                await commentsRepository.updateLikeStatusInfoForComment(userId,req.params.id)
                 return res.sendStatus(204);
             }
             if(newStatus==="Dislike"){
                 await authService.setDisLikeForComment(userId,new ObjectId(req.params.id));
+                await commentsRepository.updateDisLikeStatusInfoForComment(userId,req.params.id)
                 return res.sendStatus(204);
             }
             if(newStatus==="None"){

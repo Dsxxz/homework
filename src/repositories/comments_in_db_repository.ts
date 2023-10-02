@@ -53,8 +53,8 @@ export const commentsRepository={
         };
     },
     async updateComment(id:string,content:string):Promise<boolean>{
-        const resultBlog= await CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
-        return resultBlog.matchedCount===1 ;
+        const resultComment= await CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
+        return resultComment.matchedCount===1 ;
     },
     async deleteComment(id:string): Promise<boolean>{
         const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
@@ -65,15 +65,25 @@ export const commentsRepository={
             return "None";
         }
         const userLiked = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.likesCount":{ "$in" : userId } })
+        console.log('commentsInDbRepo', 'getLikeStatus', 'userLiked', userLiked)
         if (userLiked) {
             return "Like";
         }
         const userDisliked  = await CommentModel.findOne({_id: new ObjectId(commentId),"likesInfo.dislikesCount":{ "$in" : userId } })
+        console.log('commentsInDbRepo', 'getLikeStatus', 'userDisliked', userDisliked)
         if (userDisliked) {
             return "Dislike";
         }
         else {
             return "None";
         }
+    },
+    async updateLikeStatusInfoForComment(userId:ObjectId,commentId:string) {
+        CommentModel.updateOne((userId), {$push:{likedComments:commentId}});
+        CommentModel.updateOne((userId), {$pull:{disLikedComments:commentId}});
+},
+    async updateDisLikeStatusInfoForComment(userId: ObjectId, commentId: string) {
+        CommentModel.updateOne((userId), {$push:{likedComments:commentId}});
+        CommentModel.updateOne((userId), {$pull:{disLikedComments:commentId}});
     }
 }
