@@ -26,6 +26,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
     let userId: ObjectId | null
     if (token) {
          userId = await jwtService.verifyUserIdByAccessToken(token)
+        console.log('commentsRouter.get(/:id),userId',userId)
     }
     else{  userId = null }
     res.status(200).send({id:findComment._id.toString(),
