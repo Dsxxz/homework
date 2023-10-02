@@ -89,5 +89,8 @@ export const authService = {
 ,
     async setDisLikeForComment(user: ObjectId,status:ObjectId){
         return await userRepository.updateDislikesInfo(user,status)
+    },
+    async getLikesInfo(commentId:string,userId:ObjectId):Promise<string>{
+        return await userRepository.getLikesInfo(commentId,userId)
     }
 }

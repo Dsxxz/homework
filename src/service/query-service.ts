@@ -6,7 +6,7 @@ import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 import {ObjectId} from "mongodb";
 import {userRepository} from "../repositories/user_in_db_repository";
-import {commentsRepository} from "../repositories/comments_in_db_repository";
+import {authService} from "./auth-service";
 
 
 export const blogQueryService={
@@ -120,7 +120,7 @@ export const userQueryService= {
                         likesInfo: {
                             likesCount: comment.likesInfo.likesCount.length,
                             dislikesCount: comment.likesInfo.dislikesCount.length,
-                            myStatus: userId ? await commentsRepository.getLikeStatus(comment._id.toString(), userId) : "None"
+                            myStatus: userId ? await authService.getLikesInfo(comment._id.toString(), userId) : "None"
                 }
             }))
             let user: UserAccountDbType | null | undefined;
