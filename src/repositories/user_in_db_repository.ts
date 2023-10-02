@@ -65,7 +65,7 @@ export const userRepository= {
     async updateLikesInfo(userID: ObjectId, commentID:ObjectId){
          UserModelClass.updateOne((userID), {$push:{likedComments:commentID}});
          UserModelClass.updateOne((userID), {$pull:{disLikedComments:commentID}});
-             return;
+         return;
     },
     async updateDislikesInfo(userID: ObjectId, commentID:ObjectId) {
         UserModelClass.updateOne((userID), {$push:{disLikedComments:commentID}});
@@ -73,11 +73,11 @@ export const userRepository= {
         return;
     },
     async getLikesInfo(commentId:string,userId:ObjectId):Promise<string>{
-        const likes = await UserModelClass.findOne({id:userId,likedComments:{ "$in" : commentId}})
+        const likes = await UserModelClass.findOne({id:userId,likedComments:{ "$in" : [commentId]}})
             if(likes){
             return "Like";
         }
-        const disLikes = await UserModelClass.findOne({id:userId,disLikedComments:{ "$in" : commentId}})
+        const disLikes = await UserModelClass.findOne({id:userId,disLikedComments:{ "$in" : [commentId]}})
         if(disLikes){
             return "Dislike";
         }

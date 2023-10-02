@@ -61,11 +61,11 @@ export const commentsRepository={
         return result.deletedCount===1
     },
     async updateLikeStatusInfoForComment(userId:ObjectId) {
-        CommentModel.updateOne((userId), {$push:{likesCount:userId}});
-        CommentModel.updateOne((userId), {$pull:{dislikesCount:userId}});
+        CommentModel.updateOne((userId), {$push:{likesCount:[userId]}});
+        CommentModel.updateOne((userId), {$pull:{dislikesCount:[userId]}});
 },
     async updateDisLikeStatusInfoForComment(userId: ObjectId) {
-        CommentModel.updateOne((userId), {$push:{dislikesCount:userId}});
-        CommentModel.updateOne((userId), {$pull:{likesCount:userId}});
+        CommentModel.updateOne((userId), {$push:{dislikesCount:[userId]}});
+        CommentModel.updateOne((userId), {$pull:{likesCount:[userId]}});
     }
 }
