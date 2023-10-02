@@ -9,6 +9,7 @@ import {likeStatusValidation} from "../MiddleWares/likeStatus_check";
 import {jwtService} from "../application/jwt-service";
 import {ObjectId} from "mongodb";
 import {authService} from "../service/auth-service";
+import {userRepository} from "../repositories/user_in_db_repository";
 
 export const commentsRouter = Router({});
 
@@ -34,7 +35,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=>{
         likesInfo: {
             likesCount: findComment.likesInfo.likesCount.length,
             dislikesCount: findComment.likesInfo.dislikesCount.length,
-            myStatus: userId ? await commentsRepository.getLikeStatus(req.params.id, userId) : "None"
+            myStatus: userId ? await userRepository.getLikesInfo(req.params.id, userId) : "None"
         }
     });
     return;

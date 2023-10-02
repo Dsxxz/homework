@@ -72,5 +72,16 @@ export const userRepository= {
         UserModelClass.updateOne((userID), {$push:{likedComments:commentID}});
         UserModelClass.updateOne((userID), {$pull:{disLikedComments:commentID}});
         return;
+    },
+    async getLikesInfo(commentId:string,userId:ObjectId):Promise<string>{
+        const likes = await UserModelClass.findOne({id:userId,likedComments:commentId})
+        if(likes){
+            return "Like";
+        }
+        const disLikes = await UserModelClass.findOne({id:userId,disLikedComments:commentId})
+        if(disLikes){
+            return "Dislike";
+        }
+        else {return "None"}
     }
 }
