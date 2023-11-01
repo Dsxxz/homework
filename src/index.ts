@@ -1,4 +1,4 @@
-import express  from 'express';
+const express = require('express')
 import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
 import {devicesRouter} from "./routes/devises_router";
@@ -12,7 +12,7 @@ import {userRouter} from "./routes/user_router";
 import {authRouter} from "./routes/auth_router";
 import {commentsRouter} from "./routes/comments_router";
 export  const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 import  cookieParser = require('cookie-parser')
 const cors = require('cors')
 
