@@ -112,7 +112,7 @@ export const commentsQueryService = {
                 .lean();
 
 
-            const res:any = Promise.all(comments.map(async (comment: CommentsInDbType) => {
+            return Promise.all(comments.map(async (comment: CommentsInDbType) => {
             const {likes, dislikes} = await LikeService.getLikesCounter(comment._id);
                 return {
                         id: comment._id.toString(),
@@ -126,6 +126,4 @@ export const commentsQueryService = {
                 }
             }}))
 
-
-            return res ;
 }}
