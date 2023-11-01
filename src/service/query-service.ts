@@ -5,8 +5,7 @@ import {PostDBType, PostType} from "../models/posts-types";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 import {ObjectId} from "mongodb";
-import {userRepository} from "../repositories/user_in_db_repository";
-import {authService} from "./auth-service";
+import {LikeService} from "./likes-service";
 
 
 export const blogQueryService={
@@ -96,7 +95,7 @@ export const userQueryService= {
             createdAt: user.accountData.createdAt
         }))
     }}
-    export const commentsQueryService = {
+export const commentsQueryService = {
         async paginationPage(pageNumber: number = 1, pageSize: number = 10, postId: string): Promise<paginationType> {
 
             const totalCount = await CommentModel.countDocuments({postId: postId})
@@ -111,31 +110,22 @@ export const userQueryService= {
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
                 .lean();
-            const res:any = comments.map(async (comment: CommentsInDbType) => (
-                    {
+
+
+            const res:any = Promise.all(comments.map(async (comment: CommentsInDbType) => {
+            const {likes, dislikes} = await LikeService.getLikesCounter(comment._id);
+                return {
                         id: comment._id.toString(),
                         content: comment.content,
                         commentatorInfo: comment.commentatorInfo,
                         createdAt: comment.createdAt,
                         likesInfo: {
-                            likesCount: comment.likesInfo.likesCount.length,
-                            dislikesCount: comment.likesInfo.dislikesCount.length,
-                            myStatus: userId ? await authService.getLikesInfo(comment._id.toString(), userId) : "None"
+                            likesCount: likes,
+                            dislikesCount: dislikes,
+                            myStatus: userId ? await LikeService.getLikeStatus(comment._id,userId) : "None"
                 }
-            }))
-            let user: UserAccountDbType | null | undefined;
-            if(userId) {
-                 user = await userRepository.findUserById(userId)
-            }
-            return res.map((comment: CommentsInDbType) => (
-                {
-                   id: comment._id.toString(),
-                    content: comment.content,
-                    commentatorInfo: comment.commentatorInfo,
-                 createdAt: comment.createdAt,
-                   likesInfo: {
-                      likesCount: comment.likesInfo.likesCount.length,
-                      dislikesCount: comment.likesInfo.dislikesCount.length,
-                  }
-        }))
+            }}))
+
+
+            return res ;
 }}

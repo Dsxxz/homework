@@ -6,6 +6,7 @@ import {BlogDbType} from "../models/blogs-types";
 import {CommentsInDbType} from "../models/comments-types";
 import {DeviceType, IPCheckerType} from "../models/devices_types";
 import mongoose from "mongoose";
+import {LikedCommentsType} from "../models/LikesInfoType";
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/homework';
@@ -13,6 +14,11 @@ if(!mongoUri){
     throw new Error("URL doesnt found")
 }
 
+const likedCommentsSchema = new mongoose.Schema<LikedCommentsType>({
+    commentsId:{type:ObjectId, required:true},
+    status: {type:String,required:true},
+    createdAt: {Date:Date,required:true}
+})
 const userSchema = new mongoose.Schema<UserAccountDbType>({
     _id: {type:ObjectId, required:true},
     accountData: {
@@ -26,9 +32,9 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         expirationDate: {type:Date, required:true},
         isConfirmed: {type:Boolean, required:true}
     },
-    likedComments: [ObjectId],
-    disLikedComments: [ObjectId]
+    likedComments:{type:[likedCommentsSchema], required:true}
 });
+
 const blogSchema = new mongoose.Schema<BlogDbType>({
     createdAt:  {type:String, required:true},
     name:  {type:String, required:true},
@@ -55,8 +61,8 @@ const commentSchema = new mongoose.Schema<CommentsInDbType>({
     createdAt: {type:String, required:true},
     postId: {type:String, required:true},
     likesInfo:{
-        likesCount: [ObjectId],
-        dislikesCount:[ObjectId],
+        likesCount: {type:Number, required:true},
+        dislikesCount:{type:Number, required:true},
         myStatus: {type:String, default:"None"}
     }
 })
