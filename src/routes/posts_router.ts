@@ -89,7 +89,7 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
         return;
     }
     try{
-        const token = req.headers.authorization?.split(' ')[1]
+        const token = req.headers.authorization?.toString().split(' ')[1]
         let userId: ObjectId | null
         if (token) {
             userId = await jwtService.verifyUserIdByAccessToken(token)

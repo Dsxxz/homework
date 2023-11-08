@@ -1,6 +1,7 @@
 import {ObjectId} from "mongodb";
 import {DeviceType, DeviceViewType} from "../models/devices_types";
 import {devisesRepository} from "../repositories/devises_in_repository";
+import {HydratedDocumentFromSchema} from "mongoose";
 
 
 export const devicesService = {
@@ -48,7 +49,7 @@ export const devicesService = {
     async updateSession( timeTokenData: string, deviceId: ObjectId) {
         return await devisesRepository.updateSession(timeTokenData, deviceId);
     },
-    async findLastActiveDate(date:string){
-        return await devisesRepository.findLastActiveDate(date);
+    async findLastActiveDate(date:string):Promise<DeviceType|null>{
+        return devisesRepository.findLastActiveDate(date);
     }
 }

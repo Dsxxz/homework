@@ -33,7 +33,7 @@ export const postsInDbRepository={
         if(!ObjectId.isValid(id)){
             return null;
         }
-        const post = await PostModel.findOne({_id: new ObjectId(id)})
+        const post:PostDBType|null = await PostModel.findOne({_id: new ObjectId(id)})
         if(post){
             return {
                 blogId: post.blogId,
@@ -48,20 +48,18 @@ export const postsInDbRepository={
         return null;
     },
 
-    async updatePost(id:string, title: string, shortDescription: string, content: string, blogId: string): Promise<boolean>{
+    async updatePost(id:string, title: string, shortDescription: string, content: string, blogId: string){
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const resultPost = await PostModel.updateOne({_id: new ObjectId(id)},{$set:{title,shortDescription,content,blogId}})
-        return resultPost.matchedCount===1;
+        return PostModel.findOneAndUpdate({_id: new ObjectId(id)},{$set:{title,shortDescription,content,blogId}})
 
     },
 
-    async deletePost(id:string): Promise<boolean>{
+    async deletePost(id:string){
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const result = await PostModel.deleteOne({_id: new ObjectId(id)})
-        return result.deletedCount===1
+        return  PostModel.deleteOne({_id: new ObjectId(id)})
     }
 }

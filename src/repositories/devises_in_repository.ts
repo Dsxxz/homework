@@ -19,17 +19,16 @@ export const devisesRepository= {
         return session.length ? session : null;
     },
 
-    async deleteAllSession(userId:ObjectId,deviceId:ObjectId):Promise<number>{
-        const result = await DeviceModel.deleteMany({userId:userId,deviceId:{$ne:deviceId}})
-        return result.deletedCount;
+    async deleteAllSession(userId:ObjectId,deviceId:ObjectId){
+        return  DeviceModel.deleteMany({userId:userId,deviceId:{$ne:deviceId}});
     },
     async updateSession( lastActiveDate: string, deviceId: ObjectId){
         return  DeviceModel.updateOne({deviceId},{$set:{lastActiveDate}})
     },
-    async checkSessions(userId:ObjectId,ip: string, title:string) {
+    async checkSessions(userId:ObjectId,ip: string, title:string):Promise<DeviceType|null> {
         return  DeviceModel.findOne({userId:new ObjectId(userId),ip, title})
     },
-    async findLastActiveDate(lastActiveDate: string) {
+    async findLastActiveDate(lastActiveDate: string):Promise<DeviceType|null> {
         return  DeviceModel.findOne({lastActiveDate});
     }
 }

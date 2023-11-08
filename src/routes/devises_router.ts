@@ -1,6 +1,6 @@
 import {Router} from "express";
 import {jwtService} from "../application/jwt-service";
-import {DeviceViewType} from "../models/devices_types";
+import {DeviceType, DeviceViewType} from "../models/devices_types";
 import {devicesService} from "../service/devices_service";
 export const devicesRouter = Router({});
 
@@ -45,7 +45,7 @@ devicesRouter.delete('/', async (req, res)=>{
             res.sendStatus(401);
             return;
         }
-        const session = await devicesService.findLastActiveDate(time)
+        const session:DeviceType|null= await devicesService.findLastActiveDate(time)
         if(session && checkToken){
             await devicesService.deleteAllSession(session.userId,session.deviceId)
             res.sendStatus(204);

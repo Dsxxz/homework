@@ -21,7 +21,7 @@ const cors = require('cors')
 app.set('trust proxy', true)
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json!())
 
 app.use(cookieParser());
 

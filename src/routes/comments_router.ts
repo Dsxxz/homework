@@ -20,7 +20,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
             res.sendStatus(404);
             return;
         }
-        const token = req.headers.authorization?.split(' ')[1]
+        const token:string|undefined = req.headers.authorization?.toString().split(' ')[1]
         let userId: ObjectId | null
         if (token) {
             userId = await jwtService.verifyUserIdByAccessToken(token)

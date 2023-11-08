@@ -20,11 +20,11 @@ export const postsService={
         return await postsInDbRepository.findPostById(id);
     },
 
-    async updatePost(id:string, title: string, shortDescription: string, content: string, blogId: string): Promise<boolean>{
+    async updatePost(id:string, title: string, shortDescription: string, content: string, blogId: string){
         return await postsInDbRepository.updatePost(id,title,shortDescription,content,blogId);
     },
 
-    async deletePost(id:string): Promise<boolean>{
+    async deletePost(id:string){
         return  await postsInDbRepository.deletePost(id);
     }
 }
