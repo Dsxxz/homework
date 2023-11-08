@@ -4,5 +4,4 @@ dist
 yarn.lock
 .env
 __tests__
-vercel.json
 jest.config.js
