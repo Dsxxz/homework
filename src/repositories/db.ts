@@ -1,4 +1,4 @@
-import {MongoClient, ObjectId} from "mongodb";
+import {MongoClient} from "mongodb";
 import * as dotenv from 'dotenv'
 import {UserAccountDbType} from "../models/userType";
 import {PostDBType} from "../models/posts-types";
@@ -15,7 +15,7 @@ if(!mongoUri){
 
 
 const userSchema = new mongoose.Schema<UserAccountDbType>({
-    _id: {type:ObjectId, required:true},
+    _id: {type:mongoose.Schema.ObjectId, required:true},
     accountData: {
         userName: {type:String, required:true},
         email:{type:String, required:true},
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         expirationDate: {type:Date, required:true},
         isConfirmed: {type:Boolean, required:true}
     },
-    likedComments: [{ commentsId:ObjectId,
+    likedComments: [{ commentsId:mongoose.Schema.ObjectId,
         status:String,
         createdAt:Date }]
 });
@@ -36,11 +36,11 @@ const blogSchema = new mongoose.Schema<BlogDbType>({
     createdAt:  {type:String, required:true},
     name:  {type:String, required:true},
     websiteUrl:  {type:String, required:true},
-    _id:   {type:ObjectId, required:true},
+    _id:   {type:mongoose.Schema.ObjectId, required:true},
     description:  {type:String, required:true},
     isMembership: {type:Boolean, required:true}})
 const postSchema = new mongoose.Schema<PostDBType>({
-    _id: {type:ObjectId, required:true},
+    _id: {type:mongoose.Schema.ObjectId, required:true},
     blogId:  {type:String, required:true},
     blogName:  {type:String, required:true},
     content:  {type:String, required:true},
@@ -49,7 +49,7 @@ const postSchema = new mongoose.Schema<PostDBType>({
     title:  {type:String, required:true}
 })
 const commentSchema = new mongoose.Schema<CommentsInDbType>({
-    _id: {type:ObjectId, required:true},
+    _id: {type:mongoose.Schema.ObjectId, required:true},
     content: {type:String, required:true},
     commentatorInfo:{
         userId: {type:String, required:true},
@@ -67,8 +67,8 @@ const devicesSchema = new mongoose.Schema<DeviceType>({
     ip:	 {type:String, required:true},  //IP address of device during signing in
     title:	 {type:String, required:true},   //Device name: for example Chrome 105 (received by parsing http header "user-agent")
     lastActiveDate: {type:String, required:true},   //Date of the last generating of refresh/access tokens
-    deviceId: {type:ObjectId, required:true},  // ID of connected device session
-    userId: {type:ObjectId, required:true}
+    deviceId: {type:mongoose.Schema.ObjectId, required:true},  // ID of connected device session
+    userId: {type:mongoose.Schema.ObjectId, required:true}
 })
 const restrictsSchema = new mongoose.Schema<IPCheckerType>({
     ip: {type:String, required:true},

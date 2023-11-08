@@ -2,6 +2,8 @@ const express = require('express')
 import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
 import {devicesRouter} from "./routes/devises_router";
+import {Request, Response} from "express";
+
 import {
     BlogModel,
     CommentModel, DeviceModel, RestrictModel,
@@ -12,14 +14,15 @@ import {userRouter} from "./routes/user_router";
 import {authRouter} from "./routes/auth_router";
 import {commentsRouter} from "./routes/comments_router";
 export  const app = express();
-const port = process.env.PORT || 5000
-import  cookieParser = require('cookie-parser')
+const port = process.env.PORT || 3000
+import  cookieParser from  'cookie-parser'
 const cors = require('cors')
 
 app.set('trust proxy', true)
 
-app.use(express.json());
 app.use(cors());
+app.use(express.json())
+
 app.use(cookieParser());
 
 app.use('/blogs', blogsRouter)
@@ -29,7 +32,7 @@ app.use('/users', userRouter)
 app.use('/auth', authRouter)
 app.use('/comments', commentsRouter)
 
-app.delete('/testing/all-data', async (req, res)=>{
+app.delete('/testing/all-data', async (req:Request, res:Response)=>{
     try {
         await BlogModel.deleteMany({})
         await PostModel.deleteMany({})

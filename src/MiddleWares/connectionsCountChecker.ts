@@ -3,7 +3,7 @@ import {controlRequests} from "../repositories/control_requests";
 import {subSeconds} from "date-fns";
 
 export const ConnectionsCountChecker = async (req: Request, res: Response, next: NextFunction) => {
-    const ip:string = req.ip
+    const ip:string = req.ip || ''
     const url:string = req.originalUrl
     const date = new Date(Date.now())
     const tenSecAgo = subSeconds(date, 10)
@@ -12,5 +12,5 @@ export const ConnectionsCountChecker = async (req: Request, res: Response, next:
     if(count){
         return res.sendStatus(429);
     }
-    next();
+    return next();
 }

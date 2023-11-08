@@ -52,7 +52,7 @@ authRouter.post('/login', ConnectionsCountChecker,
 
         if (checkResult) {
             const userId: ObjectId = checkResult._id
-            const ip = req.ip
+            const ip = req.ip || ''
             const title = req.headers['user-agent'] || 'custom UA'
             const newDeviceId = new ObjectId()
 

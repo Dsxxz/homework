@@ -12,21 +12,21 @@ export const inputBlogsAndPostsValidation = ((req:Request, res:Response, next: N
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else next();
+    else return next();
 })
 export const inputUserValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else next();
+    else return next();
 })
 export const inputCommentsValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else next();
+    else return next();
 })
 
 export const inputAuthValidation = ((req:Request, res:Response, next: NextFunction)=> {
@@ -34,7 +34,7 @@ export const inputAuthValidation = ((req:Request, res:Response, next: NextFuncti
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else next();
+    else return next();
 })
 
 export const existingEmailValidation = ((req:Request, res:Response, next: NextFunction)=> {
@@ -42,19 +42,19 @@ export const existingEmailValidation = ((req:Request, res:Response, next: NextFu
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else next();
+    else return next();
 })
 export const inputNewPasswordValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else next();
+    else return next();
 })
 export const inputLikesValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else next();
+    else return  next();
 })

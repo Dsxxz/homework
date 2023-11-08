@@ -16,9 +16,9 @@ export const blogsRepository={
         }
     },
     async findBlogById(id: string):Promise<BlogType | null>{
-        if(!ObjectId.isValid(id)) {
-            return null
-        }
+        // if(!ObjectId.isValid(id)) {
+        //     return null
+        // }
 
         const blog = await BlogModel.findOne({_id: new ObjectId(id)})
         if (blog) {
