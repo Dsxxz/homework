@@ -1,8 +1,8 @@
-const express = require('express')
 import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
 import {devicesRouter} from "./routes/devises_router";
-import {Request, Response} from "express";
+import { Request, Response} from "express";
+const express = require('express')
 
 import {
     BlogModel,
