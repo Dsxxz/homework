@@ -1,6 +1,12 @@
 {
   "name": "Homework",
   "version": "1.0.0",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/Dsxxz/homework.git"
+  },
+  "author": "Lera <jgfnvb@mail.ru>",
+  "license": "MIT",
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.5",

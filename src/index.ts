@@ -1,8 +1,7 @@
 import {blogsRouter} from "./routes/blogs_router";
 import {postsRouter} from "./routes/posts_router";
 import {devicesRouter} from "./routes/devises_router";
-import { Request, Response} from "express";
-const express = require('express')
+import express,{Request, Response} from "express";
 
 import {
     BlogModel,
@@ -21,7 +20,7 @@ const cors = require('cors')
 app.set('trust proxy', true)
 
 app.use(cors());
-app.use(express.json!())
+app.use(express.json())
 
 app.use(cookieParser());
 
@@ -52,7 +51,6 @@ const startApp = async ()=>{
         await runDb()
         app.listen(port, () => {
         console.log(`Example app listening on port ${port}`)})
-    return;
 }
 
  startApp();
