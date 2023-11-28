@@ -20,6 +20,7 @@ export const LikeService={
             if (!currentUserLike) {
                 currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
                 await  currentUser.save()
+                console.log("currentUserLike", currentUser)
                 return;
             }
             await commentsRepository.calculateLikesCount(likeStatus, currentUserLike.status, commentId)
