@@ -5,7 +5,7 @@ import {PostDBType} from "../models/posts-types";
 import {BlogDbType} from "../models/blogs-types";
 import {CommentsInDbType} from "../models/comments-types";
 import {DeviceType, IPCheckerType} from "../models/devices_types";
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/homework';
