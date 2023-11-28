@@ -44,15 +44,17 @@ export const commentsRepository={
        return CommentModel.findOneAndDelete({_id: new ObjectId(id)})
     }
     ,async calculateLikesCount(newStatus: string, oldStatus: string,commentId: ObjectId){
-            const comment:CommentsInDbType|null = await CommentModel.findOne({_id:commentId})
+            const comment:HydratedDocument<CommentsInDbType>|null = await CommentModel.findOne({_id:commentId})
         if(!comment){throw new Error('Comment doesnt exist, method calculateLikesCount')}
         if(oldStatus==='None'){
             if(newStatus==='Like') {
                 comment.likesInfo.likesCount++
+                await comment.save()
                 return
             }
             else {
                 comment.likesInfo.dislikesCount++
+                await comment.save()
                 return
             }
         }
@@ -62,11 +64,13 @@ export const commentsRepository={
         if(newStatus==='Like'){
             comment.likesInfo.likesCount++
             comment.likesInfo.dislikesCount--
+            await comment.save()
             return
         }
         if(newStatus==='Dislike'){
             comment.likesInfo.likesCount--
             comment.likesInfo.dislikesCount++
+            await comment.save()
             return
         }
          }
