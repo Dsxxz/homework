@@ -1,7 +1,6 @@
 import {ObjectId} from "mongodb";
 import {DeviceType, DeviceViewType} from "../models/devices_types";
 import {devisesRepository} from "../repositories/devises_in_repository";
-import {HydratedDocumentFromSchema} from "mongoose";
 
 
 export const devicesService = {
