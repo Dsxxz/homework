@@ -31,6 +31,6 @@ export type UserAccountDbType = {
         expirationDate:Date,
         isConfirmed:boolean
     },
-    likedComments:LikedCommentsType[]
+    likedComments:[LikedCommentsType]
 }
 
