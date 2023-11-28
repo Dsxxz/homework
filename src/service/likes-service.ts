@@ -4,6 +4,7 @@ import {UserAccountDbType} from "../models/userType";
 import {HydratedDocument} from "mongoose";
 import {CommentModel} from "../repositories/db";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
+import {CommentsInDbType} from "../models/comments-types";
 
 export const LikeService={
 
@@ -22,8 +23,8 @@ export const LikeService={
         await commentsRepository.calculateLikesCount(likeStatus,currentUserLike.status,commentId)
         currentUserLike.status=likeStatus
         await userRepository.saveUser(currentUser)
-
-   },
+        return;
+    },
     async getLikeStatus(commentId: ObjectId,userId?: ObjectId): Promise<string>{
         if(!userId){return "None"}
         const currentUser:HydratedDocument<UserAccountDbType>|null = await userRepository.findUserById(userId)
@@ -37,8 +38,8 @@ export const LikeService={
         return currentUserLike.status
 },
     async getLikesCounter(commentId:ObjectId){
-        const comment = await CommentModel.findOne({_id:commentId})
-        if(!comment){throw new Error("Comment doent exist, method getlikesCounter")}
+        const comment:CommentsInDbType = await CommentModel.findOne({_id:commentId})
+        if(!comment){throw new Error("Comment doesnt exist, method getLikesCounter")}
         return {likes:comment.likesInfo.likesCount, dislikes:comment.likesInfo.dislikesCount}
     }
 }
