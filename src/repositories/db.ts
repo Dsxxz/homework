@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         expirationDate: {type:Date, required:true},
         isConfirmed: {type:Boolean, required:true}
     },
-    likedComments: [{ commentsId:mongoose.Schema.ObjectId,
+    likedComments: [{ commentsId: {type:mongoose.Schema.ObjectId, required:true},
         status:String,
         createdAt:Date }]
 });

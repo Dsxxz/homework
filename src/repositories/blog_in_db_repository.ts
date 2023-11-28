@@ -1,6 +1,7 @@
 import {BlogModel} from "./db"
 import {ObjectId} from "mongodb";
 import {BlogDbType, BlogType} from "../models/blogs-types";
+import {HydratedDocument} from "mongoose";
 
 export const blogsRepository={
     async createNewBlog(newBlog:BlogDbType):Promise<BlogType>{
@@ -16,11 +17,8 @@ export const blogsRepository={
         }
     },
     async findBlogById(id: string):Promise<BlogType | null>{
-        // if(!ObjectId.isValid(id)) {
-        //     return null
-        // }
 
-        const blog = await BlogModel.findOne({_id: new ObjectId(id)})
+        const blog:HydratedDocument<BlogType> = await BlogModel.findOne({_id: new ObjectId(id)})
         if (blog) {
             return {
                 name: blog.name,
@@ -39,7 +37,7 @@ export const blogsRepository={
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const blogInstance = await BlogModel.findOne({_id: new ObjectId(id)});
+        const blogInstance:HydratedDocument<BlogType> = await BlogModel.findOne({_id: new ObjectId(id)});
         if (!blogInstance)return false;
         blogInstance.name=name;
         blogInstance.websiteUrl=websiteUrl;
