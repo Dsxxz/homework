@@ -37,13 +37,11 @@ export const commentsRepository={
     async getCommentById(id:string):Promise<HydratedDocument<CommentsInDbType>|null>{
         return  CommentModel.findOne({_id: new ObjectId((id))})
     },
-    async updateComment(id:string,content:string):Promise<boolean>{
-        return CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
+    async updateComment(id:string,content:string):Promise<void>{
+         CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
     },
-    async deleteComment(id:string): Promise<number>{
-        await  CommentModel.deleteOne({_id: new ObjectId(id)}).then((result)=> {
-            return result
-        })
+    async deleteComment(id:string): Promise<void>{
+       await  CommentModel.deleteOne({_id: new ObjectId(id)})
     }//,
     // async saveComment(comment:HydratedDocument<CommentsInDbType>){
     //     return await comment.save();
