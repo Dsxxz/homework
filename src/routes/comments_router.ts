@@ -95,7 +95,5 @@ commentsRouter.put('/:id/like-status',
             console.log("comments-Router-put-comments.id.likeStatus", e)
             res.status(500).send(e);
             return;
-
-
         }
 })

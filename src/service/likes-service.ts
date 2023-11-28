@@ -9,21 +9,27 @@ import {CommentsInDbType} from "../models/comments-types";
 export const LikeService={
 
     async updateCommentLike(userId: ObjectId, likeStatus: string, commentId: ObjectId) {
-        const currentUser:HydratedDocument<UserAccountDbType>|null = await userRepository.findUserById(userId)
-        if(!currentUser){
-            console.log('LikeService-updateCommentLike-!currentUser')
-            throw new Error('User is not exist')
-        }
-        const currentUserLike = currentUser.likedComments?.find(l=>l.commentsId===commentId)
-        if(!currentUserLike){
-            await userRepository.createCommentStatus(userId, likeStatus, commentId)
+        try{
+            const currentUser: HydratedDocument<UserAccountDbType> | null = await userRepository.findUserById(userId)
+            if (!currentUser) {
+                console.log('LikeService-updateCommentLike-!currentUser')
+                throw new Error('User is not exist')
+            }
+            const currentUserLike = currentUser.likedComments?.find(l => l.commentsId === commentId)
+            if (!currentUserLike) {
+                await userRepository.createCommentStatus(userId, likeStatus, commentId)
+                await userRepository.saveUser(currentUser)
+                return;
+            }
+            await commentsRepository.calculateLikesCount(likeStatus, currentUserLike.status, commentId)
+            currentUserLike.status = likeStatus
             await userRepository.saveUser(currentUser)
             return;
         }
-        await commentsRepository.calculateLikesCount(likeStatus,currentUserLike.status,commentId)
-        currentUserLike.status=likeStatus
-        await userRepository.saveUser(currentUser)
-        return;
+        catch (e) {
+            console.log("LikeService.updateCommentLike", e)
+            return;
+        }
     },
     async getLikeStatus(commentId: ObjectId,userId?: ObjectId): Promise<string>{
         if(!userId){return "None"}
