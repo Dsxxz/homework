@@ -9,12 +9,13 @@ import {CommentsInDbType} from "../models/comments-types";
 export const LikeService={
 
     async updateCommentLike(userId: ObjectId, likeStatus: string, commentId: ObjectId) {
+        const currentUser: HydratedDocument<UserAccountDbType> | null = await userRepository.findUserById(userId)
+        if (!currentUser) {
+            console.log('LikeService-updateCommentLike-!currentUser')
+            throw new Error('User is not exist')
+        }
+
         try{
-            const currentUser: HydratedDocument<UserAccountDbType> | null = await userRepository.findUserById(userId)
-            if (!currentUser) {
-                console.log('LikeService-updateCommentLike-!currentUser')
-                throw new Error('User is not exist')
-            }
             const currentUserLike = currentUser.likedComments?.find(l => l.commentsId === commentId)
             if (!currentUserLike) {
                 await userRepository.createCommentStatus(userId, likeStatus, commentId)
