@@ -18,8 +18,8 @@ export const LikeService={
         try{
             const currentUserLike = currentUser.likedComments?.find(l => l.commentsId === commentId)
             if (!currentUserLike) {
-                await userRepository.createCommentStatus(userId, likeStatus, commentId)
-                await userRepository.saveUser(currentUser)
+                currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
+                await  currentUser.save()
                 return;
             }
             await commentsRepository.calculateLikesCount(likeStatus, currentUserLike.status, commentId)

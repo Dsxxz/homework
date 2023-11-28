@@ -64,17 +64,5 @@ export const userRepository= {
     },
     async findUserByOldPassword(password: string):Promise<UserAccountDbType|null> {
         return  UserModelClass.findOne({"accountData.userPasswordHash":password}).lean()
-    },
-    async createCommentStatus(userId: ObjectId, likeStatus: string, commentId: ObjectId) {
-        const user: Promise<HydratedDocument<UserAccountDbType> | null> = this.findUserById(userId)
-        if(!user){return null;}
-        await UserModelClass.findByIdAndUpdate({_id:userId}, {$set: {
-                "likedComments.commentsId":commentId,
-                "likedComments.status":likeStatus,
-                "likedComments.createdAt":new Date()
-            }})
-
-        console.log('createCommentStatus', this.findUserById(userId))
-        return ;
     }
 }
