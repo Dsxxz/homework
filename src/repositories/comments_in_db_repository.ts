@@ -46,51 +46,33 @@ export const commentsRepository={
     ,async calculateLikesCount(newStatus: string, oldStatus: string,commentId: ObjectId){
             const comment:HydratedDocument<CommentsInDbType>|null = await CommentModel.findOne({_id:commentId}).exec();
         if(!comment){throw new Error('Comment doesnt exist, method calculateLikesCount')}
-        if (oldStatus === 'None') {
-            if (newStatus === 'Like') {
-                comment.likesInfo.likesCount++;
-            } else {
-                comment.likesInfo.dislikesCount++;
-            }
-        } else if (oldStatus === newStatus) {
-            // Ничего не делаем, так как статус остается неизменным
-        } else if (newStatus === 'Like') {
-            comment.likesInfo.likesCount++;
-            comment.likesInfo.dislikesCount--;
-        } else if (newStatus === 'Dislike') {
-            comment.likesInfo.likesCount--;
-            comment.likesInfo.dislikesCount++;
-        }
 
-// Сохраняем изменения в модели комментария
-        await comment.save();
-        return;
-        // if(oldStatus==='None'){
-        //     if(newStatus==='Like') {
-        //         comment.likesInfo.likesCount++
-        //         await comment.save()
-        //         return
-        //     }
-        //     else {
-        //         comment.likesInfo.dislikesCount++
-        //         await comment.save()
-        //         return
-        //     }
-        // }
-        // if (oldStatus===newStatus){
-        //     return
-        // }
-        // if(newStatus==='Like'){
-        //     comment.likesInfo.likesCount++
-        //     comment.likesInfo.dislikesCount--
-        //     await comment.save()
-        //     return
-        // }
-        // if(newStatus==='Dislike'){
-        //     comment.likesInfo.likesCount--
-        //     comment.likesInfo.dislikesCount++
-        //     await comment.save()
-        //     return
-        // }
+         if(oldStatus==='None'){
+             if(newStatus==='Like') {
+                 comment.likesInfo.likesCount++
+                 await comment.save()
+                 return
+             }
+             else {
+                 comment.likesInfo.dislikesCount++
+                 await comment.save()
+                 return
+             }
+         }
+         if (oldStatus===newStatus){
+             return
+         }
+         if(newStatus==='Like'){
+             comment.likesInfo.likesCount++
+             comment.likesInfo.dislikesCount--
+             await comment.save()
+             return
+         }
+         if(newStatus==='Dislike'){
+             comment.likesInfo.likesCount--
+             comment.likesInfo.dislikesCount++
+             await comment.save()
+             return
+         }
          }
 }

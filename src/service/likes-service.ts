@@ -23,8 +23,10 @@ export const LikeService={
                 return;
             }
             await commentsRepository.calculateLikesCount(likeStatus, currentUserLike.status, commentId)
+            console.log("currentUserLike", currentUserLike)
             currentUserLike.status = likeStatus
             await  currentUser.save()
+            console.log("currentUserLike", currentUserLike)
             return;
         }
         catch (e) {
