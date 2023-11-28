@@ -40,8 +40,10 @@ export const commentsRepository={
     async updateComment(id:string,content:string):Promise<boolean>{
         return CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
     },
-    async deleteComment(id:string): Promise<boolean>{
-        return  CommentModel.deleteOne({_id: new ObjectId(id)})
+    async deleteComment(id:string): Promise<number>{
+        await  CommentModel.deleteOne({_id: new ObjectId(id)}).then((result)=> {
+            return result
+        })
     }//,
     // async saveComment(comment:HydratedDocument<CommentsInDbType>){
     //     return await comment.save();
