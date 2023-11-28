@@ -18,7 +18,7 @@ export const blogsRepository={
     },
     async findBlogById(id: string):Promise<BlogType | null>{
 
-        const blog:HydratedDocument<BlogType> = await BlogModel.findOne({_id: new ObjectId(id)})
+        const blog:HydratedDocument<BlogType>|null = await BlogModel.findOne({_id: new ObjectId(id)})
         if (blog) {
             return {
                 name: blog.name,
@@ -37,7 +37,7 @@ export const blogsRepository={
         if(!ObjectId.isValid(id)){
             return false;
         }
-        const blogInstance:HydratedDocument<BlogType> = await BlogModel.findOne({_id: new ObjectId(id)});
+        const blogInstance:HydratedDocument<BlogType>|null = await BlogModel.findOne({_id: new ObjectId(id)});
         if (!blogInstance)return false;
         blogInstance.name=name;
         blogInstance.websiteUrl=websiteUrl;
