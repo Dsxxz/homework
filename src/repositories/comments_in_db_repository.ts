@@ -38,18 +38,16 @@ export const commentsRepository={
         return  CommentModel.findOne({_id: new ObjectId((id))})
     },
     async updateComment(id:string,content:string):Promise<boolean>{
-        const resultComment= await CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
-        return resultComment.matchedCount===1 ;
+        return CommentModel.updateOne({_id: new ObjectId(id)},{$set: {content}})
     },
     async deleteComment(id:string): Promise<boolean>{
-        const result = await CommentModel.deleteOne({_id: new ObjectId(id)})
-        return result.deletedCount===1
+        return  CommentModel.deleteOne({_id: new ObjectId(id)})
     }//,
     // async saveComment(comment:HydratedDocument<CommentsInDbType>){
     //     return await comment.save();
     // }
     ,async calculateLikesCount(newStatus: string, oldStatus: string,commentId: ObjectId){
-            const comment = await CommentModel.findOne({_id:commentId})
+            const comment:CommentsInDbType|null = await CommentModel.findOne({_id:commentId})
         if(!comment){throw new Error('Comment doent exist, method calculateLikesCount')}
         if(oldStatus==='None'){
             if(newStatus==='Like') {
