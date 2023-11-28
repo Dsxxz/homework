@@ -5,7 +5,7 @@ import {PostDBType} from "../models/posts-types";
 import {BlogDbType} from "../models/blogs-types";
 import {CommentsInDbType} from "../models/comments-types";
 import {DeviceType, IPCheckerType} from "../models/devices_types";
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/homework';
@@ -27,9 +27,11 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         expirationDate: {type:Date, required:true},
         isConfirmed: {type:Boolean, required:true}
     },
-    likedComments: [{ commentsId: {type:mongoose.Schema.ObjectId, required:true},
-        status:String,
-        createdAt:Date }]
+    likedComments: [{
+        commentsId: { type: mongoose.Schema.ObjectId, required: true },
+        status: String,
+        createdAt: Date
+    }]
 });
 
 const blogSchema = new mongoose.Schema<BlogDbType>({
