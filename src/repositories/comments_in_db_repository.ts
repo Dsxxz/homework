@@ -48,7 +48,7 @@ export const commentsRepository={
     // }
     ,async calculateLikesCount(newStatus: string, oldStatus: string,commentId: ObjectId){
             const comment:CommentsInDbType|null = await CommentModel.findOne({_id:commentId})
-        if(!comment){throw new Error('Comment doent exist, method calculateLikesCount')}
+        if(!comment){throw new Error('Comment doesnt exist, method calculateLikesCount')}
         if(oldStatus==='None'){
             if(newStatus==='Like') {
                 comment.likesInfo.likesCount++

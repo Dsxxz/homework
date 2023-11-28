@@ -33,10 +33,9 @@ export const userRepository= {
         return true;
     },
     async updateConfirmationIsConfirmed(_id: ObjectId): Promise<boolean> {
-        const userInstance = await UserModelClass.findOne({_id});
+        const userInstance = await UserModelClass.findByIdAndUpdate({_id},{$set: { "emailConfirmation.isConfirmed": true}});
         if(!userInstance)return false;
-        userInstance.emailConfirmation.isConfirmed=true;
-        await userInstance.save();
+        await this.saveUser(userInstance)
         return true;
     },
     async updateConfirmationCode(user: UserAccountDbType): Promise<UserAccountDbType|null> {
@@ -67,9 +66,9 @@ export const userRepository= {
         return  UserModelClass.findOne({"accountData.userPasswordHash":password}).lean()
     },
     async createCommentStatus(userId: ObjectId, likeStatus: string, commentId: ObjectId) {
-        const user = this.findUserById(userId)
+        const user: Promise<HydratedDocument<UserAccountDbType> | null> = this.findUserById(userId)
         if(!user){return null;}
-        await UserModelClass.updateOne({_id:userId}, {$set: {
+        await UserModelClass.findByIdAndUpdate({_id:userId}, {$set: {
                 "likedComments.commentsId":commentId,
                 "likedComments.status":likeStatus,
                 "likedComments.createdAt":new Date()
