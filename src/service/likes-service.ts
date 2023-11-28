@@ -38,7 +38,7 @@ export const LikeService={
         return currentUserLike.status
 },
     async getLikesCounter(commentId:ObjectId){
-        const comment:CommentsInDbType = await CommentModel.findOne({_id:commentId})
+        const comment:CommentsInDbType|null = await CommentModel.findOne({_id:commentId})
         if(!comment){throw new Error("Comment doesnt exist, method getLikesCounter")}
         return {likes:comment.likesInfo.likesCount, dislikes:comment.likesInfo.dislikesCount}
     }
