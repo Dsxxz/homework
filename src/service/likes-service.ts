@@ -17,6 +17,7 @@ export const LikeService={
         let oldStatus :string
 
         try{
+
             if(!currentUser.likedComments) {
                 currentUser.likedComments = []
                 currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
@@ -25,12 +26,13 @@ export const LikeService={
             }
             else {
                 let currentUserLike = currentUser.likedComments.find(l => l.commentsId === commentId)
+                oldStatus = currentUserLike.status
+
                 if(!currentUserLike){
                     currentUserLike={commentsId: commentId, status: likeStatus, createdAt: new Date()}
                     oldStatus="None"
                 }
 
-                oldStatus = currentUserLike.status
 
                 currentUser.likedComments = currentUser.likedComments.map((like => {
                     if (like.commentsId === commentId) {
@@ -52,8 +54,8 @@ export const LikeService={
             return;
         }
     },
-    async getLikeStatus(commentId: ObjectId,userId?: ObjectId): Promise<string>{
-        if(!userId){return "None"}
+    async getLikeStatus(commentId: ObjectId,userId: ObjectId|null): Promise<string>{
+        if(!userId) {return "None"}
         const currentUser:HydratedDocument<UserAccountDbType>|null = await userRepository.findUserById(userId)
         if(!currentUser){
             return "None"

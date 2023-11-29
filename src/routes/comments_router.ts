@@ -29,7 +29,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
             userId = null
         }
 
-        const myStatus = userId ? await LikeService.getLikeStatus(findComment._id,userId) : "None"
+        const myStatus =  await LikeService.getLikeStatus(findComment._id,userId)
     console.log('myStatus,commentsRouter.get/:id',myStatus)
         const {likes, dislikes} = await LikeService.getLikesCounter(findComment._id)
 
