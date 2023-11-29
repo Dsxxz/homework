@@ -28,6 +28,7 @@ export const LikeService={
                 if(!currentUserLike){
                     currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
                     oldStatus="None"
+                    return;
                 }
 
                 oldStatus = currentUserLike.status
