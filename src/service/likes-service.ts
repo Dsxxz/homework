@@ -5,6 +5,7 @@ import {HydratedDocument} from "mongoose";
 import {CommentModel} from "../repositories/db";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {CommentsInDbType} from "../models/comments-types";
+import {LikedCommentsType} from "../models/LikesInfoType";
 
 export const LikeService={
 
@@ -14,6 +15,7 @@ export const LikeService={
             console.log('LikeService-updateCommentLike-!currentUser')
             throw new Error('User is not exist')
         }
+        const oldStatus:LikedCommentsType = currentUser.likedComments.find(l=>l.commentsId===commentId)
 
         try{
             if(!currentUser.likedComments) {
@@ -31,9 +33,7 @@ export const LikeService={
                 }
                 return like;
             }))
-
-            await commentsRepository.calculateLikesCount(likeStatus, likeStatus, commentId)
-            currentUser.likedComments.find(l => l.commentsId === commentId)!.status=likeStatus
+            await commentsRepository.calculateLikesCount(likeStatus, oldStatus.status, commentId)
             await  userRepository.saveUser(currentUser)
             return;
         }
