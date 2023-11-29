@@ -5,7 +5,6 @@ import {HydratedDocument} from "mongoose";
 import {CommentModel} from "../repositories/db";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {CommentsInDbType} from "../models/comments-types";
-import {LikedCommentsType} from "../models/LikesInfoType";
 
 export const LikeService={
 
@@ -17,18 +16,25 @@ export const LikeService={
         }
 
         try{
-            if(!currentUser.likedComments)currentUser.likedComments = []
-            const currentUserLike:LikedCommentsType|undefined = currentUser.likedComments.find(l => l.commentsId === commentId)
-            if (!currentUserLike) {
+            if(!currentUser.likedComments) {
+                currentUser.likedComments = []
                 currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
                 console.log("currentUser.likedComments", currentUser.likedComments)
-             }
+            }
+
+            currentUser.likedComments = currentUser.likedComments.map((like =>{
+                if (like.commentsId===commentId){
+                    return{
+                        ...like,
+                        status:likeStatus
+                    }
+                }
+                return like;
+            }))
 
             await commentsRepository.calculateLikesCount(likeStatus, likeStatus, commentId)
-            console.log("currentUserLike", currentUserLike)
             currentUser.likedComments.find(l => l.commentsId === commentId)!.status=likeStatus
             await  userRepository.saveUser(currentUser)
-            console.log("currentUserLike", currentUserLike)
             return;
         }
         catch (e) {
