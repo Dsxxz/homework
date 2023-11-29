@@ -19,13 +19,15 @@ export const LikeService={
         if(currentUser.likedComments && currentUser.likedComments.find(l => l.commentsId === commentId).status){
              oldStatus = currentUser.likedComments.find(l => l.commentsId === commentId).status
         }
+        else {
+            oldStatus="None"
+        }
 
         try{
 
             if(!currentUser.likedComments) {
                 currentUser.likedComments = []
                 currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
-                oldStatus="None"
                 console.log("currentUser.likedComments", currentUser.likedComments)
             }
             else {
@@ -33,7 +35,6 @@ export const LikeService={
 
                 if(!currentUserLike){
                     currentUserLike={commentsId: commentId, status: likeStatus, createdAt: new Date()}
-                    oldStatus="None"
                 }
 
 
