@@ -14,15 +14,16 @@ export const LikeService={
             console.log('LikeService-updateCommentLike-!currentUser')
             throw new Error('User is not exist')
         }
-        const oldStatus  = (currentUser.likedComments && currentUser.likedComments.find(l => l.commentsId === commentId)) ?
-            currentUser.likedComments.find(l => l.commentsId === commentId).status : "None";
+        let oldStatus :string
 
         try{
             if(!currentUser.likedComments) {
                 currentUser.likedComments = []
                 currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
+                oldStatus="None"
                 console.log("currentUser.likedComments", currentUser.likedComments)
             }
+            oldStatus=currentUser.likedComments.find(l=>l.commentsId===commentId).status
 
             currentUser.likedComments = currentUser.likedComments.map((like =>{
                 if (like.commentsId===commentId){
