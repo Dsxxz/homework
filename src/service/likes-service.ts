@@ -5,6 +5,7 @@ import {HydratedDocument} from "mongoose";
 import {CommentModel} from "../repositories/db";
 import {commentsRepository} from "../repositories/comments_in_db_repository";
 import {CommentsInDbType} from "../models/comments-types";
+import {LikedCommentsType} from "../models/LikesInfoType";
 
 export const LikeService={
 
@@ -14,7 +15,10 @@ export const LikeService={
             console.log('LikeService-updateCommentLike-!currentUser')
             throw new Error('User is not exist')
         }
-        let oldStatus:string = currentUser.likedComments.find(l => l.commentsId === commentId).status
+        let oldStatus:string
+        if(currentUser.likedComments && currentUser.likedComments.find(l => l.commentsId === commentId).status){
+             oldStatus = currentUser.likedComments.find(l => l.commentsId === commentId).status
+        }
 
         try{
 
@@ -53,18 +57,19 @@ export const LikeService={
             return;
         }
     },
-    async getLikeStatus(commentId: ObjectId,userId: ObjectId|null): Promise<string>{
-        if(!userId) {return "None"}
+    async getLikeStatus(userId?: ObjectId|null):Promise<LikedCommentsType[]>{
+        if(!userId)
+        {
+            return [];
+        }
         const currentUser:HydratedDocument<UserAccountDbType>|null = await userRepository.findUserById(userId)
-        if(!currentUser){
-            return "None"
+        if(!currentUser)
+        {
+            return []
         }
-        const currentUserLike = currentUser.likedComments?.find(l=>l.commentsId===commentId)
-        if(!currentUserLike){
-            return "None"
+        return  currentUser.likedComments
         }
-        return currentUserLike.status
-},
+,
     async getLikesCounter(commentId:ObjectId){
         const comment:CommentsInDbType|null = await CommentModel.findOne({_id:commentId})
         if(!comment){throw new Error("Comment doesnt exist, method getLikesCounter")}

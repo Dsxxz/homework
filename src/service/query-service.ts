@@ -110,11 +110,11 @@ export const commentsQueryService = {
                 .skip((pageNumber - 1) * pageSize)
                 .limit(pageSize)
                 .lean();
-
+            const likesForUser = await LikeService.getLikeStatus(userId)
 
             return Promise.all(comments.map(async (comment: CommentsInDbType) => {
             const {likes, dislikes} = await LikeService.getLikesCounter(comment._id);
-                return {
+            return {
                         id: comment._id.toString(),
                         content: comment.content,
                         commentatorInfo: comment.commentatorInfo,
@@ -122,7 +122,7 @@ export const commentsQueryService = {
                         likesInfo: {
                             likesCount: likes,
                             dislikesCount: dislikes,
-                            myStatus: userId ? await LikeService.getLikeStatus(comment._id,userId) : "None"
+                            myStatus: likesForUser.find(l=>l.commentsId===comment._id).status
                 }
             }}))
 
