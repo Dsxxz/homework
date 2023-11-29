@@ -24,7 +24,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
         let userId: ObjectId | null
         if (token) {
             userId = await jwtService.verifyUserIdByAccessToken(token)
-            console.log('commentsRouter.get(/:id),userId', userId)
+            //console.log('commentsRouter.get(/:id),userId', userId)
         } else {
             userId = null
         }
@@ -43,7 +43,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
                 myStatus:myStatus
             }
         })
-        console.log('commentsRouter.get(/:id),myStatus', findComment.likesInfo.myStatus);
+        //console.log('commentsRouter.get(/:id),myStatus', findComment.likesInfo.myStatus);
         return;
     })
 commentsRouter.delete('/:id',
