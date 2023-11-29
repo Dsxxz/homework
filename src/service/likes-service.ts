@@ -23,17 +23,19 @@ export const LikeService={
                 oldStatus="None"
                 console.log("currentUser.likedComments", currentUser.likedComments)
             }
-            oldStatus=currentUser.likedComments.find(l=>l.commentsId===commentId).status
+            else {
+                oldStatus = currentUser.likedComments.find(l => l.commentsId === commentId).status
 
-            currentUser.likedComments = currentUser.likedComments.map((like =>{
-                if (like.commentsId===commentId){
-                    return{
-                        ...like,
-                        status:likeStatus
+                currentUser.likedComments = currentUser.likedComments.map((like => {
+                    if (like.commentsId === commentId) {
+                        return {
+                            ...like,
+                            status: likeStatus
+                        }
                     }
-                }
-                return like;
-            }))
+                    return like;
+                }))
+            }
             await commentsRepository.calculateLikesCount(likeStatus, oldStatus, commentId)
             await  userRepository.saveUser(currentUser)
             return;
