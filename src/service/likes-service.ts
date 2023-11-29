@@ -24,7 +24,6 @@ export const LikeService={
         }
 
         try{
-
             if(!currentUser.likedComments) {
                 currentUser.likedComments = []
                 currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
@@ -36,7 +35,6 @@ export const LikeService={
                 if(!currentUserLike){
                     currentUserLike={commentsId: commentId, status: likeStatus, createdAt: new Date()}
                 }
-
 
                 currentUser.likedComments = currentUser.likedComments.map((like => {
                     if (like.commentsId === commentId) {

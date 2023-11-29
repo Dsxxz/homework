@@ -122,7 +122,7 @@ export const commentsQueryService = {
                         likesInfo: {
                             likesCount: likes,
                             dislikesCount: dislikes,
-                            myStatus: likesForUser.find(l=>l.commentsId===comment._id).status
+                            myStatus: likesForUser.find(l=>l.commentsId===comment._id).status||"None"
                 }
             }}))
 

@@ -40,7 +40,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
             likesInfo: {
                 likesCount: likes,
                 dislikesCount: dislikes,
-                myStatus:myStatus
+                myStatus:myStatus||"None"
             }
         })
         return;
