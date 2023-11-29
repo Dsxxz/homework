@@ -15,7 +15,7 @@ export const commentsRouter = Router({});
 
 commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
         const findComment = await commentsRepository.getCommentById(req.params.id)
-        console.log(findComment)
+        //console.log(findComment)
         if (!findComment) {
             res.sendStatus(404);
             return;
@@ -30,6 +30,7 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
         }
 
         const myStatus = userId ? await LikeService.getLikeStatus(findComment._id,userId) : "None"
+    console.log('myStatus,commentsRouter.get/:id',myStatus)
         const {likes, dislikes} = await LikeService.getLikesCounter(findComment._id)
 
         res.status(200).send({
