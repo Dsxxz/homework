@@ -14,7 +14,7 @@ export const LikeService={
             console.log('LikeService-updateCommentLike-!currentUser')
             throw new Error('User is not exist')
         }
-        const oldStatus  = currentUser.likedComments && currentUser.likedComments.find(l => l.commentsId === commentId).status ?
+        const oldStatus  = (currentUser.likedComments && currentUser.likedComments.find(l => l.commentsId === commentId)) ?
             currentUser.likedComments.find(l => l.commentsId === commentId).status : "None";
 
         try{
