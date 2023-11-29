@@ -22,14 +22,12 @@ export const LikeService={
                 currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
                 oldStatus="None"
                 console.log("currentUser.likedComments", currentUser.likedComments)
-                return;
             }
             else {
                 const currentUserLike = currentUser.likedComments.find(l => l.commentsId === commentId)
                 if(!currentUserLike){
                     currentUser.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
                     oldStatus="None"
-                    return;
                 }
 
                 oldStatus = currentUserLike.status
