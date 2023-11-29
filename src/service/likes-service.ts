@@ -43,6 +43,7 @@ export const LikeService={
                     return like;
                 }))
             }
+            console.log("check statuses",likeStatus,oldStatus)
             await commentsRepository.calculateLikesCount(likeStatus, oldStatus, commentId)
             await  userRepository.saveUser(currentUser)
             return;

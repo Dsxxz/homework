@@ -44,7 +44,7 @@ export const commentsRepository={
        return CommentModel.findOneAndDelete({_id: new ObjectId(id)})
     }
     ,async calculateLikesCount(newStatus: string, oldStatus: string,commentId: ObjectId){
-        const comment:HydratedDocument<CommentsInDbType>|null = await CommentModel.findOne({_id:commentId}).exec();
+        const comment:HydratedDocument<CommentsInDbType>|null = await CommentModel.findOne({_id:commentId})
         if(!comment){throw new Error('Comment doesnt exist, method calculateLikesCount')}
 
          if(oldStatus==='None'){
