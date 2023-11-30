@@ -6,6 +6,9 @@ import {likeEnum} from "../models/LikesInfoType";
 import {HydratedDocument} from "mongoose";
 
 export const commentsRepository={
+    async saveComment(comment:HydratedDocument<CommentsInDbType>){
+        return await comment.save();
+    },
     async createComment(content:string,userId:ObjectId, postId:string):Promise<CommentsViewType|null>{
         const user = await authService.findUsersById(userId)
         if(!user) return null
@@ -50,30 +53,28 @@ export const commentsRepository={
          if(oldStatus==='None'){
              if(newStatus==='Like') {
                  comment.likesInfo.likesCount++
-                 await comment.save()
-                 return;
+                 await this.saveComment(comment)
              }
              if(newStatus==='Dislike') {
                  comment.likesInfo.dislikesCount++
-                 await comment.save()
-                 return;
+                 await this.saveComment(comment)
              }
          }
          if (oldStatus===newStatus){
-             return;
+             await this.saveComment(comment);
          }
          if (oldStatus!=='None'){
          if(newStatus==='Like'){
              comment.likesInfo.likesCount++
              comment.likesInfo.dislikesCount--
-             await comment.save()
-             return;
+             await  this.saveComment(comment)
          }
          if(newStatus==='Dislike'){
              comment.likesInfo.likesCount--
              comment.likesInfo.dislikesCount++
-             await comment.save()
-             return;
+             await this.saveComment(comment)
          }}
+        console.log(comment.likesInfo.likesCount, comment.likesInfo.dislikesCount)
+         return;
          }
 }
