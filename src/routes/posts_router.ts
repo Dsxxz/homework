@@ -72,7 +72,7 @@ postsRouter.post('/:id/comments',
               return;
           }
               const token = req.headers.authorization!.split(' ')[1]
-              const userId: ObjectId = await jwtService.verifyUserIdByAccessToken(token) || req.user?._id
+              const userId: ObjectId = await jwtService.verifyUserIdByAccessToken(token) || new ObjectId(req.user?._id)
               const newComment: CommentsViewType | null = await commentsRepository.createComment
               (req.body.content, userId, foundPostById.id)
               res.status(201).send(newComment);
