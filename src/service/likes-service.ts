@@ -15,11 +15,11 @@ export const LikeService={
             throw new Error('User is not exist')
         }
         let oldStatus:string
-        const currentUserLike = this.getLikeStatus(userId)
-        if (!(await currentUserLike).length>0){
+        const currentUserLike = currentUser.likedComments
+        if (!currentUserLike.length<1){
             oldStatus="None"
         }
-        if ((await currentUserLike).length>0){
+        if (currentUserLike.length>0){
             oldStatus=currentUser.likedComments.find(l=>l.commentsId===commentId).status
             if(!oldStatus){oldStatus="None"}
         }
