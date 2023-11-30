@@ -14,19 +14,8 @@ export const LikeService={
             console.log('LikeService-updateCommentLike-!currentUser')
             throw new Error('User is not exist')
         }
-        let oldStatus:string
-        const currentUserLike = currentUser.likedComments
-        if (!currentUserLike){
-            oldStatus="None"
-        }
-        if (currentUserLike){
-            const oldSt:string|undefined=currentUser.likedComments.find(l=>l.commentsId===commentId).status
-            if(!oldSt){
-                oldStatus="None"}
-            if (oldSt){
-                oldStatus=oldSt
-            }
-        }
+        let oldStatus:string=currentUser.likedComments?.find(l=>l.commentsId===commentId)?.status||"None"
+
         try{
             await commentsRepository.calculateLikesCount(oldStatus, likeStatus, commentId)
             await userRepository.updateCommentUser(userId, likeStatus, commentId)
