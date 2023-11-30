@@ -21,7 +21,11 @@ export const LikeService={
         }
         if (currentUserLike){
             const oldSt=currentUser.likedComments.find(l=>l.commentsId===commentId).status
-            if(!oldSt){oldStatus="None"}
+            if(!oldSt){
+                oldStatus="None"}
+            if (oldSt){
+                oldStatus=oldSt
+            }
         }
         try{
             await commentsRepository.calculateLikesCount(oldStatus, likeStatus, commentId)
