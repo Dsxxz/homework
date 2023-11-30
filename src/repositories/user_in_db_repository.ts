@@ -3,6 +3,7 @@ import {UserAccountDbType} from "../models/userType";
 import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
 import {HydratedDocument} from "mongoose";
+import {LikedCommentsType} from "../models/LikesInfoType";
 
 export const userRepository= {
     async saveUser(user:HydratedDocument<UserAccountDbType>){
@@ -14,7 +15,7 @@ export const userRepository= {
             return false
         }
         if(!user.likedComments){
-            const like= {commentId,likeStatus,Date }
+            const like:LikedCommentsType= {commentsId: commentId, status: likeStatus, createdAt: new Date()}
             await UserModelClass.findByIdAndUpdate({userId},{$push: { "likedComments": {like}}})
         }
         else{
