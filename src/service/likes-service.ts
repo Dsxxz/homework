@@ -16,11 +16,12 @@ export const LikeService={
         }
         let oldStatus:string
         const currentUserLike = this.getLikeStatus(userId)
-        if (!currentUserLike){
+        if (!(await currentUserLike).length>0){
             oldStatus="None"
         }
-        if (currentUserLike){
+        if ((await currentUserLike).length>0){
             oldStatus=currentUser.likedComments.find(l=>l.commentsId===commentId).status
+            if(!oldStatus){oldStatus="None"}
         }
         try{
             await commentsRepository.calculateLikesCount(oldStatus, likeStatus, commentId)
