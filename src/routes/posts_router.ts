@@ -65,22 +65,23 @@ postsRouter.post('/:id/comments',
     authMiddleWare,
     inputCommentsValidation,
     async (req:Request<{id: string}, {}, {content: string}>, res:Response)=>{
-      try{
-    let foundPostById = await postsService.findPostById(req.params.id)
-    if(!foundPostById){
-        res.sendStatus(404);
-        return;
-    }
-    const newComment:CommentsViewType|null = await commentsRepository.createComment
-        (req.body.content, req.user!._id, foundPostById.id)
-
-        res.status(201).send(newComment);
-            return;}
-        catch (e) {
-            console.log("postsRouter.post('/:id/comments'", e)
-            res.status(500).send(e)
-            return;
-        }
+      try {
+          const foundPostById = await postsService.findPostById(req.params.id)
+          if (!foundPostById) {
+              res.sendStatus(404);
+              return;
+          }
+              const token = req.headers.authorization!.split(' ')[1]
+              const userId: ObjectId = await jwtService.verifyUserIdByAccessToken(token)
+              const newComment: CommentsViewType | null = await commentsRepository.createComment
+              (req.body.content, userId, foundPostById.id)
+              res.status(201).send(newComment);
+              return;
+          } catch (e) {
+              console.log("postsRouter.post('/:id/comments'", e)
+              res.status(500).send(e)
+              return;
+          }
     })
 postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputCommentsType>,res:Response)=>{
     let foundPostById = await postsService.findPostById(req.params.id)
