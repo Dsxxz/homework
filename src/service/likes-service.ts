@@ -16,10 +16,10 @@ export const LikeService={
         }
         let oldStatus:string
         const currentUserLike = currentUser.likedComments
-        if (!currentUserLike.length<1){
+        if (!currentUserLike){
             oldStatus="None"
         }
-        if (currentUserLike.length>0){
+        if (currentUserLike){
             oldStatus=currentUser.likedComments.find(l=>l.commentsId===commentId).status
             if(!oldStatus){oldStatus="None"}
         }
