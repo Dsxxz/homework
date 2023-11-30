@@ -43,7 +43,7 @@ export const authService = {
         if (passwordHash!==user.accountData.userPasswordHash)return null;}
         return user
     },
-    async findUsersById(userID:ObjectId|string):Promise<UserAccountDbType|null>{
+    async findUsersById(userID:ObjectId):Promise<UserAccountDbType|null>{
         return userRepository.findUserById(userID)
     },
     async generateHash(password:string,salt:string){

@@ -47,8 +47,8 @@ export const userRepository= {
         console.log("findUserByConfirmationCode, userRepository" ,user )
         return user
     },
-    async findUserById(id: ObjectId|string): Promise<HydratedDocument<UserAccountDbType> | null> {
-        return  UserModelClass.findOne({_id: new ObjectId((id))})
+    async findUserById(id: ObjectId): Promise<HydratedDocument<UserAccountDbType> | null> {
+        return  UserModelClass.findOne({id})
     },
     async deleteUser(id: string): Promise<boolean> {
         const userInstance = await UserModelClass.findOne({_id:id});
