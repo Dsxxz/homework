@@ -14,18 +14,20 @@ export const userRepository= {
             return false
         }
         if(!user.likedComments){
-            user.likedComments = []
-            user.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
+            const like= {commentId,likeStatus,Date }
+            await UserModelClass.findByIdAndUpdate({userId},{$push: { "likedComments": {like}}})
         }
-        user.likedComments.map((like => {
-            if (like.commentsId === commentId) {
-                return {
-                    ...like,
-                    status: likeStatus
-                }
+        else{
+                user.likedComments.map((like => {
+                    if (like.commentsId === commentId) {
+                        return {
+                            ...like,
+                            status: likeStatus
+                        }
+                    }
+                    return like;
+                }));
             }
-            return like;
-        }));
         await this.saveUser(user);
         return true;
     },
