@@ -71,10 +71,9 @@ postsRouter.post('/:id/comments',
               res.sendStatus(404);
               return;
           }
-              const token = req.headers.authorization!.split(' ')[1]
-              const userId: ObjectId = await jwtService.verifyUserIdByAccessToken(token) || new ObjectId(req.user?._id)
+
               const newComment: CommentsViewType | null = await commentsRepository.createComment
-              (req.body.content, userId, foundPostById.id)
+              (req.body.content, req.user!._id, foundPostById.id)
               res.status(201).send(newComment);
               return;
           } catch (e) {
