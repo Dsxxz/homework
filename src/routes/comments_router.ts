@@ -26,14 +26,11 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
         } else {
             userId = null
         }
-
         const likesArray =  await LikeService.getLikeStatus(userId)
-        const myStatus = likesArray?.find(l=>l.commentsId===findComment._id).status||[]
+        const myStatus = likesArray?.find(l=>l.commentsId===findComment._id).status
     console.log('myStatus,commentsRouter.get/:id',myStatus)
         const {likes, dislikes} = await LikeService.getLikesCounter(findComment._id)
-
-    if (userId) {
-        res.status(200).send({
+     res.status(200).send({
             id: findComment._id.toString(),
             commentatorInfo: findComment.commentatorInfo,
             content: findComment.content,
@@ -41,25 +38,10 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
             likesInfo: {
                 likesCount: likes,
                 dislikesCount: dislikes,
-                myStatus: myStatus
+                myStatus: myStatus||"None"
             }
         })
         return;
-
-    }
-    else {res.status(200).send({
-        id: findComment._id.toString(),
-        commentatorInfo: findComment.commentatorInfo,
-        content: findComment.content,
-        createdAt: findComment.createdAt,
-        likesInfo: {
-            likesCount: likes,
-            dislikesCount: dislikes,
-            myStatus: 'None'
-        }
-    })
-        return;
-    }
     })
 commentsRouter.delete('/:id',
     authMiddleWare,

@@ -1,5 +1,4 @@
 import {ObjectId} from "mongodb";
-import mongoose from "mongoose";
 
 export type CommentsViewType ={
     id:string,

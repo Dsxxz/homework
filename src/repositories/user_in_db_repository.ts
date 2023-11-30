@@ -8,6 +8,27 @@ export const userRepository= {
     async saveUser(user:HydratedDocument<UserAccountDbType>){
         return await user.save();
     },
+    async updateCommentUser(userId: ObjectId, likeStatus: string, commentId: ObjectId){
+        const user:HydratedDocument<UserAccountDbType>|null = await this.findUserById(userId);
+        if(!user){
+            return false
+        }
+        if(!user.likedComments){
+            user.likedComments = []
+            user.likedComments.push({commentsId: commentId, status: likeStatus, createdAt: new Date()})
+        }
+        user.likedComments.map((like => {
+            if (like.commentsId === commentId) {
+                return {
+                    ...like,
+                    status: likeStatus
+                }
+            }
+            return like;
+        }));
+        await this.saveUser(user);
+        return true;
+    },
     async createNewUser(newUser: UserAccountDbType): Promise<UserAccountDbType> {
         const userInstance = new UserModelClass(newUser);
         await userInstance.save();

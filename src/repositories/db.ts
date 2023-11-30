@@ -27,12 +27,10 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         expirationDate: {type:Date, required:true},
         isConfirmed: {type:Boolean, required:true}
     },
-    likedComments: [{
-        commentsId: { type: mongoose.Schema.ObjectId, required: true },
+    likedComments: [ { type: mongoose.Schema.ObjectId,
         status: String,
-        createdAt: Date
-    }]
-});
+        createdAt: Date}]
+})
 
 const blogSchema = new mongoose.Schema<BlogDbType>({
     createdAt:  {type:String, required:true},
@@ -62,7 +60,7 @@ const commentSchema = new mongoose.Schema<CommentsInDbType>({
     likesInfo:{
         likesCount: {type:Number, required:true},
         dislikesCount:{type:Number, required:true},
-        myStatus: {type:String, default:"None"}
+        myStatus: {type:String}
     }
 })
 const devicesSchema = new mongoose.Schema<DeviceType>({
