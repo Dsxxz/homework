@@ -20,7 +20,7 @@ export const LikeService={
             oldStatus="None"
         }
         if (currentUserLike){
-            const oldSt=currentUser.likedComments.find(l=>l.commentsId===commentId).status
+            const oldSt:string|undefined=currentUser.likedComments.find(l=>l.commentsId===commentId).status
             if(!oldSt){
                 oldStatus="None"}
             if (oldSt){
