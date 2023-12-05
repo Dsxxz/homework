@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {authService} from "../service/auth-service";
 import {jwtService} from "../application/jwt-service";
+import {ObjectId} from "mongodb";
 
 export const authMiddleWare = async (req:Request,res:Response,next:NextFunction)=>{
     if(!req.headers.authorization){
@@ -8,7 +9,7 @@ export const authMiddleWare = async (req:Request,res:Response,next:NextFunction)
         return;
     }
     const token = req.headers.authorization.split(' ')[1]
-    const userID = await jwtService.verifyUserIdByAccessToken(token)
+    const userID:ObjectId = await jwtService.verifyUserIdByAccessToken(token)
     if(userID){
         req.user = await authService.findUsersById(userID)
         next();
