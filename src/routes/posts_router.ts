@@ -71,9 +71,8 @@ postsRouter.post('/:id/comments',
               res.sendStatus(404);
               return;
           }
-
               const newComment: CommentsViewType | null = await commentsRepository.createComment
-              (req.body.content, req.user!._id, foundPostById.id)
+              (req.body.content, new ObjectId(req.user!._id), foundPostById.id)
               res.status(201).send(newComment);
               return;
           } catch (e) {
