@@ -70,11 +70,13 @@ postsRouter.post('/:id/comments',
           const content = req.body.content;
           const userId = new ObjectId(req.user?._id);
           if (!userId){
+              console.log("userId doest find")
               res.sendStatus(404);
               return;
           }
           const foundPostById = await postsService.findPostById(postId)
           if (!foundPostById) {
+              console.log("foundPostById doest find")
               res.sendStatus(404);
               return;
           }
@@ -83,6 +85,7 @@ postsRouter.post('/:id/comments',
                   userId,
                   foundPostById.id)
           if(!newComment){
+              console.log("newComment doest find")
               res.sendStatus(404);
               return;
           }
