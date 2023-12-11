@@ -82,6 +82,10 @@ postsRouter.post('/:id/comments',
               (content,
                   userId,
                   foundPostById.id)
+          if(!newComment){
+              res.sendStatus(404);
+              return;
+          }
               res.status(201).send(newComment);
               return;
           } catch (e) {
