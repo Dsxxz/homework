@@ -69,6 +69,10 @@ postsRouter.post('/:id/comments',
           const postId = req.params.id;
           const content = req.body.content;
           const userId = new ObjectId(req.user?._id);
+          if (!userId){
+              res.sendStatus(404);
+              return;
+          }
           const foundPostById = await postsService.findPostById(postId)
           if (!foundPostById) {
               res.sendStatus(404);
