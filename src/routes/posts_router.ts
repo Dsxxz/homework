@@ -66,13 +66,18 @@ postsRouter.post('/:id/comments',
     inputCommentsValidation,
     async (req:Request<{id: string}, {}, {content: string}>, res:Response)=>{
       try {
-          const foundPostById = await postsService.findPostById(req.params.id)
+          const postId = req.params.id;
+          const content = req.body.content;
+          const userId = new ObjectId(req.user?._id);
+          const foundPostById = await postsService.findPostById(postId)
           if (!foundPostById) {
               res.sendStatus(404);
               return;
           }
               const newComment: CommentsViewType | null = await commentsRepository.createComment
-              (req.body.content, new ObjectId(req.user!._id), foundPostById.id)
+              (content,
+                  userId,
+                  foundPostById.id)
               res.status(201).send(newComment);
               return;
           } catch (e) {
