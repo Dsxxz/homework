@@ -12,7 +12,7 @@ export const commentsRepository={
     async createComment(content:string,userId:ObjectId, postId:string):Promise<CommentsViewType|null>{
         const user = await authService.findUsersById(userId)
         if(!user) return null
-        const newComment:CommentsInDbType = {
+        const comment:CommentsInDbType = {
             _id:new ObjectId(),
             content:content,
             commentatorInfo:{userId:user._id.toString(),userLogin:user.accountData.userName},
@@ -24,12 +24,13 @@ export const commentsRepository={
                 myStatus: likeEnum.None
             }
         }
-        await CommentModel.create(newComment)
+        const newComment = await CommentModel.create(comment)
+        await this.saveComment(newComment)
         return {
-            id:newComment._id.toString(),
-            commentatorInfo:newComment.commentatorInfo,
-            content:newComment.content,
-            createdAt:newComment.createdAt,
+            id:comment._id.toString(),
+            commentatorInfo:comment.commentatorInfo,
+            content:comment.content,
+            createdAt:comment.createdAt,
             likesInfo: {
                 likesCount:0,
                 dislikesCount:0,
