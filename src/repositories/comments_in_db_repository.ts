@@ -11,7 +11,10 @@ export const commentsRepository={
     },
     async createComment(content:string,userId:ObjectId, postId:string):Promise<CommentsViewType|null>{
         const user = await authService.findUsersById(userId)
-        if(!user) return null
+        if(!user) {
+            console.log("user not found")
+            return null
+        }
         const comment:CommentsInDbType = {
             _id:new ObjectId(),
             content:content,

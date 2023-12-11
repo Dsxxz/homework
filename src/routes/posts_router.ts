@@ -68,6 +68,8 @@ postsRouter.post('/:id/comments',
       try {
           const postId = req.params.id;
           const content = req.body.content;
+          if(!content){
+              console.log("content doest find")}
           const userId = new ObjectId(req.user?._id);
           if (!userId){
               console.log("userId doest find")
@@ -83,7 +85,7 @@ postsRouter.post('/:id/comments',
               const newComment: CommentsViewType | null = await commentsRepository.createComment
               (content,
                   userId,
-                  foundPostById.id)
+                  postId)
           if(!newComment){
               console.log("newComment doest find")
               res.sendStatus(404);

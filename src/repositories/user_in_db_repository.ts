@@ -48,7 +48,7 @@ export const userRepository= {
         return user
     },
     async findUserById(id: ObjectId): Promise<HydratedDocument<UserAccountDbType> | null> {
-        return  UserModelClass.findOne({id})
+        return  UserModelClass.findOne({_id:id})
     },
     async deleteUser(id: string): Promise<boolean> {
         const userInstance = await UserModelClass.findOne({_id:id});
