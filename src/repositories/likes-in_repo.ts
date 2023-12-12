@@ -13,7 +13,9 @@ export const LikesRepo={
         }
         const findLike = await LikesInfoModel.findOne({id:commentId,userId:userId})
         if(!findLike){
-            const like = new LikesInfoModel({commentId:commentId,
+            const like = new LikesInfoModel({
+                _id:new ObjectId(),
+                commentId:commentId,
                 status: status,
                 createdAt: new Date().toISOString(),
                 userId: userId,
