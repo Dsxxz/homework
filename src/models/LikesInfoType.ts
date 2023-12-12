@@ -8,6 +8,7 @@ export enum likeEnum{
 export type LikedCommentsType =
     {
         _id:ObjectId,
+        commentId:ObjectId,
         status: string,
         createdAt: string,
         userId: ObjectId,

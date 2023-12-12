@@ -13,7 +13,7 @@ export const LikesRepo={
         }
         const findLike = await LikesInfoModel.findOne({id:commentId,userId:userId})
         if(!findLike){
-            const like = new LikesInfoModel({_id:commentId,
+            const like = new LikesInfoModel({commentId:commentId,
                 status: status,
                 createdAt: new Date().toISOString(),
                 userId: userId,
@@ -22,14 +22,14 @@ export const LikesRepo={
             return like;
         }
         else{
-            return LikesInfoModel.findOneAndUpdate({id:commentId,userId:userId},{ $set:{status:status}})
+            return LikesInfoModel.findOneAndUpdate({commentId:commentId,userId:userId},{ $set:{status:status}})
         }
     },
     async findCommentLikes(commentId:ObjectId):Promise<LikedCommentsType[]|null>{
-        return  LikesInfoModel.find({_id:commentId})
+        return  LikesInfoModel.find({commentId:commentId})
     },
     async deleteLike(_id: ObjectId) : Promise<boolean>{
-        const likeInstance = await LikesInfoModel.findOne({_id:_id});
+        const likeInstance = await LikesInfoModel.findOne({commentId:_id});
         if(!likeInstance)return false;
         await likeInstance.deleteOne();
         return true;    }

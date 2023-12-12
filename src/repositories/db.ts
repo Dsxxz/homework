@@ -69,6 +69,7 @@ const restrictsSchema = new mongoose.Schema<IPCheckerType>({
     date: {type:Date, required:true}
 })
 const likeInfosSchema = new mongoose.Schema<LikedCommentsType>({
+    commentId:{type:mongoose.Schema.ObjectId, required:true},
     _id:{type:mongoose.Schema.ObjectId, required:true},
     status: {type:String, required:true},
     createdAt: {type:String, required:true},
