@@ -118,8 +118,8 @@ export const commentsQueryService = {
                 let status
                 const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(comment._id)
                 if(commentLikes && commentLikes.length > 0){
-                    likes = commentLikes.map(l => l.status === "Like")
-                    dislikes = commentLikes.map(l => l.status === "Dislike")
+                    likes = commentLikes.filter(l => l.status === "Like")
+                    dislikes = commentLikes.filter(l => l.status === "Dislike")
                     if(userId) {
                         status = commentLikes.find(l => l.userId === userId)?.status
                     }
