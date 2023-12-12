@@ -112,7 +112,7 @@ export const commentsQueryService = {
                 .limit(pageSize)
                 .lean();
 
-            await Promise.all(comments.map(async (comment: CommentsInDbType) => {
+            return await Promise.all(comments.map(async (comment: CommentsInDbType) => {
                 let likes
                 let dislikes
                 let status
