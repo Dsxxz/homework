@@ -113,9 +113,9 @@ export const commentsQueryService = {
                 .lean();
 
             return await Promise.all(comments.map(async (comment: CommentsInDbType) => {
-                let likes
-                let dislikes
-                let status
+                let likes=[]
+                let dislikes=[]
+                let status: string = "None"
                 let statusArr:LikedCommentsType|undefined
                 const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(comment._id)
                 if(commentLikes && commentLikes.length > 0){
@@ -134,9 +134,9 @@ export const commentsQueryService = {
                         createdAt: comment.createdAt,
                         postId:comment.postId,
                 likesInfo: {
-                    likesCount: likes ? likes.length : 0,
-                        dislikesCount: dislikes ? dislikes.length : 0,
-                        myStatus: status ? status : "None"
+                    likesCount: likes.length,
+                        dislikesCount: dislikes.length ,
+                        myStatus: status
                 }
             }
             }))
