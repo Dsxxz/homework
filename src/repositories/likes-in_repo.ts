@@ -11,7 +11,7 @@ export const LikesRepo={
         if(status==="None"){
             return this.deleteLike(commentId)
         }
-        const findLike = await LikesInfoModel.findOne({id:commentId,userId:userId})
+        const findLike = await LikesInfoModel.findOne({commentId:commentId,userId:userId})
         if(!findLike){
             const like = new LikesInfoModel({
                 _id:new ObjectId(),

@@ -7,6 +7,11 @@ export const myValidationResult = validationResult.withDefaults({
         return { message: error.msg, field: error.param };
     }
 })
+export const myValidationResultLike = validationResult.withDefaults({
+    formatter: (error:any) => {
+        return { message: error.msg, field: error.body };
+    }
+})
 export const inputBlogsAndPostsValidation = ((req:Request, res:Response, next: NextFunction)=> {
     const errorsMessages = myValidationResult(req)
     if (!errorsMessages.isEmpty()) {
@@ -52,7 +57,7 @@ export const inputNewPasswordValidation = ((req:Request, res:Response, next: Nex
     else return next();
 })
 export const inputLikesValidation = ((req:Request, res:Response, next: NextFunction)=> {
-    const errorsMessages = myValidationResult(req)
+    const errorsMessages = myValidationResultLike(req)
     if (!errorsMessages.isEmpty()) {
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
