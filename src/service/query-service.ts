@@ -116,12 +116,16 @@ export const commentsQueryService = {
                 let likes
                 let dislikes
                 let status
+                let statusArr:LikedCommentsType|undefined
                 const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(comment._id)
                 if(commentLikes && commentLikes.length > 0){
                     likes = commentLikes.filter(l => l.status === "Like")
                     dislikes = commentLikes.filter(l => l.status === "Dislike")
                     if(userId) {
-                        status = commentLikes.find(l => l.userId === userId)?.status
+                        statusArr = commentLikes.find(l => l.userId === userId)
+                        if(statusArr){
+                            status=statusArr.status
+                        }
                     }
                 }
             return {id: comment._id.toString(),
