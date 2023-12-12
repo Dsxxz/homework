@@ -2,10 +2,11 @@ import {BlogModel, CommentModel, PostModel, UserModelClass} from "../repositorie
 import {UserAccountDbType, UserViewModel} from "../models/userType";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 import {PostDBType, PostType} from "../models/posts-types";
-import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
+import {CommentsInDbType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 import {ObjectId} from "mongodb";
-import {LikeService} from "./likes-service";
+import {LikedCommentsType} from "../models/LikesInfoType";
+import {likesService} from "./likes-service";
 
 
 export const blogQueryService={
@@ -103,7 +104,7 @@ export const commentsQueryService = {
             return {totalCount, pagesCount};
         },
         async getCommentsForPost(sortBy: string = 'createdAt', sortDirection: string = 'desc', postId: string,
-                                 pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null):Promise<Array<CommentsViewType>> {
+                                 pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null) {
             const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
             const comments: Array<CommentsInDbType> = await CommentModel.find({postId: postId})
                 .sort({[sortBy]: sortDirectionNumber})
@@ -111,24 +112,28 @@ export const commentsQueryService = {
                 .limit(pageSize)
                 .lean();
 
-            const likesForUser = await LikeService.getLikeStatus(userId)
-
-
-            return Promise.all(comments.map(async (comment: CommentsInDbType) => {
-            const {likes, dislikes} = await LikeService.getLikesCounter(comment._id);
+            await Promise.all(comments.map(async (comment: CommentsInDbType) => {
+                let likes
+                let dislikes
+                let status
+                const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(comment._id)
+                if (commentLikes && commentLikes.length > 0) {
+                    likes = commentLikes.map(l => l.status === "Like")
+                    dislikes = commentLikes.map(l => l.status === "Dislike")
+                    if(userId) {
+                        status = commentLikes.find(l => l.userId === userId)?.status
+                    }
+                }
             return {
                         id: comment._id.toString(),
                         content: comment.content,
                         commentatorInfo: comment.commentatorInfo,
                         createdAt: comment.createdAt,
-                        likesInfo: {
-                            likesCount: likes,
-                            dislikesCount: dislikes,
-                             myStatus:
-                            // (userId && likesForUser && likesForUser.find(l=>l.commentsId===comment._id) &&
-                            //     likesForUser.find(l=>l.commentsId===comment._id).status) ?
-                            //     likesForUser.find(l=>l.commentsId===comment._id).status :
-                                 "None"
+                        postId:comment.postId,
+                likesInfo: {
+                    likesCount: likes ? likes.length : 0,
+                        dislikesCount: dislikes ? dislikes.length : 0,
+                        myStatus: status ? status : "None"
                 }
             }
             }))

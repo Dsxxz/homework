@@ -8,41 +8,54 @@ import {inputCommentsValidation, inputLikesValidation} from "../MiddleWares/vali
 import {likeStatusValidation} from "../MiddleWares/likeStatus_check";
 import {jwtService} from "../application/jwt-service";
 import {ObjectId} from "mongodb";
-import {LikeService} from "../service/likes-service";
+import {likesService} from "../service/likes-service";
+import {LikedCommentsType} from "../models/LikesInfoType";
 export const commentsRouter = Router({});
 
 
 
 commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
+    try {
         const findComment = await commentsRepository.getCommentById(req.params.id)
         if (!findComment) {
             res.sendStatus(404);
             return;
         }
-        const token:string|undefined = req.headers.authorization?.toString().split(' ')[1]
+        const token: string | undefined = req.headers.authorization?.toString().split(' ')[1]
         let userId: ObjectId | null
         if (token) {
             userId = await jwtService.verifyUserIdByAccessToken(token)
         } else {
             userId = null
         }
-        const likesArray =  await LikeService.getLikeStatus(userId)
-        const myStatus = likesArray?.find(l=>l.commentsId===findComment._id)?.status
-    console.log('myStatus,commentsRouter.get/:id',myStatus)
-        const {likes, dislikes} = await LikeService.getLikesCounter(findComment._id)
-     res.status(200).send({
+        let likes
+        let dislikes
+        let status
+        const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(new ObjectId(req.params.id))
+        if(commentLikes && commentLikes.length > 0){
+             likes = commentLikes.map(l => l.status === "Like")
+             dislikes = commentLikes.map(l => l.status === "Dislike")
+             if(userId) {
+                 status = commentLikes.find(l => l.userId === userId)?.status
+             }
+        }
+        res.status(200).send({
             id: findComment._id.toString(),
             commentatorInfo: findComment.commentatorInfo,
             content: findComment.content,
             createdAt: findComment.createdAt,
             likesInfo: {
-                likesCount: likes,
-                dislikesCount: dislikes,
-                myStatus: myStatus ? myStatus : "None"
+                likesCount: likes ? likes.length : 0,
+                dislikesCount: dislikes ? dislikes.length : 0,
+                myStatus: status ? status : "None"
             }
         })
         return;
-    })
+    }catch (e){
+        console.log("commentsRouter, get, id", e)
+        res.status(500).send(e)
+    }}
+)
 commentsRouter.delete('/:id',
     authMiddleWare,
     checkOwnerOfComments,
@@ -53,6 +66,7 @@ commentsRouter.delete('/:id',
         res.sendStatus(404);
         return;
     }
+    await
     res.sendStatus(204);
     return;
 })
@@ -67,7 +81,7 @@ commentsRouter.put('/:id',
         res.sendStatus(404);
         return;
     }
-
+    await likesService.deleteLike(new ObjectId(req.params.id))
     res.status(204).send(await commentsRepository.getCommentById(req.params.id));
     return;
 })
@@ -84,7 +98,7 @@ commentsRouter.put('/:id/like-status',
         try {
             const token = req.headers.authorization!.split(' ')[1]
             const userId:ObjectId = await jwtService.verifyUserIdByAccessToken(token)
-            await LikeService.updateCommentLike(userId,req.body.likeStatus,findComment._id)
+            await likesService.createOrUpdateLike(findComment._id, userId, "comment",req.body.likeStatus)
             res.sendStatus(204);
             return;
         }

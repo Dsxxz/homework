@@ -3,34 +3,10 @@ import {UserAccountDbType} from "../models/userType";
 import {ObjectId} from "mongodb";
 import {v4 as uuidv4} from "uuid";
 import {HydratedDocument} from "mongoose";
-import {LikedCommentsType} from "../models/LikesInfoType";
 
 export const userRepository= {
     async saveUser(user:HydratedDocument<UserAccountDbType>){
         return await user.save();
-    },
-    async updateCommentUser(userId: ObjectId, likeStatus: string, commentId: ObjectId){
-        const user:HydratedDocument<UserAccountDbType>|null = await this.findUserById(userId);
-        if(!user){
-            return false
-        }
-        if(!user.likedComments){
-            const like:LikedCommentsType= {commentsId: commentId, status: likeStatus, createdAt: new Date()}
-            await UserModelClass.findByIdAndUpdate({userId},{$push: { "likedComments": {like}}})
-        }
-        else{
-                user.likedComments.map((like => {
-                    if (like.commentsId === commentId) {
-                        return {
-                            ...like,
-                            status: likeStatus
-                        }
-                    }
-                    return like;
-                }));
-            }
-        await this.saveUser(user);
-        return true;
     },
     async createNewUser(newUser: UserAccountDbType): Promise<UserAccountDbType> {
         const userInstance = new UserModelClass(newUser);

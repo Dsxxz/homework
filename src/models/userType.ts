@@ -1,5 +1,4 @@
 import {ObjectId} from "mongodb";
-import {LikedCommentsType} from "./LikesInfoType";
 
 export  type UserInputModel = {
     login: string,
@@ -30,7 +29,6 @@ export type UserAccountDbType = {
         confirmationCode: string,
         expirationDate:Date,
         isConfirmed:boolean
-    },
-    likedComments:Array<LikedCommentsType>
+    }
 }
 

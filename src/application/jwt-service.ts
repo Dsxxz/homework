@@ -8,7 +8,7 @@ export const jwtService = {
     },
 
     async createRefresh(userId: ObjectId, deviceId: ObjectId,) {
-        return jwt.sign({userId, deviceId}, 'refreshTokenPrivateKey', {expiresIn: '50s'});
+        return jwt.sign({userId, deviceId}, 'refreshTokenPrivateKey', {expiresIn: '50m'});
     },
 
     async getLastActiveDateFromRefreshToken(refreshToken: string): Promise<string> {

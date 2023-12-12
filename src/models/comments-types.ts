@@ -16,12 +16,7 @@ export type CommentsInDbType={
     content:string,
     commentatorInfo:CommentatorInfo
     createdAt:string
-    postId:string,
-    likesInfo: {
-        "likesCount": number,
-        "dislikesCount": number,
-        "myStatus": string
-    }
+    postId:string
 }
 export  type  CommentatorInfo={
     userId:string

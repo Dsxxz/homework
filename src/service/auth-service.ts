@@ -26,8 +26,7 @@ export const authService = {
                             minutes:5,
                         }),
                     isConfirmed:false
-        },
-            likedComments:[]}
+        }}
         const createResult:UserAccountDbType = await userRepository.createNewUser(newUser)
         try {
             await emailManager.sendEmailConfirmationCode(newUser)

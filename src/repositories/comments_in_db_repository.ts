@@ -20,12 +20,7 @@ export const commentsRepository={
             content:content,
             commentatorInfo:{userId:user._id.toString(),userLogin:user.accountData.userName},
             createdAt:new Date().toISOString(),
-            postId:postId,
-            likesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
-                myStatus: likeEnum.None
-            }
+            postId:postId
         }
         const newComment = await CommentModel.create(comment)
         await this.saveComment(newComment)
@@ -50,35 +45,4 @@ export const commentsRepository={
     async deleteComment(id:string){
        return CommentModel.findOneAndDelete({_id: new ObjectId(id)})
     }
-    ,async calculateLikesCount(oldStatus:string,newStatus: string,commentId: ObjectId){
-        const comment:HydratedDocument<CommentsInDbType>|null = await CommentModel.findOne({_id:commentId})
-        if(!comment){throw new Error('Comment doesnt exist, method calculateLikesCount')}
-
-         if(oldStatus==='None'){
-             if(newStatus==='Like') {
-                 comment.likesInfo.likesCount++
-                 await this.saveComment(comment)
-             }
-             if(newStatus==='Dislike') {
-                 comment.likesInfo.dislikesCount++
-                 await this.saveComment(comment)
-             }
-         }
-         if (oldStatus===newStatus){
-             await this.saveComment(comment);
-         }
-         if (oldStatus!=='None'){
-         if(newStatus==='Like'){
-             comment.likesInfo.likesCount++
-             comment.likesInfo.dislikesCount--
-             await  this.saveComment(comment)
-         }
-         if(newStatus==='Dislike'){
-             comment.likesInfo.likesCount--
-             comment.likesInfo.dislikesCount++
-             await this.saveComment(comment)
-         }}
-        console.log(comment.likesInfo.likesCount, comment.likesInfo.dislikesCount)
-         return;
-         }
 }

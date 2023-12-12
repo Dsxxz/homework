@@ -6,6 +6,7 @@ import {BlogDbType} from "../models/blogs-types";
 import {CommentsInDbType} from "../models/comments-types";
 import {DeviceType, IPCheckerType} from "../models/devices_types";
 import mongoose from "mongoose";
+import {LikedCommentsType} from "../models/LikesInfoType";
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/homework';
@@ -26,10 +27,7 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         confirmationCode:  {type:String, required:true},
         expirationDate: {type:Date, required:true},
         isConfirmed: {type:Boolean, required:true}
-    },
-    likedComments: [ { type: mongoose.Schema.ObjectId,
-        status: String,
-        createdAt: Date}]
+    }
 })
 
 const blogSchema = new mongoose.Schema<BlogDbType>({
@@ -56,12 +54,7 @@ const commentSchema = new mongoose.Schema<CommentsInDbType>({
         userLogin: {type:String, required:true}
     },
     createdAt: {type:String, required:true},
-    postId: {type:String, required:true},
-    likesInfo:{
-        likesCount: {type:Number, required:true},
-        dislikesCount:{type:Number, required:true},
-        myStatus: {type:String}
-    }
+    postId: {type:String, required:true}
 })
 const devicesSchema = new mongoose.Schema<DeviceType>({
     ip:	 {type:String, required:true},  //IP address of device during signing in
@@ -75,7 +68,13 @@ const restrictsSchema = new mongoose.Schema<IPCheckerType>({
     url: {type:String, required:true},
     date: {type:Date, required:true}
 })
-
+const likeInfosSchema = new mongoose.Schema<LikedCommentsType>({
+    _id:{type:mongoose.Schema.ObjectId, required:true},
+    status: {type:String, required:true},
+    createdAt: {type:String, required:true},
+    userId: {type:mongoose.Schema.ObjectId, required:true},
+    field: {type:String, required:true},
+})
 
 export const UserModelClass =  mongoose.model('users', userSchema);
 export const BlogModel =  mongoose.model('blogs', blogSchema);
@@ -83,6 +82,7 @@ export const PostModel =  mongoose.model('posts', postSchema);
 export const CommentModel =  mongoose.model('comments', commentSchema);
 export const DeviceModel =  mongoose.model('devices', devicesSchema);
 export const RestrictModel =  mongoose.model('restricts', restrictsSchema);
+export const LikesInfoModel =  mongoose.model('likes', likeInfosSchema);
 
 
 
