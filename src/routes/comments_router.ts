@@ -28,26 +28,31 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
         } else {
             userId = null
         }
-        let likes
-        let dislikes
-        let status
+        let likes=[]
+        let dislikes=[]
+        let statusArr:LikedCommentsType|undefined
+        let status: string= "None"
         const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(new ObjectId(req.params.id))
         if(commentLikes && commentLikes.length > 0){
-             likes = commentLikes.map(l => l.status === "Like")
-             dislikes = commentLikes.map(l => l.status === "Dislike")
+             likes = commentLikes.filter(l => l.status === "Like")
+             dislikes = commentLikes.filter(l => l.status === "Dislike")
              if(userId) {
-                 status = commentLikes.find(l => l.userId === userId)?.status
+                 statusArr = commentLikes.find(l => l.userId === userId)
+                 if(statusArr){
+                     status=statusArr.status
+                 }
              }
         }
+        console.log(likes.length, dislikes.length, status)
         res.status(200).send({
             id: findComment._id.toString(),
             commentatorInfo: findComment.commentatorInfo,
             content: findComment.content,
             createdAt: findComment.createdAt,
             likesInfo: {
-                likesCount: likes ? likes.length : 0,
-                dislikesCount: dislikes ? dislikes.length : 0,
-                myStatus: status ? status : "None"
+                likesCount: likes.length,
+                dislikesCount:dislikes.length,
+                myStatus: status
             }
         })
         return;

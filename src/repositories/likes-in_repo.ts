@@ -28,7 +28,7 @@ export const LikesRepo={
         }
     },
     async findCommentLikes(commentId:ObjectId):Promise<LikedCommentsType[]|null>{
-        return  LikesInfoModel.find({commentId:commentId})
+        return LikesInfoModel.find({commentId:commentId}).lean()
     },
     async deleteLike(_id: ObjectId) : Promise<boolean>{
         const likeInstance = await LikesInfoModel.findOne({commentId:_id});
