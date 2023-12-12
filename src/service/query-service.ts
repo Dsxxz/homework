@@ -132,7 +132,6 @@ export const commentsQueryService = {
                         content: comment.content,
                         commentatorInfo: comment.commentatorInfo,
                         createdAt: comment.createdAt,
-                        postId:comment.postId,
                 likesInfo: {
                     likesCount: likes.length,
                         dislikesCount: dislikes.length ,

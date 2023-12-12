@@ -9,7 +9,7 @@ export const myValidationResult = validationResult.withDefaults({
 })
 export const myValidationResultLike = validationResult.withDefaults({
     formatter: (error:any) => {
-        return { message: error.msg, field: error.body };
+        return { message: error.msg, field: "likeStatus" };
     }
 })
 export const inputBlogsAndPostsValidation = ((req:Request, res:Response, next: NextFunction)=> {
