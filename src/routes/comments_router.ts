@@ -22,24 +22,30 @@ commentsRouter.get('/:id',async (req:Request<{id:string}>,res:Response)=> {
             return;
         }
         const token: string | undefined = req.headers.authorization?.toString().split(' ')[1]
-        let userId: ObjectId | null
+        let userId:ObjectId|null
         if (token) {
             userId = await jwtService.verifyUserIdByAccessToken(token)
         } else {
             userId = null
+            console.log("user token and user id dont found")
         }
+
         let likes=[]
         let dislikes=[]
-        let statusArr:LikedCommentsType|undefined
+        let statusArr
         let status: string= "None"
         const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(new ObjectId(req.params.id))
         if(commentLikes && commentLikes.length > 0){
+            console.log(commentLikes)
              likes = commentLikes.filter(l => l.status === "Like")
              dislikes = commentLikes.filter(l => l.status === "Dislike")
              if(userId) {
-                 statusArr = commentLikes.find(l => l.userId === userId)
+                 statusArr = commentLikes.find((l) => l.userId.toString() === userId!.toString())
+                 console.log(statusArr, userId)
                  if(statusArr){
+                     console.log("statusArr found")
                      status=statusArr.status
+                     console.log("123",statusArr.status, status)
                  }
              }
         }

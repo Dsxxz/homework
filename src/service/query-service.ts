@@ -122,7 +122,7 @@ export const commentsQueryService = {
                     likes = commentLikes.filter(l => l.status === "Like")
                     dislikes = commentLikes.filter(l => l.status === "Dislike")
                     if(userId) {
-                        statusArr = commentLikes.find(l => l.userId === userId)
+                        statusArr = commentLikes.find(l => l.userId.toString() === userId.toString())
                         if(statusArr){
                             status=statusArr.status
                         }
