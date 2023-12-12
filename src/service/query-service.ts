@@ -104,7 +104,7 @@ export const commentsQueryService = {
             return {totalCount, pagesCount};
         },
         async getCommentsForPost(sortBy: string = 'createdAt', sortDirection: string = 'desc', postId: string,
-                                 pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null):Promise<CommentsViewType[]|null> {
+                                 pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null):Promise<CommentsViewType[]> {
             const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
             const comments: Array<CommentsInDbType> = await CommentModel.find({postId: postId})
                 .sort({[sortBy]: sortDirectionNumber})
