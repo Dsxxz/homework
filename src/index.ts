@@ -7,7 +7,7 @@ import {
     BlogModel,
     CommentModel, DeviceModel, RestrictModel,
     PostModel,
-    runDb, UserModelClass
+    runDb, UserModelClass, LikesInfoModel
 } from "./repositories/db";
 import {userRouter} from "./routes/user_router";
 import {authRouter} from "./routes/auth_router";
@@ -39,6 +39,7 @@ app.delete('/testing/all-data', async (req:Request, res:Response)=>{
         await CommentModel.deleteMany({})
         await DeviceModel.deleteMany({})
         await RestrictModel.deleteMany({})
+        await LikesInfoModel.deleteMany({})
         return res.sendStatus(204);
     }
     catch{
