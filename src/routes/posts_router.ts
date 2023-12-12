@@ -121,7 +121,7 @@ postsRouter.get('/:id/comments',async (req:Request<{id:string},{},{},QueryInputC
             "page": +pageNumber,
             "pageSize": +pageSize,
             "totalCount": paginator.totalCount,
-            "items": comments
+            "items": comments ? comments : []
         })
         return;
     }

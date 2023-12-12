@@ -7,7 +7,10 @@ export const LikesRepo={
     async saveLike(like:HydratedDocument<LikedCommentsType>):Promise<HydratedDocument<LikedCommentsType>>{
        return await like.save();
     },
-    async createOrUpdateLike(commentId:ObjectId, userId:ObjectId, field:string, status: string):Promise<HydratedDocument<LikedCommentsType>|null>{
+    async createOrUpdateLike(commentId:ObjectId, userId:ObjectId, field:string, status: string):Promise<HydratedDocument<LikedCommentsType>|null|boolean>{
+        if(status==="None"){
+            return this.deleteLike(commentId)
+        }
         const findLike = await LikesInfoModel.findOne({id:commentId,userId:userId})
         if(!findLike){
             const like = new LikesInfoModel({_id:commentId,

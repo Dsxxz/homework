@@ -2,7 +2,7 @@ import {BlogModel, CommentModel, PostModel, UserModelClass} from "../repositorie
 import {UserAccountDbType, UserViewModel} from "../models/userType";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 import {PostDBType, PostType} from "../models/posts-types";
-import {CommentsInDbType} from "../models/comments-types";
+import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 import {ObjectId} from "mongodb";
 import {LikedCommentsType} from "../models/LikesInfoType";
@@ -104,7 +104,7 @@ export const commentsQueryService = {
             return {totalCount, pagesCount};
         },
         async getCommentsForPost(sortBy: string = 'createdAt', sortDirection: string = 'desc', postId: string,
-                                 pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null) {
+                                 pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null):Promise<CommentsViewType[]|null> {
             const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
             const comments: Array<CommentsInDbType> = await CommentModel.find({postId: postId})
                 .sort({[sortBy]: sortDirectionNumber})
@@ -117,15 +117,14 @@ export const commentsQueryService = {
                 let dislikes
                 let status
                 const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(comment._id)
-                if (commentLikes && commentLikes.length > 0) {
+                if(commentLikes && commentLikes.length > 0){
                     likes = commentLikes.map(l => l.status === "Like")
                     dislikes = commentLikes.map(l => l.status === "Dislike")
                     if(userId) {
                         status = commentLikes.find(l => l.userId === userId)?.status
                     }
                 }
-            return {
-                        id: comment._id.toString(),
+            return {id: comment._id.toString(),
                         content: comment.content,
                         commentatorInfo: comment.commentatorInfo,
                         createdAt: comment.createdAt,
