@@ -50,9 +50,9 @@ class PostController{
                 console.log("user token and user id dont found in method getAllPosts in post_router, str 50")
             }
             const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
-
+            let direction = sortDirection || 'desc'
             const posts: Array<PostType> = await this.postQueryService.findPostsByQuerySort( sortBy?.toString(),
-                sortDirection?.toString(),+pageNumber?.toString(),+pageSize?.toString())
+                direction,+pageNumber?.toString(),+pageSize?.toString())
             const paginator:paginationType = await this.postQueryService.paginationPage(+pageNumber,+pageSize)
             const resultPostArr = await Promise.all(posts.map(async post =>{
                 let likes=[]
