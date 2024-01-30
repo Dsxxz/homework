@@ -5,20 +5,17 @@ import {PostDBType, PostType} from "../models/posts-types";
 import {CommentsInDbType, CommentsViewType} from "../models/comments-types";
 import {paginationType} from "../models/query_input_models";
 import {ObjectId} from "mongodb";
-import {LikedCommentsType} from "../models/LikesInfoType";
+import {LikedType} from "../models/LikesInfoType";
 import {likesService} from "./likes-service";
 
 
-export const blogQueryService={
+export class BlogQueryService{
     async paginationPage(searchNameTerm?:string,pageNumber:number=1,pageSize:number=10):Promise<paginationType>{
         const filter = searchNameTerm ? {name: {$regex: searchNameTerm, $options: 'i'}}:{}
         const   totalCount = await BlogModel.countDocuments(filter)
         const   pagesCount = Math.ceil(totalCount / pageSize)
-
         return {totalCount,pagesCount};
     }
-    ,
-
     async findBlogsByQuerySort(sortBy:string='createdAt',sortDirection:string,searchNameTerm?:string,
                                pageNumber:number=1,pageSize:number=10):Promise<Array<BlogType>> {
 
@@ -37,7 +34,7 @@ export const blogQueryService={
             description: blog.description,
             isMembership: blog.isMembership
         }))}}
-export const postQueryService={
+export class PostQueryService{
     async paginationPage(pageNumber:number=1,pageSize:number=10,blogId?:string):Promise<paginationType>{
         const filter = blogId ? {blogId:blogId} :{}
         const   totalCount = await PostModel.countDocuments(filter)
@@ -45,11 +42,11 @@ export const postQueryService={
 
         return {totalCount,pagesCount};
     }
-    ,
     async findPostsByQuerySort(sortBy:string='createdAt',sortDirection:string,
          pageNumber:number=1,pageSize:number=10,blogId?:string)
             :Promise<Array<PostType>>
         {
+
             const sortDirectionNumber:-1|1 = sortDirection==='desc'? -1 : 1
             const filter = blogId ? {blogId:blogId} :{}
                 const posts: PostDBType[] = await PostModel.find(filter)
@@ -57,7 +54,9 @@ export const postQueryService={
                     .skip((pageNumber-1)*pageSize)
                     .limit(pageSize)
                     .lean();
-                return posts.map((post:PostDBType) => ({
+
+
+            return posts.map((post:PostDBType) => ({
                     blogId: post.blogId,
                     blogName: post.blogName,
                     content: post.content,
@@ -66,9 +65,12 @@ export const postQueryService={
                     shortDescription: post.shortDescription,
                     title: post.title
                 }))
+
+
+
         }}
 
-export const userQueryService= {
+export class UserQueryService{
     async paginationPage(searchLoginTerm: string, searchEmailTerm: string,
                          pageNumber: number, pageSize: number): Promise<paginationType> {
         const filterEmail = searchEmailTerm ? {email: {$regex: searchEmailTerm, $options: 'i'}} : {}
@@ -77,7 +79,6 @@ export const userQueryService= {
         const pagesCount = Math.ceil(totalCount / pageSize)
         return {totalCount, pagesCount};
     }
-    ,
     async findUsersByQuerySort(sortBy: string = 'createdAt', searchLoginTerm: string, searchEmailTerm: string,
                                pageNumber: number, pageSize: number, sortDirection: string)
         : Promise<Array<UserViewModel>> {
@@ -96,13 +97,13 @@ export const userQueryService= {
             createdAt: user.accountData.createdAt
         }))
     }}
-export const commentsQueryService = {
+export class CommentsQueryService {
         async paginationPage(pageNumber: number = 1, pageSize: number = 10, postId: string): Promise<paginationType> {
 
             const totalCount = await CommentModel.countDocuments({postId: postId})
             const pagesCount = Math.ceil(totalCount / pageSize)
             return {totalCount, pagesCount};
-        },
+        }
         async getCommentsForPost(sortBy: string = 'createdAt', sortDirection: string = 'desc', postId: string,
                                  pageNumber: number = 1, pageSize: number = 10,userId?:ObjectId|null):Promise<CommentsViewType[]> {
             const sortDirectionNumber: -1 | 1 = sortDirection === 'desc' ? -1 : 1
@@ -116,8 +117,8 @@ export const commentsQueryService = {
                 let likes=[]
                 let dislikes=[]
                 let status: string = "None"
-                let statusArr:LikedCommentsType|undefined
-                const commentLikes: LikedCommentsType[] | null = await likesService.findCommentLikes(comment._id)
+                let statusArr:LikedType|undefined
+                const commentLikes: LikedType[] | null = await likesService.findLikes(comment._id)
                 if(commentLikes && commentLikes.length > 0){
                     likes = commentLikes.filter(l => l.status === "Like")
                     dislikes = commentLikes.filter(l => l.status === "Dislike")

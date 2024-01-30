@@ -3,7 +3,7 @@ import {ObjectId} from "mongodb";
 import {BlogDbType, BlogType} from "../models/blogs-types";
 import {HydratedDocument} from "mongoose";
 
-export const blogsRepository={
+export class BlogsRepository{
     async createNewBlog(newBlog:BlogDbType):Promise<BlogType>{
         const blogInstance = new BlogModel(newBlog)
         blogInstance.save()
@@ -15,7 +15,7 @@ export const blogsRepository={
             description: blogInstance.description,
             isMembership:blogInstance.isMembership
         }
-    },
+    }
     async findBlogById(id: string):Promise<BlogType | null>{
 
         const blog:HydratedDocument<BlogType>|null = await BlogModel.findOne({_id: new ObjectId(id)})
@@ -31,8 +31,7 @@ export const blogsRepository={
         }
 
         return null
-    },
-
+    }
     async updateBlog(id:string,name:string, websiteUrl:string,description:string): Promise<boolean>{
         if(!ObjectId.isValid(id)){
             return false;
@@ -43,8 +42,7 @@ export const blogsRepository={
         blogInstance.websiteUrl=websiteUrl;
         blogInstance.description=description;
         return true;
-    },
-
+    }
     async deleteBlog(id:string): Promise<boolean>{
         if(!ObjectId.isValid(id)){
             return false;

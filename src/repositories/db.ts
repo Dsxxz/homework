@@ -6,7 +6,7 @@ import {BlogDbType} from "../models/blogs-types";
 import {CommentsInDbType} from "../models/comments-types";
 import {DeviceType, IPCheckerType} from "../models/devices_types";
 import mongoose from "mongoose";
-import {LikedCommentsType} from "../models/LikesInfoType";
+import {LikedType} from "../models/LikesInfoType";
 dotenv.config()
 
 const mongoUri = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/homework';
@@ -29,7 +29,6 @@ const userSchema = new mongoose.Schema<UserAccountDbType>({
         isConfirmed: {type:Boolean, required:true}
     }
 })
-
 const blogSchema = new mongoose.Schema<BlogDbType>({
     createdAt:  {type:String, required:true},
     name:  {type:String, required:true},
@@ -68,8 +67,8 @@ const restrictsSchema = new mongoose.Schema<IPCheckerType>({
     url: {type:String, required:true},
     date: {type:Date, required:true}
 })
-const likeInfosSchema = new mongoose.Schema<LikedCommentsType>({
-    commentId:{type:mongoose.Schema.ObjectId, required:true},
+const likeInfosSchema = new mongoose.Schema<LikedType>({
+    commentOrPostId:{type:mongoose.Schema.ObjectId, required:true},
     _id:{type:mongoose.Schema.ObjectId, required:true},
     status: {type:String, required:true},
     createdAt: {type:String, required:true},

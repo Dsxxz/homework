@@ -1,11 +1,11 @@
-import {blogsRepository} from "./blog_in_db_repository";
 import {PostModel} from "./db";
 import {ObjectId} from "mongodb";
 import {PostDBType, PostType} from "../models/posts-types";
+import {blogService} from "../service/blog-service";
 
-export const postsInDbRepository={
+class PostsInDbRepository{
     async createNewPost(creatingPost:PostDBType): Promise<PostType| null> {
-        const existingBlog = await blogsRepository.findBlogById(creatingPost.blogId)
+        const existingBlog = await blogService.findBlogById(creatingPost.blogId)
         if(!existingBlog) {
             return null
         }
@@ -28,7 +28,7 @@ export const postsInDbRepository={
             shortDescription: newPost.shortDescription,
             title: newPost.title
         }
-    },
+    }
     async findPostById(id:string) :Promise<PostType |null>{
         if(!ObjectId.isValid(id)){
             return null;
@@ -46,16 +46,14 @@ export const postsInDbRepository={
             }
         }
         return null;
-    },
-
+    }
     async updatePost(id:string, title: string, shortDescription: string, content: string, blogId: string){
         if(!ObjectId.isValid(id)){
             return false;
         }
         return PostModel.findOneAndUpdate({_id: new ObjectId(id)},{$set:{title,shortDescription,content,blogId}})
 
-    },
-
+    }
     async deletePost(id:string){
         if(!ObjectId.isValid(id)){
             return false;
@@ -63,3 +61,4 @@ export const postsInDbRepository={
         return  PostModel.deleteOne({_id: new ObjectId(id)})
     }
 }
+export const postsInDbRepository = new PostsInDbRepository()

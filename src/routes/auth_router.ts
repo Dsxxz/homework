@@ -1,7 +1,4 @@
-import {Request, Response, Router} from "express";
-import {authService} from "../service/auth-service";
-import {LoginInputModel, UserAccountDbType} from "../models/userType";
-import {jwtService} from "../application/jwt-service";
+import {Router} from "express";
 import {authMiddleWare} from "../MiddleWares/auth-middleWare";
 import {
     existingEmailValidation,
@@ -10,233 +7,35 @@ import {
 } from "../MiddleWares/validation-middleware";
 import {
     authInputEmailValidation,
-    authInputLoginValidation, authInputNewPasswordValidation,
+    authInputLoginValidation,
+    authInputNewPasswordValidation,
     authInputPasswordValidation
 } from "../MiddleWares/auth-registration";
 import {inputEmailValidationForResending} from "../MiddleWares/registration-email-resending";
-import {emailManager} from "../managers/email_manager";
-import {userRepository} from "../repositories/user_in_db_repository";
 import {ConnectionsCountChecker} from "../MiddleWares/connectionsCountChecker";
-import {ObjectId} from "mongodb";
-import {devicesService} from "../service/devices_service";
 import {userInputEmailValidation} from "../MiddleWares/input-user-validation";
-
-
+import {authController} from "../composition_root";
 export const authRouter = Router({});
 
-authRouter.get('/me', authMiddleWare, async (req, res) => {
-    try {
-        const token = req.headers.authorization!.split(' ')[1]
-        const userId = await jwtService.verifyUserIdByAccessToken(token)
-        const user = await authService.findUsersById(userId)
-        if(user){
-            res.status(200).send({
-                "email": user.accountData.email,
-                "login": user.accountData.userName,
-                "userId": userId
-            })
-            return;
-        }
-        else{
-            res.status(401).send('not found')
-            return;
-        }
-    } catch (e) {
-        res.status(401).send('not found')
-        return;
-    }
-})
-authRouter.post('/login', ConnectionsCountChecker,
-    async (req: Request<{}, {}, LoginInputModel, {}>, res: Response) => {
-       try{ const checkResult: UserAccountDbType | null = await authService.checkLoginAndPassword(req.body.loginOrEmail, req.body.password)
-
-        if (checkResult) {
-            const userId: ObjectId = checkResult._id
-            const ip = req.ip || ''
-            const title = req.headers['user-agent'] || 'custom UA'
-            const newDeviceId = new ObjectId()
-
-            const accessToken = await jwtService.createAccess(userId)
-            const refreshToken = await jwtService.createRefresh(userId, newDeviceId)
-            const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
-
-            const checkSessions = await devicesService.checkSessions(userId,ip,title)
-            if(checkSessions){
-                await devicesService.updateSession(timeTokenData,checkSessions.deviceId )
-            }
-            else{
-                await devicesService.createNewSession(userId,ip,title,timeTokenData,newDeviceId)
-            }
-
-            res.cookie('refreshToken', refreshToken, {
-               httpOnly: true,
-                 secure: true
-             })
-             res.status(200).send({accessToken: accessToken})
-            return;
-        }
-        else {
-            res.sendStatus(401);
-            return;
-        }}
-        catch (e) {
-            console.log("authRouter.post('/login'", e)
-            res.status(500).send(e)
-        }
-})
+authRouter.get('/me', authMiddleWare, authController.getMyData.bind(authController))
+authRouter.post('/login', ConnectionsCountChecker,authController.loginUser.bind(authController))
 authRouter.post('/registration', ConnectionsCountChecker,
     authInputEmailValidation,
     authInputPasswordValidation,
     authInputLoginValidation,
-    inputAuthValidation,
-    async (req: Request, res: Response) => {
-        try {
-            const user = await authService.createNewUser(req.body.password, req.body.login, req.body.email)
-            res.status(204).send(user?.emailConfirmation.isConfirmed);
-            return;
-        } catch (e) {
-            res.status(400).send(e);
-            return;
-        }
-    })
-
-authRouter.post('/registration-confirmation', ConnectionsCountChecker,
-    async (req: Request, res: Response) => {
-        const correctCode = await authService.checkExistCode(req.body.code)
-        if (!correctCode) {
-            res.status(400).send({errorsMessages: [{message: "Confirmation Code is not correct", field: "code"}]})
-            return;
-        }
-        const confirmCode = await authService.checkIsConfirmCode(req.body.code)
-        if (confirmCode) {
-            res.status(400).send({errorsMessages: [{message: "Confirmation Code already confirm", field: "code"}]})
-            return;
-        } else {
-                await authService.updateConfirmEmail(req.body.code);
-                res.sendStatus(204);
-                return;
-        }
-    })
-
+    inputAuthValidation,authController.registration.bind(authController))
+authRouter.post('/registration-confirmation', ConnectionsCountChecker, authController.emailRegistration.bind(authController))
 authRouter.post('/registration-email-resending', ConnectionsCountChecker,
     inputEmailValidationForResending,
-    existingEmailValidation,
-    async (req: Request, res: Response) => {
-        const user = await userRepository.findUserByLoginOrEmail(req.body.email)
-        if (user!.emailConfirmation.isConfirmed) {
-            res.status(400).send({
-                errorsMessages: [{
-                    message: "Confirmation Code already confirm",
-                    field: "email"
-                }]
-            });
-            return;
-        }
-        const updateUser: UserAccountDbType | null = await authService.updateUserConfirmCode(user!);
-        if (updateUser) {
+    existingEmailValidation,authController.updatingEmailCode.bind(authController))
+authRouter.post('/logout',authController.userLogout.bind(authController))
 
-            await emailManager.sendEmailConfirmationCode(updateUser)
-            res.sendStatus(204);
-            return;
-                }
-             else {
-                res.sendStatus(400);
-                return;
-            }
-    })
+authRouter.post('/refresh-token', authController.updatingJwt.bind(authController))
 
-authRouter.post('/logout',
-    async (req, res) => {
-        try{
-            const cookie= req.cookies.refreshToken;
-            const refresh = await jwtService.verifyUserIdByRefreshToken(cookie)
-            const dateRefresh = await jwtService.getLastActiveDateFromRefreshToken(cookie)
-            const checkTimeFromRefresh = await devicesService.findLastActiveDate(dateRefresh)
-
-        if (refresh && checkTimeFromRefresh) {
-            await devicesService.deleteOneSessionById(refresh.deviceId)
-            res.clearCookie('refreshToken').sendStatus(204)
-            return;
-        }
-        else {
-                res.sendStatus(401);
-                return;
-            }
-        }
-        catch (e) {
-            res.send(e)
-        }
-    })
-
-authRouter.post('/refresh-token', async (req, res) => {
-    const cookie= req.cookies.refreshToken;
-    const refresh = await jwtService.verifyUserIdByRefreshToken(cookie)
-    const dateRefresh = await jwtService.getLastActiveDateFromRefreshToken(cookie)
-
-    const checkTimeFromRefresh = await devicesService.findLastActiveDate(dateRefresh)
-
-    if(refresh && checkTimeFromRefresh) {
-            const accessToken = await jwtService.createAccess(refresh.userId)
-            const refreshToken = await jwtService.createRefresh(refresh.userId,refresh.deviceId)
-            const timeTokenData = await jwtService.getLastActiveDateFromRefreshToken(refreshToken)
-            await devicesService.updateSession(timeTokenData,checkTimeFromRefresh.deviceId)
-
-        res.cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
-            res.status(200).send({accessToken})
-            return;
-                                      }
-    else {
-        res.sendStatus(401);
-        return;
-    }
-})
 authRouter.post('/password-recovery', ConnectionsCountChecker,
     userInputEmailValidation,
-    inputNewPasswordValidation,
-    async (req: Request, res: Response) => {
-        try {
-            const user = await userRepository.findUserByLoginOrEmail(req.body.email)
-            if(!user){
-                res.sendStatus(204);
-                return;
-            }
-            else {
-                const updateUser = await authService.passwordRecoveryUser(user);
-                if(updateUser) {
-                    emailManager.sendRecoveryCode(updateUser);
-                    res.sendStatus(204);
-                    return;
-                }
-            }
-        }
-        catch (e) {
-            res.status(500).send(e);
-            return;
-        }
-    })
+    inputNewPasswordValidation,authController.updatingEmailCode.bind(authController))
+
 authRouter.post('/new-password', ConnectionsCountChecker,
     authInputNewPasswordValidation,
-    inputNewPasswordValidation,
-     async (req: Request, res: Response) => {
-    try {
-        const user = await authService.checkExistCode(req.body.recoveryCode)
-        if(!user){
-            res.status(400).send({ errorsMessages: [{ message: "Recovery code is not correct", field: "recoveryCode" }] })
-            return;
-        }
-        else {
-            const checkNewPassword = await authService.findUserByOldPassword(user!,req.body.newPassword)
-            if(checkNewPassword){
-                res.sendStatus(401);
-                return;
-            }
-                await authService.updateAccountData(user!, req.body.newPassword)
-                res.sendStatus(204);
-                return;
-        }
-    }
-    catch (e) {
-        res.status(500).send(e);
-        return;
-    }
-     })
+    inputNewPasswordValidation,authController.updatingPassword.bind(authController))

@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
-import {commentsRepository} from "../repositories/comments_in_db_repository";
-
+import {CommentsRepository} from "../repositories/comments_in_db_repository";
+const commentsRepository = new CommentsRepository()
 export const checkOwnerOfComments=async (req:Request,res:Response,next:NextFunction)=>{
     const comment = await commentsRepository.getCommentById(req.params.id)
     if(!comment){

@@ -5,10 +5,10 @@ export enum likeEnum{
     Like="Like",
     Dislike="Dislike"
 }
-export type LikedCommentsType =
+export type LikedType =
     {
         _id:ObjectId,
-        commentId:ObjectId,
+        commentOrPostId:ObjectId,
         status: string,
         createdAt: string,
         userId: ObjectId,

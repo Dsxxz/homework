@@ -1,15 +1,22 @@
 import {ObjectId} from "mongodb";
-import {LikesRepo} from "../repositories/likes-in_repo";
-import {LikedCommentsType} from "../models/LikesInfoType";
+import {likesRepo} from "../repositories/likes-in_repo";
+import {LikedType} from "../models/LikesInfoType";
 
-export const likesService={
-    async createOrUpdateLike(commentId:ObjectId, userId:ObjectId, field:string, status: string){
-        return await LikesRepo.createOrUpdateLike(commentId, userId, field, status)
-        },
-    async findCommentLikes(commentId:ObjectId):Promise<LikedCommentsType[]|null>{
-        return await LikesRepo.findCommentLikes(commentId)
-    },
+class LikesService{
+    async createOrUpdateLike(commentIdOrPost:ObjectId, userId:ObjectId, field:string, status: string){
+        return await likesRepo.createOrUpdateLike(commentIdOrPost, userId, field, status)
+        }
+    async findLikes(commentOrPostId:ObjectId):Promise<LikedType[]|null>{
+        return await likesRepo.findLike(commentOrPostId)
+    }
     async deleteLike(_id: ObjectId) {
-        return await LikesRepo.deleteLike(_id)
+        return await likesRepo.deleteLike(_id)
+    }
+    async deleteLikes(commentOrPostId: ObjectId) {
+        return await likesRepo.deleteLikes(commentOrPostId);
+    }
+    async findLatestLikes(postId:ObjectId):Promise<any[]>{
+        return likesRepo.findLatestLikes(postId)
     }
 }
+export const likesService=new LikesService()

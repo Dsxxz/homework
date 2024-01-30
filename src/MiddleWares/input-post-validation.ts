@@ -1,4 +1,5 @@
-import {blogsRepository} from "../repositories/blog_in_db_repository";
+import {blogService} from "../service/blog-service";
+
 const {body } = require('express-validator');
 
 
@@ -19,7 +20,7 @@ export const postBlogIDValidation = body('blogId').trim().exists({checkFalsy: tr
 
 
 export const postBlogIDValidator = body('blogId').trim().custom( async ( value: string)=> {
-    const existingBlog = await blogsRepository.findBlogById(value)
+    const existingBlog = await blogService.findBlogById(value)
     if(!existingBlog){
         throw new Error('blogID doesnt exist')
     }

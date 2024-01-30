@@ -7,6 +7,11 @@ export const myValidationResult = validationResult.withDefaults({
         return { message: error.msg, field: error.param };
     }
 })
+export const myValidationResultComment = validationResult.withDefaults({
+    formatter: (error:any) => {
+        return { message: error.msg, field: error.param };
+    }
+})
 export const myValidationResultLike = validationResult.withDefaults({
     formatter: (error:any) => {
         return { message: error.msg, field: "likeStatus" };
@@ -27,11 +32,14 @@ export const inputUserValidation = ((req:Request, res:Response, next: NextFuncti
     else return next();
 })
 export const inputCommentsValidation = ((req:Request, res:Response, next: NextFunction)=> {
-    const errorsMessages = myValidationResult(req)
+    const errorsMessages = myValidationResultComment(req)
     if (!errorsMessages.isEmpty()) {
+        console.log(45)
         return res.status(400).json({ errorsMessages: errorsMessages.array({onlyFirstError: true}) });
     }
-    else return next();
+    else
+        console.log(100)
+    return next();
 })
 
 export const inputAuthValidation = ((req:Request, res:Response, next: NextFunction)=> {

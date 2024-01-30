@@ -1,8 +1,8 @@
 import {NextFunction, Request, Response} from "express";
-import {authService} from "../service/auth-service";
+import {AuthService} from "../service/auth-service";
 import {jwtService} from "../application/jwt-service";
 import {ObjectId} from "mongodb";
-
+const authService = new AuthService()
 export const authMiddleWare = async (req:Request,res:Response,next:NextFunction)=>{
     if(!req.headers.authorization){
         res.sendStatus(401);
