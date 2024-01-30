@@ -113,8 +113,9 @@ class BlogController{
         else{
             try{
                 const { pageNumber=1, pageSize=10, sortBy, sortDirection} = req.query;
+                let direction = sortDirection || 'desc'
                 const posts: Array<PostType> = await this.postQueryService.findPostsByQuerySort( sortBy?.toString(),
-                    sortDirection?.toString(),+pageNumber?.toString(),+pageSize?.toString(),req.params.blogId!)
+                    direction,+pageNumber?.toString(),+pageSize?.toString(),req.params.blogId!)
                 const paginator:paginationType = await this.postQueryService.paginationPage(+pageNumber,+pageSize,req.params.blogId!)
 
                 const token: string | undefined = req.headers.authorization?.toString().split(' ')[1]
