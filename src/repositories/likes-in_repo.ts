@@ -44,7 +44,7 @@ class LikesRepo{
     async findLatestLikes(postId: ObjectId):Promise<any[]> {
         return  LikesInfoModel.aggregate([
             {
-                $match: { commentOrPostId: postId }
+                $match: { commentOrPostId: postId ,status:"Like" }
             },
             {
                 $addFields: {
