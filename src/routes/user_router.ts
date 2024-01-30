@@ -71,6 +71,6 @@ class UserController {
 const userController = new UserController()
 
 userRouter.post('/',basicAuth,userInputLoginValidation,userInputEmailValidation,
-    userInputPasswordValidation,inputUserValidation, userController.createUser)
+    userInputPasswordValidation,inputUserValidation, userController.createUser.bind(userController))
 userRouter.get('/',basicAuth, userController.getUser.bind(userController))
 userRouter.delete('/:id', basicAuth, userController.deleteUser.bind(userController))
